@@ -220,7 +220,8 @@ class PreacherSchedule extends Model
         }
         
         $sql = "SELECT * FROM {$this->table} WHERE " . implode(' AND ', $where) . " LIMIT 1";
-        return Database::fetch($sql, $params);
+        $result = Database::fetch($sql, $params);
+        return $result ?: null;
     }
     
     /**
