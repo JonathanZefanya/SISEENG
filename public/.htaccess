@@ -6,8 +6,10 @@
 # Aktifkan URL rewriting
 RewriteEngine On
 
-# Set base directory
-RewriteBase /project-website/siseeng/public/
+# Deteksi RewriteBase secara otomatis
+# CATATAN: Untuk production, sesuaikan dengan path jika perlu
+# Contoh: /siseeng/public/ atau /public/ tergantung struktur hosting
+RewriteBase /
 
 # Jika file atau direktori ada, jangan rewrite
 RewriteCond %{REQUEST_FILENAME} !-f

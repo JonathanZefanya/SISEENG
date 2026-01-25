@@ -17,15 +17,18 @@ if (!defined('BASE_PATH')) {
 // =========================================================
 // ENVIRONMENT SETTINGS
 // =========================================================
-define('ENVIRONMENT', 'development'); // 'development' atau 'production'
+define('ENVIRONMENT', 'development'); // 'development' atau 'production' - TEMPORARY DEBUG MODE
 
 // Error reporting berdasarkan environment
 if (ENVIRONMENT === 'development') {
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
 } else {
-    error_reporting(0);
+    error_reporting(E_ALL);
     ini_set('display_errors', 0);
+    ini_set('log_errors', 1);
+    // Path error log di dalam project folder
+    ini_set('error_log', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'error.log');
 }
 
 // =========================================================
@@ -33,7 +36,12 @@ if (ENVIRONMENT === 'development') {
 // =========================================================
 define('APP_NAME', 'GBI HOP Ciseeng');
 define('APP_VERSION', '1.0.0');
-define('APP_URL', 'http://localhost/project-website/siseeng/public');
+
+// Deteksi APP_URL secara otomatis
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+define('APP_URL', $protocol . '://' . $host);
+
 define('ADMIN_EMAIL', 'admin@gereja.com');
 
 // =========================================================
@@ -60,6 +68,8 @@ define('SESSION_LIFETIME', 7200); // 2 jam dalam detik
 define('SESSION_SECURE', false); // Set true jika menggunakan HTTPS
 define('SESSION_HTTPONLY', true);
 define('SESSION_SAMESITE', 'Strict');
+// Path untuk session files - gunakan tmp directory yang writable
+define('SESSION_PATH', sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'siseeng_sessions');
 
 // Rate limiting untuk login (DoS protection)
 define('LOGIN_MAX_ATTEMPTS', 5);

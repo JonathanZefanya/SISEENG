@@ -34,6 +34,16 @@ class Session
         // Set session name
         session_name(SESSION_NAME);
         
+        // Set custom session path yang writable
+        if (defined('SESSION_PATH')) {
+            // Buat directory jika belum ada
+            if (!is_dir(SESSION_PATH)) {
+                @mkdir(SESSION_PATH, 0755, true);
+            }
+            // Set session save path
+            session_save_path(SESSION_PATH);
+        }
+        
         // Konfigurasi cookie session yang aman
         session_set_cookie_params([
             'lifetime' => SESSION_LIFETIME,

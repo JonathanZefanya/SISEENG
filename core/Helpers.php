@@ -12,7 +12,16 @@
  * @param string $url URL tujuan
  */
 function redirect($url) {
-    header("Location: " . APP_URL . "/" . ltrim($url, '/'));
+    // Simpan session sebelum redirect
+    // Ini memastikan flash messages dan data session tersimpan
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_write_close();
+    }
+    
+    // Build redirect URL dengan benar (hindari double slash)
+    $baseUrl = rtrim(APP_URL, '/');
+    $path = '/' . ltrim($url, '/');
+    header("Location: " . $baseUrl . $path);
     exit;
 }
 
