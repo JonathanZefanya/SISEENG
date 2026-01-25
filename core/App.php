@@ -193,6 +193,16 @@ class App
             'admin/jadwal-pengkhotbah/generate' => ['controller' => 'Admin\PreacherSchedule', 'action' => 'generate'],
             'admin/jadwal-pengkhotbah/quick-update' => ['controller' => 'Admin\PreacherSchedule', 'action' => 'quickUpdate'],
             
+            // Admin - Rekening Donasi
+            'admin/rekening-donasi' => ['controller' => 'Admin\DonationAccount', 'action' => 'index'],
+            'admin/rekening-donasi/create' => ['controller' => 'Admin\DonationAccount', 'action' => 'create'],
+            'admin/rekening-donasi/store' => ['controller' => 'Admin\DonationAccount', 'action' => 'store'],
+            'admin/rekening-donasi/edit' => ['controller' => 'Admin\DonationAccount', 'action' => 'edit'],
+            'admin/rekening-donasi/update' => ['controller' => 'Admin\DonationAccount', 'action' => 'update'],
+            'admin/rekening-donasi/delete' => ['controller' => 'Admin\DonationAccount', 'action' => 'delete'],
+            'admin/rekening-donasi/toggle' => ['controller' => 'Admin\DonationAccount', 'action' => 'toggle'],
+            'admin/rekening-donasi/update-qris' => ['controller' => 'Admin\DonationAccount', 'action' => 'updateQris'],
+            
             // Admin - Log Aktivitas (Super Admin only)
             'admin/logs' => ['controller' => 'Admin\ActivityLog', 'action' => 'index'],
         ];

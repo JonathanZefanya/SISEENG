@@ -292,14 +292,26 @@
             </div>
             
             <div class="col-lg-6">
-                <!-- Embed Google Maps (ganti dengan lokasi asli) -->
+                <!-- Embed Google Maps -->
                 <div class="ratio ratio-4x3 rounded shadow overflow-hidden">
+                    <?php 
+                    $gmapsUrl = setting('site_gmaps_embed');
+                    if (!empty($gmapsUrl)): 
+                    ?>
                     <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.2904085578!2d106.84513267499122!3d-6.224509561111673!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMTMnMjguMiJTIDEwNsKwNTAnNTAuMSJF!5e0!3m2!1sen!2sid!4v1635000000000!5m2!1sen!2sid" 
+                        src="<?= e($gmapsUrl) ?>" 
                         style="border:0;" 
                         allowfullscreen="" 
                         loading="lazy">
                     </iframe>
+                    <?php else: ?>
+                    <div class="d-flex align-items-center justify-content-center bg-light">
+                        <div class="text-center text-muted">
+                            <i class="bi bi-geo-alt" style="font-size: 3rem;"></i>
+                            <p class="mb-0 mt-2">Lokasi belum tersedia</p>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

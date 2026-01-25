@@ -137,6 +137,38 @@
             transition: all 0.2s ease;
         }
         
+        /* Dropdown Menu Styles */
+        .nav-dropdown { position: relative; }
+        .nav-dropdown-toggle { cursor: pointer; justify-content: flex-start; }
+        .nav-dropdown-toggle .dropdown-arrow { 
+            margin-left: auto; 
+            font-size: 0.75rem; 
+            transition: transform 0.3s ease; 
+        }
+        .nav-dropdown.open .dropdown-arrow { transform: rotate(180deg); }
+        .nav-dropdown-menu {
+            display: none;
+            padding-left: 0.5rem;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+        .nav-dropdown.open .nav-dropdown-menu { display: block; }
+        .nav-submenu-link {
+            padding: 0.6rem 1rem 0.6rem 2.5rem !important;
+            font-size: 0.85rem !important;
+            border-radius: 8px;
+            margin-bottom: 2px;
+        }
+        .nav-submenu-link i { font-size: 0.9rem !important; }
+        .nav-submenu-link.active { 
+            background: rgba(79, 70, 229, 0.6) !important; 
+            color: white !important;
+        }
+        .nav-submenu-link:hover { 
+            background: rgba(255,255,255,0.08); 
+            color: white; 
+        }
+        
         .nav-link:hover { color: white; background: rgba(255,255,255,0.1); }
         .nav-link.active { color: white; background: var(--primary-color); box-shadow: 0 4px 15px -3px rgba(79, 70, 229, 0.5); }
         .nav-link i { font-size: 1.15rem; width: 24px; text-align: center; }
@@ -274,7 +306,7 @@
                 <i class="bi bi-building"></i>
             </div>
             <div class="sidebar-brand">
-                GBI Ciseeng
+                SISEENG
                 <small>Admin Panel</small>
             </div>
         </div>
@@ -295,7 +327,38 @@
             <?php 
             $menus = \App\Middleware\RoleMiddleware::getAccessibleMenus();
             $currentUrl = $_GET['url'] ?? 'admin/dashboard';
+            
             foreach ($menus as $menu): 
+                // Check if this is a dropdown menu
+                if (isset($menu['type']) && $menu['type'] === 'dropdown'):
+                    // Check if any submenu is active
+                    $dropdownActive = false;
+                    foreach ($menu['submenu'] as $sub) {
+                        if (strpos($currentUrl, $sub['active']) === 0) {
+                            $dropdownActive = true;
+                            break;
+                        }
+                    }
+            ?>
+            <div class="nav-item nav-dropdown <?= $dropdownActive ? 'open' : '' ?>">
+                <a href="#" class="nav-link nav-dropdown-toggle <?= $dropdownActive ? 'active' : '' ?>">
+                    <i class="bi <?= $menu['icon'] ?>"></i>
+                    <span><?= e($menu['title']) ?></span>
+                    <i class="bi bi-chevron-down dropdown-arrow"></i>
+                </a>
+                <div class="nav-dropdown-menu" <?= $dropdownActive ? 'style="display: block;"' : '' ?>>
+                    <?php foreach ($menu['submenu'] as $submenu): 
+                        $subActive = strpos($currentUrl, $submenu['active']) === 0;
+                    ?>
+                    <a href="<?= url($submenu['url']) ?>" class="nav-link nav-submenu-link <?= $subActive ? 'active' : '' ?>">
+                        <i class="bi <?= $submenu['icon'] ?>"></i>
+                        <span><?= e($submenu['title']) ?></span>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php else:
+                // Single menu item
                 $isActive = strpos($currentUrl, $menu['active']) === 0;
             ?>
             <div class="nav-item">
@@ -310,6 +373,7 @@
                     <?php endif; endif; ?>
                 </a>
             </div>
+            <?php endif; ?>
             <?php endforeach; ?>
             
             <div class="sidebar-divider"></div>
@@ -424,6 +488,15 @@
         backdrop?.addEventListener('click', () => {
             sidebar.classList.remove('show');
             backdrop.classList.remove('show');
+        });
+        
+        // Dropdown menu toggle
+        document.querySelectorAll('.nav-dropdown-toggle').forEach(function(toggle) {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                const dropdown = this.closest('.nav-dropdown');
+                dropdown.classList.toggle('open');
+            });
         });
         
         setTimeout(() => {

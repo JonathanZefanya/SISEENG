@@ -190,55 +190,83 @@ class RoleMiddleware
                 'title' => 'Dashboard',
                 'url' => 'admin/dashboard',
                 'icon' => 'bi-speedometer2',
-                'active' => 'admin/dashboard'
+                'active' => 'admin/dashboard',
+                'type' => 'single'
             ],
             [
-                'title' => 'Jadwal Ibadah',
-                'url' => 'admin/jadwal',
-                'icon' => 'bi-calendar-check',
-                'active' => 'admin/jadwal'
-            ],
-            [
-                'title' => 'Jadwal Pengkhotbah',
-                'url' => 'admin/jadwal-pengkhotbah',
-                'icon' => 'bi-person-video3',
-                'active' => 'admin/jadwal-pengkhotbah'
+                'title' => 'Jadwal',
+                'icon' => 'bi-calendar-week',
+                'type' => 'dropdown',
+                'active' => 'admin/jadwal',
+                'submenu' => [
+                    [
+                        'title' => 'Jadwal Ibadah',
+                        'url' => 'admin/jadwal',
+                        'icon' => 'bi-calendar-check',
+                        'active' => 'admin/jadwal'
+                    ],
+                    [
+                        'title' => 'Jadwal Pengkhotbah',
+                        'url' => 'admin/jadwal-pengkhotbah',
+                        'icon' => 'bi-person-video3',
+                        'active' => 'admin/jadwal-pengkhotbah'
+                    ]
+                ]
             ],
             [
                 'title' => 'Artikel',
-                'url' => 'admin/artikel',
                 'icon' => 'bi-file-earmark-text',
-                'active' => 'admin/artikel'
-            ],
-            [
-                'title' => 'Kategori Artikel',
-                'url' => 'admin/kategori-artikel',
-                'icon' => 'bi-tags',
-                'active' => 'admin/kategori-artikel'
+                'type' => 'dropdown',
+                'active' => 'admin/artikel',
+                'submenu' => [
+                    [
+                        'title' => 'Kategori Artikel',
+                        'url' => 'admin/kategori-artikel',
+                        'icon' => 'bi-tags',
+                        'active' => 'admin/kategori-artikel'
+                    ],
+                    [
+                        'title' => 'Semua Artikel',
+                        'url' => 'admin/artikel',
+                        'icon' => 'bi-file-earmark-text',
+                        'active' => 'admin/artikel'
+                    ],
+                ]
             ],
             [
                 'title' => 'Kegiatan',
                 'url' => 'admin/kegiatan',
                 'icon' => 'bi-calendar-event',
-                'active' => 'admin/kegiatan'
+                'active' => 'admin/kegiatan',
+                'type' => 'single'
             ],
             [
                 'title' => 'Data Jemaat',
                 'url' => 'admin/jemaat',
                 'icon' => 'bi-people',
-                'active' => 'admin/jemaat'
+                'active' => 'admin/jemaat',
+                'type' => 'single'
             ],
             [
                 'title' => 'Pesan Masuk',
                 'url' => 'admin/pesan',
                 'icon' => 'bi-envelope',
-                'active' => 'admin/pesan'
+                'active' => 'admin/pesan',
+                'type' => 'single'
+            ],
+            [
+                'title' => 'Rekening Donasi',
+                'url' => 'admin/rekening-donasi',
+                'icon' => 'bi-credit-card',
+                'active' => 'admin/rekening-donasi',
+                'type' => 'single'
             ],
             [
                 'title' => 'Pengaturan',
                 'url' => 'admin/pengaturan',
                 'icon' => 'bi-gear',
-                'active' => 'admin/pengaturan'
+                'active' => 'admin/pengaturan',
+                'type' => 'single'
             ],
         ];
         
@@ -248,13 +276,15 @@ class RoleMiddleware
                 'title' => 'Kelola Admin',
                 'url' => 'admin/users',
                 'icon' => 'bi-person-gear',
-                'active' => 'admin/users'
+                'active' => 'admin/users',
+                'type' => 'single'
             ];
             $menus[] = [
                 'title' => 'Log Aktivitas',
                 'url' => 'admin/logs',
                 'icon' => 'bi-clock-history',
-                'active' => 'admin/logs'
+                'active' => 'admin/logs',
+                'type' => 'single'
             ];
         }
         

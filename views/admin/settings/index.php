@@ -189,6 +189,50 @@
                             <textarea class="form-control" id="site_address" name="site_address" rows="3" 
                                       placeholder="Jl. Gereja No. 123, Kelurahan, Kecamatan, Kota, Kode Pos"><?= e($settings['site_address'] ?? '') ?></textarea>
                         </div>
+                        
+                        <!-- Google Maps Section -->
+                        <div class="col-12">
+                            <hr class="my-2">
+                            <h6 class="fw-bold text-primary"><i class="bi bi-geo-alt me-2"></i>Lokasi Google Maps</h6>
+                        </div>
+                        <div class="col-12">
+                            <label for="site_gmaps_embed" class="form-label fw-semibold">Google Maps Embed URL</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text"><i class="bi bi-map"></i></span>
+                                <input type="url" class="form-control" id="site_gmaps_embed" name="site_gmaps_embed" 
+                                       value="<?= e($settings['site_gmaps_embed'] ?? '') ?>" 
+                                       placeholder="https://www.google.com/maps/embed?pb=...">
+                            </div>
+                            <small class="text-muted">
+                                <strong>Cara mendapatkan URL:</strong><br>
+                                1. Buka <a href="https://www.google.com/maps" target="_blank">Google Maps</a><br>
+                                2. Cari lokasi gereja Anda<br>
+                                3. Klik tombol "Bagikan" → pilih "Sematkan peta"<br>
+                                4. Salin URL dari atribut <code>src="..."</code> pada kode iframe
+                            </small>
+                        </div>
+                        
+                        <!-- Preview Maps -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Preview Lokasi</label>
+                            <div class="ratio ratio-16x9 rounded shadow-sm overflow-hidden border" id="maps-preview">
+                                <?php if (!empty($settings['site_gmaps_embed'])): ?>
+                                <iframe 
+                                    src="<?= e($settings['site_gmaps_embed']) ?>" 
+                                    style="border:0;" 
+                                    allowfullscreen="" 
+                                    loading="lazy">
+                                </iframe>
+                                <?php else: ?>
+                                <div class="d-flex align-items-center justify-content-center bg-light">
+                                    <div class="text-center text-muted">
+                                        <i class="bi bi-geo-alt" style="font-size: 3rem;"></i>
+                                        <p class="mb-0 mt-2">Belum ada lokasi maps</p>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -213,43 +257,13 @@
                         </div>
                         
                         <div class="col-12">
-                            <hr class="my-2">
-                            <h6 class="fw-bold text-primary"><i class="bi bi-bank me-2"></i>Rekening Bank 1</h6>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="donation_bank_name" class="form-label fw-semibold">Nama Bank</label>
-                            <input type="text" class="form-control form-control-lg" id="donation_bank_name" name="donation_bank_name" 
-                                   value="<?= e($settings['donation_bank_name'] ?? '') ?>" placeholder="Bank BCA">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="donation_bank_account" class="form-label fw-semibold">Nomor Rekening</label>
-                            <input type="text" class="form-control form-control-lg" id="donation_bank_account" name="donation_bank_account" 
-                                   value="<?= e($settings['donation_bank_account'] ?? '') ?>" placeholder="1234567890">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="donation_account_name" class="form-label fw-semibold">Atas Nama</label>
-                            <input type="text" class="form-control form-control-lg" id="donation_account_name" name="donation_account_name" 
-                                   value="<?= e($settings['donation_account_name'] ?? '') ?>" placeholder="Gereja Bethel Indonesia">
-                        </div>
-                        
-                        <div class="col-12">
-                            <hr class="my-2">
-                            <h6 class="fw-bold text-primary"><i class="bi bi-bank me-2"></i>Rekening Bank 2 (Opsional)</h6>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="donation_bank_name_2" class="form-label fw-semibold">Nama Bank</label>
-                            <input type="text" class="form-control form-control-lg" id="donation_bank_name_2" name="donation_bank_name_2" 
-                                   value="<?= e($settings['donation_bank_name_2'] ?? '') ?>" placeholder="Bank Mandiri">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="donation_bank_account_2" class="form-label fw-semibold">Nomor Rekening</label>
-                            <input type="text" class="form-control form-control-lg" id="donation_bank_account_2" name="donation_bank_account_2" 
-                                   value="<?= e($settings['donation_bank_account_2'] ?? '') ?>" placeholder="0987654321">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="donation_account_name_2" class="form-label fw-semibold">Atas Nama</label>
-                            <input type="text" class="form-control form-control-lg" id="donation_account_name_2" name="donation_account_name_2" 
-                                   value="<?= e($settings['donation_account_name_2'] ?? '') ?>" placeholder="Gereja Bethel Indonesia">
+                            <div class="alert alert-info mb-0">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <strong>Rekening Bank & QRIS</strong> dapat dikelola melalui menu 
+                                <a href="<?= url('admin/rekening-donasi') ?>" class="alert-link">
+                                    <i class="bi bi-credit-card me-1"></i>Rekening Donasi
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
