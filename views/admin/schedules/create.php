@@ -23,28 +23,28 @@
                 </div>
                 
                 <div class="col-md-6">
-                    <label for="day" class="form-label fw-semibold">Hari <span class="text-danger">*</span></label>
-                    <select class="form-select form-select-lg" id="day" name="day" required>
+                    <label for="day_of_week" class="form-label fw-semibold">Hari <span class="text-danger">*</span></label>
+                    <select class="form-select form-select-lg" id="day_of_week" name="day_of_week" required>
                         <option value="">Pilih Hari</option>
                         <?php 
                         $days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                         foreach ($days as $day): 
                         ?>
-                        <option value="<?= $day ?>" <?= old('day') === $day ? 'selected' : '' ?>><?= $day ?></option>
+                        <option value="<?= $day ?>" <?= old('day_of_week') === $day ? 'selected' : '' ?>><?= $day ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 
                 <div class="col-md-6">
-                    <label for="time_start" class="form-label fw-semibold">Waktu Mulai <span class="text-danger">*</span></label>
-                    <input type="time" class="form-control form-control-lg" id="time_start" name="time_start" 
-                           value="<?= e(old('time_start')) ?>" required>
+                    <label for="start_time" class="form-label fw-semibold">Waktu Mulai <span class="text-danger">*</span></label>
+                    <input type="time" class="form-control form-control-lg" id="start_time" name="start_time" 
+                           value="<?= e(old('start_time')) ?>" required>
                 </div>
                 
                 <div class="col-md-6">
-                    <label for="time_end" class="form-label fw-semibold">Waktu Selesai</label>
-                    <input type="time" class="form-control form-control-lg" id="time_end" name="time_end" 
-                           value="<?= e(old('time_end')) ?>">
+                    <label for="end_time" class="form-label fw-semibold">Waktu Selesai</label>
+                    <input type="time" class="form-control form-control-lg" id="end_time" name="end_time" 
+                           value="<?= e(old('end_time')) ?>">
                 </div>
                 
                 <div class="col-12">

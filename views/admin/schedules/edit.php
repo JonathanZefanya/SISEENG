@@ -28,9 +28,10 @@
                     <select class="form-select form-select-lg" id="day_of_week" name="day_of_week" required>
                         <?php 
                         $days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                        $selectedDay = old('day_of_week') ?: ($schedule['day_of_week'] ?? '');
                         foreach ($days as $d): 
                         ?>
-                        <option value="<?= $d ?>" <?= ($schedule['day_of_week'] ?? '') === $d ? 'selected' : '' ?>><?= $d ?></option>
+                        <option value="<?= $d ?>" <?= $selectedDay === $d ? 'selected' : '' ?>><?= $d ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -38,24 +39,24 @@
                 <div class="col-md-6">
                     <label for="start_time" class="form-label fw-semibold">Waktu Mulai <span class="text-danger">*</span></label>
                     <input type="time" class="form-control form-control-lg" id="start_time" name="start_time" 
-                           value="<?= e($schedule['start_time'] ?? '') ?>" required>
+                           value="<?= e(old('start_time') ?: ($schedule['start_time'] ?? '')) ?>" required>
                 </div>
                 
                 <div class="col-md-6">
                     <label for="end_time" class="form-label fw-semibold">Waktu Selesai</label>
                     <input type="time" class="form-control form-control-lg" id="end_time" name="end_time" 
-                           value="<?= e($schedule['end_time'] ?? '') ?>">
+                           value="<?= e(old('end_time') ?: ($schedule['end_time'] ?? '')) ?>">
                 </div>
                 
                 <div class="col-12">
                     <label for="location" class="form-label fw-semibold">Lokasi</label>
                     <input type="text" class="form-control form-control-lg" id="location" name="location" 
-                           value="<?= e($schedule['location']) ?>">
+                           value="<?= e(old('location') ?: $schedule['location']) ?>">
                 </div>
                 
                 <div class="col-12">
                     <label for="description" class="form-label fw-semibold">Keterangan</label>
-                    <textarea class="form-control" id="description" name="description" rows="3"><?= e($schedule['description']) ?></textarea>
+                    <textarea class="form-control" id="description" name="description" rows="3"><?= e(old('description') ?: $schedule['description']) ?></textarea>
                 </div>
                 
                 <div class="col-12">

@@ -61,9 +61,9 @@ class ScheduleController extends Controller
         
         $data = [
             'title' => $this->post('title'),
-            'day' => $this->post('day'),
-            'time_start' => $this->post('time_start'),
-            'time_end' => $this->post('time_end'),
+            'day_of_week' => $this->post('day_of_week'),
+            'start_time' => $this->post('start_time'),
+            'end_time' => $this->post('end_time'),
             'location' => $this->post('location'),
             'description' => $this->post('description'),
             'is_active' => $this->post('is_active') ? 1 : 0,
@@ -137,9 +137,9 @@ class ScheduleController extends Controller
         
         $data = [
             'title' => $this->post('title'),
-            'day' => $this->post('day'),
-            'time_start' => $this->post('time_start'),
-            'time_end' => $this->post('time_end'),
+            'day_of_week' => $this->post('day_of_week'),
+            'start_time' => $this->post('start_time'),
+            'end_time' => $this->post('end_time'),
             'location' => $this->post('location'),
             'description' => $this->post('description'),
             'is_active' => $this->post('is_active') ? 1 : 0,
@@ -217,11 +217,11 @@ class ScheduleController extends Controller
             $errors[] = 'Judul jadwal wajib diisi.';
         }
         
-        if (!in_array($data['day'], $validDays)) {
+        if (!in_array($data['day_of_week'], $validDays)) {
             $errors[] = 'Hari tidak valid.';
         }
         
-        if (empty($data['time_start'])) {
+        if (empty($data['start_time'])) {
             $errors[] = 'Waktu mulai wajib diisi.';
         }
         
