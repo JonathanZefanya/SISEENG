@@ -1,0 +1,10 @@
+# =========================================================
+# Redirect semua request ke folder public
+# Gunakan file ini jika document root tidak bisa diset ke /public
+# =========================================================
+
+RewriteEngine On
+
+# Redirect ke folder public
+RewriteRule ^$ public/ [L]
+RewriteRule (.*) public/$1 [L]
