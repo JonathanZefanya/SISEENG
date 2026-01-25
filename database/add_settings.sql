@@ -14,6 +14,7 @@ INSERT IGNORE INTO `settings` (`key`, `value`, `type`, `group`, `description`) V
 ('site_whatsapp', '08123456789', 'text', 'contact', 'Nomor WhatsApp'),
 ('site_address', 'Jl. Raya Ciseeng No. 123, Bogor, Jawa Barat', 'textarea', 'contact', 'Alamat gereja'),
 ('site_gmaps_embed', '', 'url', 'contact', 'Google Maps Embed URL'),
+('site_operational_hours', 'Senin - Jumat: 08:00 - 17:00\nSabtu: 08:00 - 12:00\nMinggu: Ibadah', 'textarea', 'contact', 'Jam operasional gereja'),
 
 -- Hero Section
 ('hero_title', 'Selamat Datang di', 'text', 'hero', 'Judul utama hero section'),
