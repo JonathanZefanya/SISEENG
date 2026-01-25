@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 24 Jan 2026 pada 20.55
+-- Waktu pembuatan: 25 Jan 2026 pada 08.33
 -- Versi server: 9.2.0
 -- Versi PHP: 8.2.4
 
@@ -47,15 +47,7 @@ CREATE TABLE `activity_logs` (
 --
 
 INSERT INTO `activity_logs` (`id`, `user_id`, `user_name`, `action`, `description`, `module`, `record_id`, `old_data`, `new_data`, `ip_address`, `user_agent`, `created_at`) VALUES
-(1, 1, NULL, 'logout', 'User logout', NULL, NULL, NULL, NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 OPR/125.0.0.0', '2026-01-24 19:16:46'),
-(2, 1, NULL, 'login', 'User berhasil login', NULL, NULL, NULL, '{\"ip\": \"::1\", \"user_agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 OPR/125.0.0.0\"}', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 OPR/125.0.0.0', '2026-01-24 19:17:09'),
-(3, 1, NULL, 'delete_article', 'Menghapus artikel: Selamat Datang di Website Gereja Kami', NULL, NULL, NULL, NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 OPR/125.0.0.0', '2026-01-24 19:32:11'),
-(4, 1, NULL, 'delete_member', 'Menghapus jemaat: ', NULL, NULL, NULL, NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 OPR/125.0.0.0', '2026-01-24 19:34:34'),
-(5, 1, NULL, 'create_article', 'Menambah artikel: awd', NULL, NULL, NULL, NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 OPR/125.0.0.0', '2026-01-24 19:50:34'),
-(6, 1, NULL, 'create_article', 'Menambah artikel: sefsef', NULL, NULL, NULL, NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 OPR/125.0.0.0', '2026-01-24 19:51:08'),
-(7, 1, NULL, 'delete_message', 'Menghapus pesan dari: Jonathan Zefanya', NULL, NULL, NULL, NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 OPR/125.0.0.0', '2026-01-24 19:57:23'),
-(8, 1, NULL, 'delete_member', 'Menghapus jemaat: Budi Santoso', NULL, NULL, NULL, NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 OPR/125.0.0.0', '2026-01-24 20:41:31'),
-(9, 1, NULL, 'delete_member', 'Menghapus jemaat: Siti Rahayu', NULL, NULL, NULL, NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 OPR/125.0.0.0', '2026-01-24 20:41:33');
+(20, 1, NULL, 'delete', 'Menghapus rekening Bank BCA', 'donation_accounts', 1, NULL, NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-01-25 08:18:35');
 
 -- --------------------------------------------------------
 
@@ -79,14 +71,6 @@ CREATE TABLE `articles` (
   `updated_at` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data untuk tabel `articles`
---
-
-INSERT INTO `articles` (`id`, `title`, `slug`, `content`, `excerpt`, `image`, `status`, `views`, `author_id`, `category_id`, `published_at`, `created_at`, `updated_at`) VALUES
-(2, 'awd', 'awd', 'awdawd', NULL, NULL, 'published', 0, 1, NULL, '2026-01-24 19:50:34', '2026-01-24 19:50:34', '2026-01-24 19:50:34'),
-(3, 'sefsef', 'sefsef', 'sefsef', NULL, NULL, 'published', 0, 1, NULL, '2026-01-24 19:51:08', '2026-01-24 19:51:08', '2026-01-24 19:51:08');
-
 -- --------------------------------------------------------
 
 --
@@ -109,12 +93,12 @@ CREATE TABLE `article_categories` (
 --
 
 INSERT INTO `article_categories` (`id`, `name`, `slug`, `description`, `color`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'Renungan', 'renungan', 'Artikel renungan harian dan mingguan', '#0d6efd', 1, '2026-01-25 02:49:38', NULL),
+(1, 'Renungan', 'renungan', 'Artikel renungan harian dan mingguan', '#0d6efd', 0, '2026-01-25 02:49:38', '2026-01-25 08:08:00'),
 (2, 'Berita Gereja', 'berita-gereja', 'Berita dan informasi seputar gereja', '#198754', 0, '2026-01-25 02:49:38', '2026-01-24 20:54:48'),
-(3, 'Kesaksian', 'kesaksian', 'Kesaksian jemaat', '#ffc107', 1, '2026-01-25 02:49:38', NULL),
-(4, 'Pengajaran', 'pengajaran', 'Artikel pengajaran dan doktrin', '#6f42c1', 1, '2026-01-25 02:49:38', NULL),
-(5, 'Keluarga', 'keluarga', 'Artikel seputar keluarga Kristen', '#fd7e14', 1, '2026-01-25 02:49:38', NULL),
-(6, 'Pemuda', 'pemuda', 'Artikel untuk pemuda', '#20c997', 1, '2026-01-25 02:49:38', NULL);
+(3, 'Kesaksian', 'kesaksian', 'Kesaksian jemaat', '#ffc107', 0, '2026-01-25 02:49:38', '2026-01-25 08:07:58'),
+(4, 'Pengajaran', 'pengajaran', 'Artikel pengajaran dan doktrin', '#6f42c1', 0, '2026-01-25 02:49:38', '2026-01-25 08:07:59'),
+(5, 'Keluarga', 'keluarga', 'Artikel seputar keluarga Kristen', '#fd7e14', 0, '2026-01-25 02:49:38', '2026-01-25 08:07:57'),
+(6, 'Pemuda', 'pemuda', 'Artikel untuk pemuda', '#20c997', 0, '2026-01-25 02:49:38', '2026-01-25 08:07:59');
 
 -- --------------------------------------------------------
 
@@ -140,6 +124,24 @@ CREATE TABLE `contact_messages` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `donation_accounts`
+--
+
+CREATE TABLE `donation_accounts` (
+  `id` int UNSIGNED NOT NULL,
+  `bank_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Nama Bank (BCA, Mandiri, dll)',
+  `account_number` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Nomor Rekening',
+  `account_name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Nama Pemilik Rekening',
+  `bank_logo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Logo bank (opsional)',
+  `is_active` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Status aktif',
+  `sort_order` int NOT NULL DEFAULT '0' COMMENT 'Urutan tampil',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `events`
 --
 
@@ -159,14 +161,6 @@ CREATE TABLE `events` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data untuk tabel `events`
---
-
-INSERT INTO `events` (`id`, `title`, `description`, `image`, `event_date`, `event_time`, `end_date`, `end_time`, `location`, `is_featured`, `status`, `created_by`, `created_at`, `updated_at`) VALUES
-(1, 'Natal Bersama 2024', 'Perayaan Natal bersama seluruh jemaat. Acara akan dimeriahkan dengan penampilan paduan suara dan drama musikal.', NULL, '2026-02-24', '17:00:00', NULL, NULL, 'Gedung Utama Gereja', 1, 'upcoming', NULL, '2026-01-25 00:51:15', NULL),
-(2, 'Retreat Pemuda', 'Retreat tahunan untuk pemuda dan remaja dengan tema \"Generasi Pembawa Terang\"', NULL, '2026-02-08', '08:00:00', NULL, NULL, 'Villa Grace, Puncak', 0, 'upcoming', NULL, '2026-01-25 00:51:15', NULL);
 
 -- --------------------------------------------------------
 
@@ -267,35 +261,39 @@ CREATE TABLE `settings` (
 --
 
 INSERT INTO `settings` (`id`, `key`, `value`, `type`, `group`, `description`, `created_at`, `updated_at`) VALUES
-(1, 'site_name', 'GBI HOP CISEENG', 'text', 'general', 'Nama website', '2026-01-25 00:51:16', '2026-01-25 02:20:31'),
-(2, 'site_tagline', 'Melayani dengan Kasih', 'text', 'general', 'Tagline website', '2026-01-25 00:51:16', '2026-01-25 02:20:31'),
-(3, 'site_email', 'info@gereja.com', 'email', 'general', 'Email utama', '2026-01-25 00:51:16', '2026-01-25 02:20:31'),
-(4, 'site_phone', '(021) 1234-5678', 'text', 'general', 'Nomor telepon', '2026-01-25 00:51:16', '2026-01-25 02:20:31'),
-(5, 'site_address', 'Jl. Gereja No. 123, Jakarta', 'textarea', 'general', 'Alamat gereja', '2026-01-25 00:51:16', '2026-01-25 02:20:31'),
-(6, 'site_facebook', 'https://facebook.com/gereja', 'url', 'social', 'Link Facebook', '2026-01-25 00:51:16', '2026-01-25 02:20:31'),
-(7, 'site_instagram', 'https://instagram.com/gereja', 'url', 'social', 'Link Instagram', '2026-01-25 00:51:16', '2026-01-25 02:20:31'),
-(8, 'site_youtube', 'https://youtube.com/gereja', 'url', 'social', 'Link YouTube', '2026-01-25 00:51:16', '2026-01-25 02:20:31'),
-(11, 'site_description', 'Website resmi Gereja Bethel Indonesia House Of Prayer Ciseeng', 'textarea', 'general', 'Deskripsi website untuk SEO', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(14, 'site_whatsapp', '08123456789', 'text', 'contact', 'Nomor WhatsApp', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(16, 'hero_title', 'Selamat Datang di', 'text', 'hero', 'Judul utama hero section', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(17, 'hero_subtitle', 'Gereja Bethel Indonesia House Of Prayer Ciseeng', 'text', 'hero', 'Sub judul hero section', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(18, 'hero_verse', 'Karena di mana dua atau tiga orang berkumpul dalam nama-Ku, di situ Aku ada di tengah-tengah mereka.', 'textarea', 'hero', 'Ayat Alkitab', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(19, 'hero_verse_ref', 'Matius 18:20', 'text', 'hero', 'Referensi ayat', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(23, 'site_tiktok', '', 'url', 'social', 'Link TikTok', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(24, 'donation_title', 'Dukung Pelayanan Kami', 'text', 'donation', 'Judul halaman donasi', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(25, 'donation_description', 'Persembahan dan donasi Anda sangat berarti untuk mendukung pelayanan gereja dan membantu sesama.', 'textarea', 'donation', 'Deskripsi donasi', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(26, 'donation_bank_name', 'Bank BCA', 'text', 'donation', 'Nama Bank 1', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(27, 'donation_bank_account', '1234567890', 'text', 'donation', 'Nomor Rekening 1', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(28, 'donation_account_name', 'GBI Ciseeng', 'text', 'donation', 'Atas Nama 1', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(29, 'donation_bank_name_2', '', 'text', 'donation', 'Nama Bank 2', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(30, 'donation_bank_account_2', '', 'text', 'donation', 'Nomor Rekening 2', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(31, 'donation_account_name_2', '', 'text', 'donation', 'Atas Nama 2', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(32, 'about_vision', 'Menjadi gereja yang membawa transformasi bagi masyarakat melalui kasih Kristus.', 'textarea', 'about', 'Visi gereja', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(33, 'about_mission', 'Menyebarkan Injil kepada semua orang\r\nMembina jemaat dalam iman dan kasih\r\nMelayani sesama dengan tulus\r\nMembangun komunitas yang saling mendukung', 'textarea', 'about', 'Misi gereja', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(34, 'about_history', 'Gereja Bethel Indonesia Ciseeng didirikan dengan visi untuk menjangkau masyarakat di wilayah Ciseeng dan sekitarnya.', 'textarea', 'about', 'Sejarah gereja', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
-(35, 'about_pastor', 'Pdt. Nama Gembala', 'text', 'about', 'Nama gembala/pendeta', '2026-01-25 02:08:02', '2026-01-25 02:20:31'),
+(1, 'site_name', 'GBI HOP CISEENG', 'text', 'general', 'Nama website', '2026-01-25 00:51:16', '2026-01-25 14:27:12'),
+(2, 'site_tagline', 'Melayani dengan Kasih', 'text', 'general', 'Tagline website', '2026-01-25 00:51:16', '2026-01-25 14:27:12'),
+(3, 'site_email', 'gbihopciseeng@gmail.com', 'email', 'general', 'Email utama', '2026-01-25 00:51:16', '2026-01-25 14:27:12'),
+(4, 'site_phone', '08561122755', 'text', 'general', 'Nomor telepon', '2026-01-25 00:51:16', '2026-01-25 14:27:12'),
+(5, 'site_address', 'Jalan Iwul, Parigi Mekar, Kec. Ciseeng, Kabupaten Bogor, Jawa Barat', 'textarea', 'general', 'Alamat gereja', '2026-01-25 00:51:16', '2026-01-25 14:27:12'),
+(6, 'site_facebook', '', 'url', 'social', 'Link Facebook', '2026-01-25 00:51:16', '2026-01-25 14:27:12'),
+(7, 'site_instagram', 'https://www.instagram.com/gbihopciseeng/', 'url', 'social', 'Link Instagram', '2026-01-25 00:51:16', '2026-01-25 14:27:12'),
+(8, 'site_youtube', 'https://www.youtube.com/@GBIHOUSEOFPRAYERCISEENG', 'url', 'social', 'Link YouTube', '2026-01-25 00:51:16', '2026-01-25 14:27:12'),
+(11, 'site_description', 'Website resmi Gereja Bethel Indonesia House Of Prayer Ciseeng', 'textarea', 'general', 'Deskripsi website untuk SEO', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(14, 'site_whatsapp', '628561122755', 'text', 'contact', 'Nomor WhatsApp', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(16, 'hero_title', 'Selamat Datang di', 'text', 'hero', 'Judul utama hero section', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(17, 'hero_subtitle', 'Gereja Bethel Indonesia House Of Prayer Ciseeng', 'text', 'hero', 'Sub judul hero section', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(18, 'hero_verse', 'Karena di mana dua atau tiga orang berkumpul dalam nama-Ku, di situ Aku ada di tengah-tengah mereka.', 'textarea', 'hero', 'Ayat Alkitab', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(19, 'hero_verse_ref', 'Matius 18:20', 'text', 'hero', 'Referensi ayat', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(23, 'site_tiktok', '', 'url', 'social', 'Link TikTok', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(24, 'donation_title', 'Dukung Pelayanan Kami', 'text', 'donation', 'Judul halaman donasi', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(25, 'donation_description', 'Persembahan dan donasi Anda sangat berarti untuk mendukung pelayanan gereja dan membantu sesama.', 'textarea', 'donation', 'Deskripsi donasi', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(26, 'donation_bank_name', '', 'text', 'donation', 'Nama Bank 1', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(27, 'donation_bank_account', '', 'text', 'donation', 'Nomor Rekening 1', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(28, 'donation_account_name', '', 'text', 'donation', 'Atas Nama 1', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(29, 'donation_bank_name_2', '', 'text', 'donation', 'Nama Bank 2', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(30, 'donation_bank_account_2', '', 'text', 'donation', 'Nomor Rekening 2', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(31, 'donation_account_name_2', '', 'text', 'donation', 'Atas Nama 2', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(32, 'about_vision', 'Menjadi gereja yang membawa transformasi bagi masyarakat melalui kasih Kristus.', 'textarea', 'about', 'Visi gereja', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(33, 'about_mission', 'Menyebarkan Injil kepada semua orang\r\nMembina jemaat dalam iman dan kasih\r\nMelayani sesama dengan tulus\r\nMembangun komunitas yang saling mendukung', 'textarea', 'about', 'Misi gereja', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(34, 'about_history', 'Gereja Bethel Indonesia Ciseeng didirikan dengan visi untuk menjangkau masyarakat di wilayah Ciseeng dan sekitarnya.', 'textarea', 'about', 'Sejarah gereja', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
+(35, 'about_pastor', 'Pdt. Okan Suhendra', 'text', 'about', 'Nama gembala/pendeta', '2026-01-25 02:08:02', '2026-01-25 14:27:12'),
 (36, 'site_logo', '', 'text', 'general', NULL, '2026-01-25 02:17:22', NULL),
-(37, 'hero_image', 'hero_1769282431.png', 'text', 'hero', NULL, '2026-01-25 02:17:22', '2026-01-25 02:20:31');
+(37, 'hero_image', 'hero_1769282431.png', 'text', 'hero', NULL, '2026-01-25 02:17:22', '2026-01-25 02:20:31'),
+(38, 'donation_qris_image', '', 'image', 'donation', 'Gambar QRIS untuk donasi', '2026-01-25 13:55:59', NULL),
+(39, 'donation_qris_name', '', 'text', 'donation', 'Nama QRIS (opsional)', '2026-01-25 13:55:59', NULL),
+(40, 'site_operational_hours', 'Minggu: 08:00 - 16:00', 'textarea', 'contact', 'Jam operasional gereja', '2026-01-25 14:21:00', '2026-01-25 14:27:12'),
+(49, 'site_gmaps_embed', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.557737417737!2d106.700113!3d-6.4507789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69e7eb43e30b6f%3A0x1b1e5e0267ce6814!2sGBI%20House%20Of%20Prayer%20Ciseeng!5e0!3m2!1sid!2sid!4v1746534651424!5m2!1sid!2sid', 'text', 'general', NULL, '2026-01-25 14:23:31', '2026-01-25 14:27:12');
 
 -- --------------------------------------------------------
 
@@ -323,7 +321,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `status`, `last_login`, `login_attempts`, `locked_until`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Super Admin', 'admin@gbiciseeng.com', '$2y$12$/1zBQIyWnQGWNN11gmyRJ.qCHsG/g8I6OLxV33RT0u19X4Kqw8I8i', 'super_admin', 'active', '2026-01-25 01:17:09', 0, NULL, NULL, '2026-01-25 00:51:15', '2026-01-25 01:17:09');
+(1, 'Super Admin', 'admin@gbiciseeng.com', '$2y$12$/1zBQIyWnQGWNN11gmyRJ.qCHsG/g8I6OLxV33RT0u19X4Kqw8I8i', 'super_admin', 'active', '2026-01-25 13:28:47', 0, NULL, NULL, '2026-01-25 00:51:15', '2026-01-25 13:28:47');
 
 --
 -- Indexes for dumped tables
@@ -367,6 +365,14 @@ ALTER TABLE `contact_messages`
   ADD KEY `idx_is_read` (`is_read`),
   ADD KEY `idx_created_at` (`created_at`),
   ADD KEY `fk_messages_read_by` (`read_by`);
+
+--
+-- Indeks untuk tabel `donation_accounts`
+--
+ALTER TABLE `donation_accounts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_is_active` (`is_active`),
+  ADD KEY `idx_sort_order` (`sort_order`);
 
 --
 -- Indeks untuk tabel `events`
@@ -439,7 +445,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT untuk tabel `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT untuk tabel `articles`
@@ -458,6 +464,12 @@ ALTER TABLE `article_categories`
 --
 ALTER TABLE `contact_messages`
   MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT untuk tabel `donation_accounts`
+--
+ALTER TABLE `donation_accounts`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT untuk tabel `events`
@@ -493,7 +505,7 @@ ALTER TABLE `schedules`
 -- AUTO_INCREMENT untuk tabel `settings`
 --
 ALTER TABLE `settings`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
 
 --
 -- AUTO_INCREMENT untuk tabel `users`
