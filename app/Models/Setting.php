@@ -45,15 +45,21 @@ class Setting extends Model
      */
     public static function set(string $key, $value): bool
     {
-        $sql = "INSERT INTO settings (`key`, `value`, `updated_at`) 
-                VALUES (:key, :value, NOW()) 
-                ON DUPLICATE KEY UPDATE `value` = :value2, `updated_at` = NOW()";
+        $db = Database::getInstance();
         
-        return Database::execute($sql, [
-            'key' => $key,
-            'value' => $value,
-            'value2' => $value
-        ]);
+        try {
+            $sql = "INSERT INTO settings (`key`, `value`, `updated_at`) 
+                    VALUES (:key, :value, NOW()) 
+                    ON DUPLICATE KEY UPDATE `value` = VALUES(`value`), `updated_at` = NOW()";
+            
+            $stmt = $db->prepare($sql);
+            return $stmt->execute([
+                'key' => $key,
+                'value' => $value
+            ]);
+        } catch (\Exception $e) {
+            return false;
+        }
     }
     
     /**
@@ -118,11 +124,14 @@ class Setting extends Model
         try {
             $db->beginTransaction();
             
-            $sql = "UPDATE {$this->table} SET `value` = :value, `updated_at` = NOW() WHERE `key` = :key";
+            // Gunakan INSERT ... ON DUPLICATE KEY UPDATE agar setting yang belum ada juga bisa disimpan
+            $sql = "INSERT INTO {$this->table} (`key`, `value`, `updated_at`) 
+                    VALUES (:key, :value, NOW()) 
+                    ON DUPLICATE KEY UPDATE `value` = VALUES(`value`), `updated_at` = NOW()";
             $stmt = $db->prepare($sql);
             
             foreach ($data as $key => $value) {
-                $stmt->execute(['key' => $key, 'value' => $value]);
+                $stmt->execute(['key' => $key, 'value' => $value ?? '']);
             }
             
             $db->commit();

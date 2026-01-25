@@ -69,6 +69,7 @@ class SettingController extends Controller
             'site_phone' => $this->post('site_phone') ?? '',
             'site_whatsapp' => $this->post('site_whatsapp') ?? '',
             'site_address' => $this->post('site_address') ?? '',
+            'site_operational_hours' => $this->post('site_operational_hours') ?? '',
             'site_gmaps_embed' => $this->post('site_gmaps_embed') ?? '',
             
             // Hero Section

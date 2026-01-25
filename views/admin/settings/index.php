@@ -184,6 +184,12 @@
                             </div>
                             <small class="text-muted">Format: 08xxx atau 628xxx (tanpa +)</small>
                         </div>
+                        <div class="col-md-6">
+                            <label for="site_operational_hours" class="form-label fw-semibold">Jam Operasional</label>
+                            <textarea class="form-control" id="site_operational_hours" name="site_operational_hours" rows="3" 
+                                      placeholder="Senin - Jumat: 08:00 - 17:00&#10;Sabtu: 08:00 - 12:00&#10;Minggu: Ibadah"><?= e($settings['site_operational_hours'] ?? '') ?></textarea>
+                            <small class="text-muted">Pisahkan dengan baris baru (enter) untuk setiap hari</small>
+                        </div>
                         <div class="col-12">
                             <label for="site_address" class="form-label fw-semibold">Alamat Lengkap</label>
                             <textarea class="form-control" id="site_address" name="site_address" rows="3" 

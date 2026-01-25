@@ -91,7 +91,7 @@ class DonationAccountController extends Controller
         $id = $this->accountModel->create($data);
         
         if ($id) {
-            ActivityLog::log('create', 'donation_accounts', $id, "Menambahkan rekening {$data['bank_name']}");
+            ActivityLog::log(auth('id'), 'create', "Menambahkan rekening {$data['bank_name']}", [], 'donation_accounts', (int)$id);
             setFlash('success', 'Rekening donasi berhasil ditambahkan!');
         } else {
             setFlash('error', 'Gagal menambahkan rekening donasi.');
@@ -168,7 +168,7 @@ class DonationAccountController extends Controller
         
         // Update
         if ($this->accountModel->updateAccount($id, $data)) {
-            ActivityLog::log('update', 'donation_accounts', $id, "Mengubah rekening {$data['bank_name']}");
+            ActivityLog::log(auth('id'), 'update', "Mengubah rekening {$data['bank_name']}", [], 'donation_accounts', $id);
             setFlash('success', 'Rekening donasi berhasil diperbarui!');
         } else {
             setFlash('error', 'Gagal memperbarui rekening donasi.');
@@ -202,7 +202,7 @@ class DonationAccountController extends Controller
         }
         
         if ($this->accountModel->deleteAccount($id)) {
-            ActivityLog::log('delete', 'donation_accounts', $id, "Menghapus rekening {$account['bank_name']}");
+            ActivityLog::log(auth('id'), 'delete', "Menghapus rekening {$account['bank_name']}", [], 'donation_accounts', $id);
             setFlash('success', 'Rekening donasi berhasil dihapus!');
         } else {
             setFlash('error', 'Gagal menghapus rekening donasi.');
@@ -232,7 +232,7 @@ class DonationAccountController extends Controller
         
         if ($this->accountModel->toggleActive($id)) {
             $status = $account['is_active'] ? 'dinonaktifkan' : 'diaktifkan';
-            ActivityLog::log('update', 'donation_accounts', $id, "Status rekening {$account['bank_name']} {$status}");
+            ActivityLog::log(auth('id'), 'update', "Status rekening {$account['bank_name']} {$status}", [], 'donation_accounts', $id);
             setFlash('success', "Rekening berhasil {$status}!");
         } else {
             setFlash('error', 'Gagal mengubah status rekening.');
@@ -316,7 +316,7 @@ class DonationAccountController extends Controller
             }
             \App\Models\Setting::set('donation_qris_image', '');
             \App\Models\Setting::set('donation_qris_name', '');
-            ActivityLog::log('delete', 'settings', 0, "Menghapus gambar QRIS donasi");
+            ActivityLog::log(auth('id'), 'delete', "Menghapus gambar QRIS donasi", [], 'settings', null);
             setFlash('success', 'Gambar QRIS berhasil dihapus!');
             $this->redirect('admin/rekening-donasi');
             return;
@@ -357,7 +357,7 @@ class DonationAccountController extends Controller
         // Update QRIS name
         \App\Models\Setting::set('donation_qris_name', $this->post('donation_qris_name') ?? '');
         
-        ActivityLog::log('update', 'settings', 0, "Memperbarui QRIS donasi");
+        ActivityLog::log(auth('id'), 'update', "Memperbarui QRIS donasi", [], 'settings', null);
         setFlash('success', 'QRIS berhasil diperbarui!');
         $this->redirect('admin/rekening-donasi');
     }

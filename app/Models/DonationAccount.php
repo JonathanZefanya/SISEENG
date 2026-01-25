@@ -78,11 +78,12 @@ class DonationAccount extends Model
             'sort_order' => $data['sort_order'] ?? 0
         ];
         
-        if (Database::execute($sql, $params)) {
-            return Database::lastInsertId();
+        try {
+            Database::query($sql, $params);
+            return Database::getInstance()->lastInsertId();
+        } catch (\Exception $e) {
+            return false;
         }
-        
-        return false;
     }
     
     /**
@@ -90,7 +91,7 @@ class DonationAccount extends Model
      * 
      * @param int $id
      * @param array $data
-     * @return int
+     * @return bool
      */
     public function updateAccount(int $id, array $data): bool
     {
@@ -114,7 +115,11 @@ class DonationAccount extends Model
             'sort_order' => $data['sort_order'] ?? 0
         ];
         
-        return Database::execute($sql, $params);
+        try {
+            return Database::query($sql, $params)->rowCount() > 0;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
     
     /**
@@ -126,7 +131,11 @@ class DonationAccount extends Model
     public function deleteAccount(int $id): bool
     {
         $sql = "DELETE FROM {$this->table} WHERE id = :id";
-        return Database::execute($sql, ['id' => $id]);
+        try {
+            return Database::query($sql, ['id' => $id])->rowCount() > 0;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
     
     /**
@@ -138,7 +147,11 @@ class DonationAccount extends Model
     public function toggleActive(int $id): bool
     {
         $sql = "UPDATE {$this->table} SET is_active = NOT is_active, updated_at = NOW() WHERE id = :id";
-        return Database::execute($sql, ['id' => $id]);
+        try {
+            return Database::query($sql, ['id' => $id])->rowCount() > 0;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
     
     /**

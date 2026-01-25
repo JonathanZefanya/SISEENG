@@ -1,3 +1,16 @@
+<?php
+// Ambil data settings dari database
+$siteAddress = setting('site_address');
+$sitePhone = setting('site_phone');
+$siteEmail = setting('site_email');
+$siteWhatsapp = setting('site_whatsapp');
+$siteFacebook = setting('site_facebook');
+$siteInstagram = setting('site_instagram');
+$siteYoutube = setting('site_youtube');
+$siteTiktok = setting('site_tiktok');
+$siteOperationalHours = setting('site_operational_hours');
+?>
+
 <section class="py-5 bg-primary text-white">
     <div class="container text-center">
         <h1 class="display-4 fw-bold mb-3">Hubungi Kami</h1>
@@ -62,6 +75,7 @@
             <div class="col-lg-5">
                 <h3 class="fw-bold mb-4">Informasi Kontak</h3>
                 
+                <?php if (!empty($siteAddress)): ?>
                 <div class="d-flex mb-4">
                     <div class="flex-shrink-0">
                         <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
@@ -70,14 +84,12 @@
                     </div>
                     <div class="flex-grow-1 ms-4">
                         <h5 class="fw-bold">Alamat</h5>
-                        <p class="text-muted fs-5 mb-0">
-                            Jl. Gereja No. 123<br>
-                            Kelurahan Contoh, Kecamatan Contoh<br>
-                            Jakarta 12345
-                        </p>
+                        <p class="text-muted fs-5 mb-0"><?= nl2br(e($siteAddress)) ?></p>
                     </div>
                 </div>
+                <?php endif; ?>
                 
+                <?php if (!empty($sitePhone)): ?>
                 <div class="d-flex mb-4">
                     <div class="flex-shrink-0">
                         <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
@@ -86,10 +98,41 @@
                     </div>
                     <div class="flex-grow-1 ms-4">
                         <h5 class="fw-bold">Telepon</h5>
-                        <p class="text-muted fs-5 mb-0">(021) 1234-5678</p>
+                        <p class="text-muted fs-5 mb-0">
+                            <a href="tel:<?= e(preg_replace('/[^0-9+]/', '', $sitePhone)) ?>" class="text-decoration-none text-muted">
+                                <?= e($sitePhone) ?>
+                            </a>
+                        </p>
                     </div>
                 </div>
+                <?php endif; ?>
                 
+                <?php if (!empty($siteWhatsapp)): ?>
+                <div class="d-flex mb-4">
+                    <div class="flex-shrink-0">
+                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="bi bi-whatsapp fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-4">
+                        <h5 class="fw-bold">WhatsApp</h5>
+                        <p class="text-muted fs-5 mb-0">
+                            <?php 
+                            $waNumber = preg_replace('/[^0-9]/', '', $siteWhatsapp);
+                            // Convert 08xxx to 628xxx
+                            if (substr($waNumber, 0, 1) === '0') {
+                                $waNumber = '62' . substr($waNumber, 1);
+                            }
+                            ?>
+                            <a href="https://wa.me/<?= e($waNumber) ?>" target="_blank" class="text-decoration-none text-muted">
+                                <?= e($siteWhatsapp) ?>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                <?php endif; ?>
+                
+                <?php if (!empty($siteEmail)): ?>
                 <div class="d-flex mb-4">
                     <div class="flex-shrink-0">
                         <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
@@ -98,10 +141,16 @@
                     </div>
                     <div class="flex-grow-1 ms-4">
                         <h5 class="fw-bold">Email</h5>
-                        <p class="text-muted fs-5 mb-0">info@gereja.com</p>
+                        <p class="text-muted fs-5 mb-0">
+                            <a href="mailto:<?= e($siteEmail) ?>" class="text-decoration-none text-muted">
+                                <?= e($siteEmail) ?>
+                            </a>
+                        </p>
                     </div>
                 </div>
+                <?php endif; ?>
                 
+                <?php if (!empty($siteOperationalHours)): ?>
                 <div class="d-flex mb-4">
                     <div class="flex-shrink-0">
                         <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
@@ -110,28 +159,38 @@
                     </div>
                     <div class="flex-grow-1 ms-4">
                         <h5 class="fw-bold">Jam Operasional</h5>
-                        <p class="text-muted fs-5 mb-0">
-                            Senin - Jumat: 08:00 - 17:00<br>
-                            Sabtu: 08:00 - 12:00<br>
-                            Minggu: Ibadah
-                        </p>
+                        <p class="text-muted fs-5 mb-0"><?= nl2br(e($siteOperationalHours)) ?></p>
                     </div>
                 </div>
+                <?php endif; ?>
                 
+                <?php if (!empty($siteFacebook) || !empty($siteInstagram) || !empty($siteYoutube) || !empty($siteTiktok)): ?>
                 <hr class="my-4">
                 
                 <h5 class="fw-bold mb-3">Ikuti Kami</h5>
                 <div class="d-flex gap-3">
-                    <a href="#" class="btn btn-outline-primary btn-lg rounded-circle">
+                    <?php if (!empty($siteFacebook)): ?>
+                    <a href="<?= e($siteFacebook) ?>" target="_blank" class="btn btn-outline-primary btn-lg rounded-circle" title="Facebook">
                         <i class="bi bi-facebook"></i>
                     </a>
-                    <a href="#" class="btn btn-outline-danger btn-lg rounded-circle">
+                    <?php endif; ?>
+                    <?php if (!empty($siteInstagram)): ?>
+                    <a href="<?= e($siteInstagram) ?>" target="_blank" class="btn btn-outline-danger btn-lg rounded-circle" title="Instagram">
                         <i class="bi bi-instagram"></i>
                     </a>
-                    <a href="#" class="btn btn-outline-danger btn-lg rounded-circle">
+                    <?php endif; ?>
+                    <?php if (!empty($siteYoutube)): ?>
+                    <a href="<?= e($siteYoutube) ?>" target="_blank" class="btn btn-outline-danger btn-lg rounded-circle" title="YouTube">
                         <i class="bi bi-youtube"></i>
                     </a>
+                    <?php endif; ?>
+                    <?php if (!empty($siteTiktok)): ?>
+                    <a href="<?= e($siteTiktok) ?>" target="_blank" class="btn btn-outline-dark btn-lg rounded-circle" title="TikTok">
+                        <i class="bi bi-tiktok"></i>
+                    </a>
+                    <?php endif; ?>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
