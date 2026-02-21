@@ -19,24 +19,24 @@
 
 <!-- Filter Kategori -->
 <?php if (!empty($categories)): ?>
-<section class="py-4 bg-light border-bottom">
-    <div class="container">
-        <div class="d-flex align-items-center gap-2 flex-wrap justify-content-center">
-            <span class="text-muted me-2 fw-medium"><i class="bi bi-filter me-1"></i>Kategori:</span>
-            <a href="<?= url('artikel') ?>" 
-               class="btn btn-sm <?= empty($categorySlug) ? 'btn-primary' : 'btn-outline-secondary' ?> rounded-pill px-3">
-                <i class="bi bi-grid me-1"></i>Semua
-            </a>
-            <?php foreach ($categories as $cat): ?>
-            <a href="<?= url('artikel?kategori=' . $cat['slug']) ?>" 
-               class="btn btn-sm rounded-pill px-3 <?= ($categorySlug ?? '') === $cat['slug'] ? '' : 'btn-outline-secondary' ?>"
-               style="<?= ($categorySlug ?? '') === $cat['slug'] ? 'background-color: ' . e($cat['color']) . '; border-color: ' . e($cat['color']) . '; color: white;' : '' ?>">
-                <?= e($cat['name']) ?>
-            </a>
-            <?php endforeach; ?>
+    <section class="py-4 bg-light border-bottom">
+        <div class="container">
+            <div class="d-flex align-items-center gap-2 flex-wrap justify-content-center">
+                <span class="text-muted me-2 fw-medium"><i class="bi bi-filter me-1"></i>Kategori:</span>
+                <a href="<?= url('artikel') ?>"
+                    class="btn btn-sm <?= empty($categorySlug) ? 'btn-primary' : 'btn-outline-secondary' ?> rounded-pill px-3">
+                    <i class="bi bi-grid me-1"></i>Semua
+                </a>
+                <?php foreach ($categories as $cat): ?>
+                    <a href="<?= url('artikel?kategori=' . $cat['slug']) ?>"
+                        class="btn btn-sm rounded-pill px-3 <?= ($categorySlug ?? '') === $cat['slug'] ? '' : 'btn-outline-secondary' ?>"
+                        style="<?= ($categorySlug ?? '') === $cat['slug'] ? 'background-color: ' . e($cat['color']) . '; border-color: ' . e($cat['color']) . '; color: white;' : '' ?>">
+                        <?= e($cat['name']) ?>
+                    </a>
+                <?php endforeach; ?>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 <?php endif; ?>
 
 <section class="py-5">
@@ -69,11 +69,11 @@
                     <div class="row g-0">
                         <div class="col-md-6">
                             <?php if ($articles[0]['image']): ?>
-                                <img src="<?= asset('uploads/articles/' . e($articles[0]['image'])) ?>" 
-                                     class="img-fluid h-100 w-100" alt="<?= e($articles[0]['title']) ?>"
-                                     style="object-fit: cover; min-height: 300px;">
+                                <img src="<?= uploads(e($articles[0]['image'])) ?>" class="img-fluid h-100 w-100"
+                                    alt="<?= e($articles[0]['title']) ?>" style="object-fit: cover; min-height: 300px;">
                             <?php else: ?>
-                                <div class="bg-primary text-white d-flex align-items-center justify-content-center h-100" style="min-height: 300px;">
+                                <div class="bg-primary text-white d-flex align-items-center justify-content-center h-100"
+                                    style="min-height: 300px;">
                                     <i class="bi bi-journal-text display-1"></i>
                                 </div>
                             <?php endif; ?>
@@ -81,7 +81,8 @@
                         <div class="col-md-6">
                             <div class="card-body p-4 p-md-5 d-flex flex-column h-100">
                                 <?php if (!empty($articles[0]['category_name'])): ?>
-                                    <span class="badge mb-3" style="width: fit-content; background-color: <?= e($articles[0]['category_color'] ?? '#6c757d') ?>">
+                                    <span class="badge mb-3"
+                                        style="width: fit-content; background-color: <?= e($articles[0]['category_color'] ?? '#6c757d') ?>">
                                         <?= e($articles[0]['category_name']) ?>
                                     </span>
                                 <?php else: ?>
@@ -105,7 +106,7 @@
                     </div>
                 </div>
             <?php endif; ?>
-            
+
             <!-- Other Articles -->
             <?php if (count($articles) > 1): ?>
                 <div class="row g-4">
@@ -113,18 +114,19 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="card h-100 border-0 shadow-sm article-card">
                                 <?php if ($article['image']): ?>
-                                    <img src="<?= asset('uploads/articles/' . e($article['image'])) ?>" 
-                                         class="card-img-top" alt="<?= e($article['title']) ?>"
-                                         style="height: 200px; object-fit: cover;">
+                                    <img src="<?= uploads(e($article['image'])) ?>" class="card-img-top"
+                                        alt="<?= e($article['title']) ?>" style="height: 200px; object-fit: cover;">
                                 <?php else: ?>
-                                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center"
+                                        style="height: 200px;">
                                         <i class="bi bi-journal-text display-3"></i>
                                     </div>
                                 <?php endif; ?>
-                                
+
                                 <div class="card-body p-4">
                                     <?php if (!empty($article['category_name'])): ?>
-                                        <span class="badge mb-2" style="background-color: <?= e($article['category_color'] ?? '#6c757d') ?>">
+                                        <span class="badge mb-2"
+                                            style="background-color: <?= e($article['category_color'] ?? '#6c757d') ?>">
                                             <?= e($article['category_name']) ?>
                                         </span>
                                     <?php endif; ?>
@@ -133,7 +135,7 @@
                                         <?= e(substr(strip_tags($article['content']), 0, 100)) ?>...
                                     </p>
                                 </div>
-                                
+
                                 <div class="card-footer bg-white border-0 p-4 pt-0">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <small class="text-muted">
@@ -150,26 +152,28 @@
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
-            
+
             <!-- Pagination -->
             <?php if (isset($pagination) && isset($pagination['last_page']) && $pagination['last_page'] > 1): ?>
                 <?php $queryParam = !empty($categorySlug) ? '&kategori=' . e($categorySlug) : ''; ?>
                 <nav aria-label="Page navigation" class="mt-5">
                     <ul class="pagination justify-content-center pagination-lg">
                         <li class="page-item <?= $pagination['current_page'] <= 1 ? 'disabled' : '' ?>">
-                            <a class="page-link" href="<?= url('artikel?page=' . ($pagination['current_page'] - 1) . $queryParam) ?>">
+                            <a class="page-link"
+                                href="<?= url('artikel?page=' . ($pagination['current_page'] - 1) . $queryParam) ?>">
                                 <i class="bi bi-chevron-left"></i>
                             </a>
                         </li>
-                        
+
                         <?php for ($i = 1; $i <= $pagination['last_page']; $i++): ?>
                             <li class="page-item <?= $i === $pagination['current_page'] ? 'active' : '' ?>">
                                 <a class="page-link" href="<?= url('artikel?page=' . $i . $queryParam) ?>"><?= $i ?></a>
                             </li>
                         <?php endfor; ?>
-                        
+
                         <li class="page-item <?= $pagination['current_page'] >= $pagination['last_page'] ? 'disabled' : '' ?>">
-                            <a class="page-link" href="<?= url('artikel?page=' . ($pagination['current_page'] + 1) . $queryParam) ?>">
+                            <a class="page-link"
+                                href="<?= url('artikel?page=' . ($pagination['current_page'] + 1) . $queryParam) ?>">
                                 <i class="bi bi-chevron-right"></i>
                             </a>
                         </li>
@@ -181,8 +185,8 @@
 </section>
 
 <style>
-.article-card:hover {
-    transform: translateY(-5px);
-    transition: transform 0.3s ease;
-}
+    .article-card:hover {
+        transform: translateY(-5px);
+        transition: transform 0.3s ease;
+    }
 </style>

@@ -12,7 +12,7 @@ use Core\Database;
 class Event extends Model
 {
     protected $table = 'events';
-    
+
     protected $fillable = [
         'title',
         'slug',
@@ -24,7 +24,7 @@ class Event extends Model
         'status',
         'created_by'
     ];
-    
+
     /**
      * Ambil event yang akan datang
      * 
@@ -37,16 +37,16 @@ class Event extends Model
                 WHERE event_date >= CURDATE() AND status = 'published'
                 ORDER BY event_date ASC, event_time ASC 
                 LIMIT :limit";
-        
+
         $stmt = Database::getInstance()->prepare($sql);
         $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
         $stmt->execute();
-        
+
         return $stmt->fetchAll();
     }
-    
+
     /**
-     * Ambil semua event dengan pagination
+     * Ambil semua event untuk admin (semua status) dengan pagination
      * 
      * @param int $page
      * @param int $perPage
@@ -56,7 +56,44 @@ class Event extends Model
     {
         return $this->paginate($page, $perPage, 'event_date', 'DESC');
     }
-    
+
+    /**
+     * Ambil event yang sudah dipublikasikan untuk halaman publik
+     * 
+     * @param int $page
+     * @param int $perPage
+     * @return array
+     */
+    public function getPublished(int $page = 1, int $perPage = ITEMS_PER_PAGE): array
+    {
+        $offset = ($page - 1) * $perPage;
+
+        $total = (int) Database::fetchColumn(
+            "SELECT COUNT(*) FROM {$this->table} WHERE status = 'published'"
+        );
+
+        $sql = "SELECT * FROM {$this->table}
+                WHERE status = 'published'
+                ORDER BY event_date DESC
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = Database::getInstance()->prepare($sql);
+        $stmt->bindValue(':limit', $perPage, \PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+        $stmt->execute();
+        $data = $stmt->fetchAll();
+
+        return [
+            'data' => $data,
+            'total' => $total,
+            'per_page' => $perPage,
+            'current_page' => $page,
+            'last_page' => $total > 0 ? (int) ceil($total / $perPage) : 1,
+            'from' => $offset + 1,
+            'to' => min($offset + $perPage, $total),
+        ];
+    }
+
     /**
      * Cari event berdasarkan slug
      * 
@@ -67,7 +104,7 @@ class Event extends Model
     {
         return $this->findBy('slug', $slug);
     }
-    
+
     /**
      * Generate slug unik
      * 
@@ -80,15 +117,15 @@ class Event extends Model
         $slug = slugify($title);
         $originalSlug = $slug;
         $counter = 1;
-        
+
         while ($this->exists('slug', $slug, $exceptId)) {
             $slug = $originalSlug . '-' . $counter;
             $counter++;
         }
-        
+
         return $slug;
     }
-    
+
     /**
      * Ambil event berdasarkan bulan
      * 
@@ -103,7 +140,7 @@ class Event extends Model
                 AND YEAR(event_date) = :year 
                 AND status = 'published'
                 ORDER BY event_date ASC";
-        
+
         return Database::fetchAll($sql, ['month' => $month, 'year' => $year]);
     }
 }

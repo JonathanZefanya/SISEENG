@@ -9,22 +9,38 @@
     <div class="container">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
-                <img src="<?= asset('images/about-church.jpg') ?>" alt="Gereja" class="img-fluid rounded shadow" onerror="this.src='https://via.placeholder.com/600x400?text=Foto+Gereja'">
+                <?php if (!empty($about['image'])): ?>
+                    <img src="<?= uploads('settings/' . e($about['image'])) ?>"
+                         alt="Foto Gereja"
+                         class="img-fluid rounded shadow"
+                         style="width:100%; height:380px; object-fit:cover;">
+                <?php else: ?>
+                    <img src="<?= asset('images/about-church.jpg') ?>"
+                         alt="Gereja"
+                         class="img-fluid rounded shadow"
+                         onerror="this.src='https://via.placeholder.com/600x400?text=Foto+Gereja'">
+                <?php endif; ?>
             </div>
             <div class="col-lg-6">
                 <h2 class="display-6 fw-bold text-primary mb-4">Selamat Datang di <?= e(APP_NAME) ?></h2>
                 <p class="lead fs-5 text-muted mb-4">
-                    Kami adalah komunitas orang percaya yang berkumpul untuk menyembah Tuhan, 
-                    bertumbuh dalam iman, dan melayani sesama dengan kasih Kristus.
+                    <?= nl2br(e($about['description'] ?: 'Kami adalah komunitas orang percaya yang berkumpul untuk menyembah Tuhan, bertumbuh dalam iman, dan melayani sesama dengan kasih Kristus.')) ?>
                 </p>
-                <p class="fs-5 text-muted mb-4">
-                    Gereja kami didirikan dengan visi untuk menjadi berkat bagi kota dan bangsa. 
-                    Kami percaya bahwa setiap orang berharga di mata Tuhan dan memiliki tujuan 
-                    yang mulia dalam hidup ini.
+                <?php if ($about['pastor']): ?>
+                <p class="fs-5 text-muted mb-2">
+                    <i class="bi bi-person-fill text-primary me-2"></i>
+                    Gembala: <strong><?= e($about['pastor']) ?></strong>
                 </p>
-                <div class="d-flex gap-3">
+                <?php endif; ?>
+                <?php if ($about['address']): ?>
+                <p class="fs-6 text-muted mb-4">
+                    <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                    <?= e($about['address']) ?>
+                </p>
+                <?php endif; ?>
+                <div class="d-flex gap-3 flex-wrap">
                     <a href="<?= url('tentang/visi-misi') ?>" class="btn btn-primary btn-lg">
-                        <i class="bi bi-eye me-2"></i>Visi & Misi
+                        <i class="bi bi-eye me-2"></i>Visi &amp; Misi
                     </a>
                     <a href="<?= url('tentang/sejarah') ?>" class="btn btn-outline-primary btn-lg">
                         <i class="bi bi-book me-2"></i>Sejarah
@@ -39,7 +55,6 @@
 <section class="py-5 bg-light">
     <div class="container">
         <h2 class="display-6 fw-bold text-center text-primary mb-5">Nilai-Nilai Kami</h2>
-        
         <div class="row g-4">
             <div class="col-md-6 col-lg-3">
                 <div class="card h-100 border-0 shadow-sm text-center p-4">

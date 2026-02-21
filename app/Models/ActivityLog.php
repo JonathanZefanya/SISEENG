@@ -12,7 +12,7 @@ use Core\Database;
 class ActivityLog extends Model
 {
     protected $table = 'activity_logs';
-    
+
     protected $fillable = [
         'user_id',
         'user_name',
@@ -25,7 +25,7 @@ class ActivityLog extends Model
         'ip_address',
         'user_agent'
     ];
-    
+
     /**
      * Override hasColumn - activity_logs hanya punya created_at, tidak ada updated_at
      */
@@ -33,7 +33,7 @@ class ActivityLog extends Model
     {
         return $column === 'created_at';
     }
-    
+
     /**
      * Catat aktivitas
      * 
@@ -56,7 +56,7 @@ class ActivityLog extends Model
             'new_data' => !empty($data) ? json_encode($data) : null
         ]);
     }
-    
+
     /**
      * Ambil log dengan pagination dan join user
      * 
@@ -70,16 +70,16 @@ class ActivityLog extends Model
         $offset = ($page - 1) * $perPage;
         $params = [];
         $whereClause = '';
-        
+
         if ($userId !== null) {
             $whereClause = 'WHERE al.user_id = :user_id';
             $params['user_id'] = $userId;
         }
-        
+
         // Count total
         $countSql = "SELECT COUNT(*) FROM {$this->table} al {$whereClause}";
         $total = (int) Database::fetchColumn($countSql, $params);
-        
+
         // Get data
         $sql = "SELECT al.*, u.name as user_name, u.email as user_email 
                 FROM {$this->table} al 
@@ -87,7 +87,7 @@ class ActivityLog extends Model
                 {$whereClause}
                 ORDER BY al.created_at DESC 
                 LIMIT :limit OFFSET :offset";
-        
+
         $stmt = Database::getInstance()->prepare($sql);
         foreach ($params as $key => $value) {
             $stmt->bindValue(':' . $key, $value);
@@ -96,7 +96,7 @@ class ActivityLog extends Model
         $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
         $stmt->execute();
         $data = $stmt->fetchAll();
-        
+
         return [
             'data' => $data,
             'total' => $total,
@@ -105,7 +105,7 @@ class ActivityLog extends Model
             'last_page' => ceil($total / $perPage)
         ];
     }
-    
+
     /**
      * Ambil log terbaru
      * 
@@ -119,14 +119,14 @@ class ActivityLog extends Model
                 LEFT JOIN users u ON al.user_id = u.id 
                 ORDER BY al.created_at DESC 
                 LIMIT :limit";
-        
+
         $stmt = Database::getInstance()->prepare($sql);
         $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
         $stmt->execute();
-        
+
         return $stmt->fetchAll();
     }
-    
+
     /**
      * Hapus log yang lebih dari X hari
      * 
@@ -137,5 +137,16 @@ class ActivityLog extends Model
     {
         $sql = "DELETE FROM {$this->table} WHERE created_at < DATE_SUB(NOW(), INTERVAL :days DAY)";
         return Database::query($sql, ['days' => $days])->rowCount();
+    }
+
+    /**
+     * Hapus semua log aktivitas
+     *
+     * @return int Jumlah baris yang dihapus
+     */
+    public function clearAll(): int
+    {
+        $sql = "DELETE FROM {$this->table}";
+        return Database::query($sql)->rowCount();
     }
 }

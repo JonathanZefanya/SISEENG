@@ -10,24 +10,24 @@
 
 <!-- Filter Kategori -->
 <?php if (!empty($categories)): ?>
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-body py-3">
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-            <span class="text-muted me-2"><i class="bi bi-funnel me-1"></i>Filter:</span>
-            <a href="<?= url('admin/artikel') ?>" 
-               class="btn btn-sm <?= empty($selectedCategory) ? 'btn-primary' : 'btn-outline-secondary' ?>">
-                Semua
-            </a>
-            <?php foreach ($categories as $cat): ?>
-            <a href="<?= url('admin/artikel?category=' . $cat['id']) ?>" 
-               class="btn btn-sm <?= ($selectedCategory ?? 0) == $cat['id'] ? 'btn-primary' : 'btn-outline-secondary' ?>"
-               style="<?= ($selectedCategory ?? 0) == $cat['id'] ? 'background-color: ' . e($cat['color']) . '; border-color: ' . e($cat['color']) : '' ?>">
-                <?= e($cat['name']) ?>
-            </a>
-            <?php endforeach; ?>
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body py-3">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <span class="text-muted me-2"><i class="bi bi-funnel me-1"></i>Filter:</span>
+                <a href="<?= url('admin/artikel') ?>"
+                    class="btn btn-sm <?= empty($selectedCategory) ? 'btn-primary' : 'btn-outline-secondary' ?>">
+                    Semua
+                </a>
+                <?php foreach ($categories as $cat): ?>
+                    <a href="<?= url('admin/artikel?category=' . $cat['id']) ?>"
+                        class="btn btn-sm <?= ($selectedCategory ?? 0) == $cat['id'] ? 'btn-primary' : 'btn-outline-secondary' ?>"
+                        style="<?= ($selectedCategory ?? 0) == $cat['id'] ? 'background-color: ' . e($cat['color']) . '; border-color: ' . e($cat['color']) : '' ?>">
+                        <?= e($cat['name']) ?>
+                    </a>
+                <?php endforeach; ?>
+            </div>
         </div>
     </div>
-</div>
 <?php endif; ?>
 
 <div class="card border-0 shadow-sm">
@@ -56,13 +56,11 @@
                                 <td class="ps-4">
                                     <div class="d-flex align-items-center">
                                         <?php if ($article['image']): ?>
-                                            <img src="<?= asset('uploads/articles/' . e($article['image'])) ?>" 
-                                                 alt="<?= e($article['title']) ?>"
-                                                 class="rounded me-3"
-                                                 style="width: 60px; height: 60px; object-fit: cover;">
+                                            <img src="<?= uploads(e($article['image'])) ?>" alt="<?= e($article['title']) ?>"
+                                                class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
                                         <?php else: ?>
-                                            <div class="bg-secondary text-white rounded me-3 d-flex align-items-center justify-content-center" 
-                                                 style="width: 60px; height: 60px;">
+                                            <div class="bg-secondary text-white rounded me-3 d-flex align-items-center justify-content-center"
+                                                style="width: 60px; height: 60px;">
                                                 <i class="bi bi-journal-text fs-4"></i>
                                             </div>
                                         <?php endif; ?>
@@ -76,7 +74,8 @@
                                 </td>
                                 <td>
                                     <?php if (!empty($article['category_name'])): ?>
-                                        <span class="badge" style="background-color: <?= e($article['category_color'] ?? '#6c757d') ?>">
+                                        <span class="badge"
+                                            style="background-color: <?= e($article['category_color'] ?? '#6c757d') ?>">
                                             <?= e($article['category_name']) ?>
                                         </span>
                                     <?php else: ?>
@@ -97,21 +96,16 @@
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="btn-group">
-                                        <a href="<?= url('artikel/' . $article['slug']) ?>" 
-                                           target="_blank"
-                                           class="btn btn-sm btn-outline-secondary" 
-                                           title="Lihat">
+                                        <a href="<?= url('artikel/' . $article['slug']) ?>" target="_blank"
+                                            class="btn btn-sm btn-outline-secondary" title="Lihat">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="<?= url('admin/articles/edit/' . $article['id']) ?>" 
-                                           class="btn btn-sm btn-outline-primary" 
-                                           title="Edit">
+                                        <a href="<?= url('admin/articles/edit/' . $article['id']) ?>"
+                                            class="btn btn-sm btn-outline-primary" title="Edit">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <button type="button" 
-                                                class="btn btn-sm btn-outline-danger" 
-                                                title="Hapus"
-                                                onclick="confirmDelete(<?= $article['id'] ?>, '<?= e($article['title']) ?>')">
+                                        <button type="button" class="btn btn-sm btn-outline-danger" title="Hapus"
+                                            onclick="confirmDelete(<?= $article['id'] ?>, '<?= e($article['title']) ?>')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
@@ -121,26 +115,29 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- Pagination -->
             <?php if (isset($pagination) && isset($pagination['total_pages']) && $pagination['total_pages'] > 1): ?>
                 <div class="card-footer bg-white border-top">
                     <nav aria-label="Page navigation">
                         <ul class="pagination justify-content-center mb-0">
                             <li class="page-item <?= $pagination['current_page'] <= 1 ? 'disabled' : '' ?>">
-                                <a class="page-link" href="<?= url('admin/articles?page=' . ($pagination['current_page'] - 1)) ?>">
+                                <a class="page-link"
+                                    href="<?= url('admin/articles?page=' . ($pagination['current_page'] - 1)) ?>">
                                     <i class="bi bi-chevron-left"></i>
                                 </a>
                             </li>
-                            
+
                             <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
                                 <li class="page-item <?= $i === $pagination['current_page'] ? 'active' : '' ?>">
                                     <a class="page-link" href="<?= url('admin/articles?page=' . $i) ?>"><?= $i ?></a>
                                 </li>
                             <?php endfor; ?>
-                            
-                            <li class="page-item <?= $pagination['current_page'] >= $pagination['total_pages'] ? 'disabled' : '' ?>">
-                                <a class="page-link" href="<?= url('admin/articles?page=' . ($pagination['current_page'] + 1)) ?>">
+
+                            <li
+                                class="page-item <?= $pagination['current_page'] >= $pagination['total_pages'] ? 'disabled' : '' ?>">
+                                <a class="page-link"
+                                    href="<?= url('admin/articles?page=' . ($pagination['current_page'] + 1)) ?>">
                                     <i class="bi bi-chevron-right"></i>
                                 </a>
                             </li>
@@ -179,9 +176,9 @@
 </div>
 
 <script>
-function confirmDelete(id, title) {
-    document.getElementById('articleTitle').textContent = title;
-    document.getElementById('deleteForm').action = '<?= url('admin/articles/delete/') ?>' + id;
-    new bootstrap.Modal(document.getElementById('deleteModal')).show();
-}
+    function confirmDelete(id, title) {
+        document.getElementById('articleTitle').textContent = title;
+        document.getElementById('deleteForm').action = '<?= url('admin/articles/delete/') ?>' + id;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
 </script>

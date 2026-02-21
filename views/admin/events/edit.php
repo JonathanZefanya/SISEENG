@@ -17,53 +17,67 @@
     <div class="card-body p-4">
         <form action="<?= url('admin/events/update/' . $event['id']) ?>" method="POST" enctype="multipart/form-data">
             <?= csrfField() ?>
-            
+            <input type="hidden" name="id" value="<?= $event['id'] ?>">
+
             <div class="row g-4">
                 <div class="col-lg-8">
                     <div class="mb-4">
-                        <label for="title" class="form-label fw-semibold">Nama Kegiatan <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control form-control-lg" id="title" name="title" 
-                               value="<?= e($event['title']) ?>" required
-                               placeholder="Masukkan nama kegiatan">
+                        <label for="title" class="form-label fw-semibold">Nama Kegiatan <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-lg" id="title" name="title"
+                            value="<?= e($event['title']) ?>" required placeholder="Masukkan nama kegiatan">
                     </div>
-                    
+
                     <div class="mb-4">
-                        <label for="description" class="form-label fw-semibold">Deskripsi <span class="text-danger">*</span></label>
+                        <label for="description" class="form-label fw-semibold">Deskripsi <span
+                                class="text-danger">*</span></label>
                         <textarea class="form-control" id="description" name="description" rows="8" required
-                                  placeholder="Deskripsikan kegiatan ini..."><?= e($event['description']) ?></textarea>
+                            placeholder="Deskripsikan kegiatan ini..."><?= e($event['description']) ?></textarea>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-4">
                     <div class="card bg-light border-0">
                         <div class="card-body">
                             <h5 class="fw-bold mb-4">Detail Kegiatan</h5>
-                            
+
                             <div class="mb-4">
-                                <label for="event_date" class="form-label fw-semibold">Tanggal <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" id="event_date" name="event_date" 
-                                       value="<?= e($event['event_date']) ?>" required>
+                                <label for="event_date" class="form-label fw-semibold">Tanggal <span
+                                        class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="event_date" name="event_date"
+                                    value="<?= e($event['event_date']) ?>" required>
                             </div>
-                            
+
                             <div class="mb-4">
-                                <label for="event_time" class="form-label fw-semibold">Waktu <span class="text-danger">*</span></label>
-                                <input type="time" class="form-control" id="event_time" name="event_time" 
-                                       value="<?= e($event['event_time']) ?>" required>
+                                <label for="event_time" class="form-label fw-semibold">Waktu <span
+                                        class="text-danger">*</span></label>
+                                <input type="time" class="form-control" id="event_time" name="event_time"
+                                    value="<?= e($event['event_time']) ?>" required>
                             </div>
-                            
+
                             <div class="mb-4">
                                 <label for="location" class="form-label fw-semibold">Lokasi</label>
-                                <input type="text" class="form-control" id="location" name="location" 
-                                       value="<?= e($event['location']) ?>"
-                                       placeholder="Contoh: Gedung Utama Gereja">
+                                <input type="text" class="form-control" id="location" name="location"
+                                    value="<?= e($event['location']) ?>" placeholder="Contoh: Gedung Utama Gereja">
                             </div>
-                            
+
+                            <div class="mb-4">
+                                <label for="status" class="form-label fw-semibold">Status Publikasi <span
+                                        class="text-danger">*</span></label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="published" <?= ($event['status'] ?? 'published') === 'published' ? 'selected' : '' ?>>Dipublikasikan</option>
+                                    <option value="draft" <?= ($event['status'] ?? '') === 'draft' ? 'selected' : '' ?>>
+                                        Draft</option>
+                                </select>
+                                <small class="text-muted">Draft tidak akan tampil di halaman publik.</small>
+                            </div>
+
                             <div class="mb-4">
                                 <label for="image" class="form-label fw-semibold">Gambar/Poster</label>
                                 <?php if ($event['image']): ?>
                                     <div class="mb-2">
-                                        <img src="<?= asset('uploads/events/' . e($event['image'])) ?>" 
-                                             class="img-thumbnail" style="max-height: 150px;">
+                                        <img src="<?= uploads(e($event['image'])) ?>" class="img-thumbnail"
+                                            style="max-height: 150px;">
                                         <p class="small text-muted mt-1 mb-0">Gambar saat ini</p>
                                     </div>
                                 <?php endif; ?>
@@ -71,9 +85,9 @@
                                 <small class="text-muted">Kosongkan jika tidak ingin mengubah gambar</small>
                                 <div id="imagePreview" class="mt-2"></div>
                             </div>
-                            
+
                             <hr>
-                            
+
                             <div class="small text-muted">
                                 <p class="mb-1">
                                     <i class="bi bi-calendar me-1"></i>
@@ -84,9 +98,9 @@
                     </div>
                 </div>
             </div>
-            
+
             <hr class="my-4">
-            
+
             <div class="d-flex justify-content-end gap-2">
                 <a href="<?= url('admin/events') ?>" class="btn btn-outline-secondary btn-lg">Batal</a>
                 <button type="submit" class="btn btn-primary btn-lg">
@@ -98,21 +112,21 @@
 </div>
 
 <script>
-// Image preview
-document.getElementById('image').addEventListener('change', function(e) {
-    const preview = document.getElementById('imagePreview');
-    preview.innerHTML = '';
-    
-    if (this.files && this.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.className = 'img-thumbnail mt-2';
-            img.style.maxHeight = '200px';
-            preview.appendChild(img);
-        };
-        reader.readAsDataURL(this.files[0]);
-    }
-});
+    // Image preview
+    document.getElementById('image').addEventListener('change', function (e) {
+        const preview = document.getElementById('imagePreview');
+        preview.innerHTML = '';
+
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'img-thumbnail mt-2';
+                img.style.maxHeight = '200px';
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
 </script>

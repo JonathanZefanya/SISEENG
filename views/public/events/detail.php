@@ -16,12 +16,10 @@
         <div class="row g-5">
             <div class="col-lg-8">
                 <?php if ($event['image']): ?>
-                    <img src="<?= asset('uploads/events/' . e($event['image'])) ?>" 
-                         class="img-fluid rounded shadow-sm mb-4 w-100" 
-                         alt="<?= e($event['title']) ?>"
-                         style="max-height: 500px; object-fit: cover;">
+                    <img src="<?= uploads(e($event['image'])) ?>" class="img-fluid rounded shadow-sm mb-4 w-100"
+                        alt="<?= e($event['title']) ?>" style="max-height: 500px; object-fit: cover;">
                 <?php endif; ?>
-                
+
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4 p-md-5">
                         <h3 class="fw-bold text-primary mb-4">Deskripsi Kegiatan</h3>
@@ -31,7 +29,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-lg-4">
                 <div class="card border-0 shadow-sm sticky-top" style="top: 100px;">
                     <div class="card-header bg-primary text-white">
@@ -55,27 +53,28 @@
                                     <i class="bi bi-clock text-primary fs-4 me-3"></i>
                                     <div>
                                         <small class="text-muted d-block">Waktu</small>
-                                        <strong class="fs-5"><?= date('H:i', strtotime($event['event_time'])) ?> WIB</strong>
+                                        <strong class="fs-5"><?= date('H:i', strtotime($event['event_time'])) ?>
+                                            WIB</strong>
                                     </div>
                                 </div>
                             </li>
                             <?php if ($event['location']): ?>
-                            <li class="mb-4">
-                                <div class="d-flex align-items-start">
-                                    <i class="bi bi-geo-alt text-primary fs-4 me-3"></i>
-                                    <div>
-                                        <small class="text-muted d-block">Lokasi</small>
-                                        <strong class="fs-5"><?= e($event['location']) ?></strong>
+                                <li class="mb-4">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-geo-alt text-primary fs-4 me-3"></i>
+                                        <div>
+                                            <small class="text-muted d-block">Lokasi</small>
+                                            <strong class="fs-5"><?= e($event['location']) ?></strong>
+                                        </div>
                                     </div>
-                                </div>
-                            </li>
+                                </li>
                             <?php endif; ?>
                             <li>
                                 <div class="d-flex align-items-start">
                                     <i class="bi bi-tag text-primary fs-4 me-3"></i>
                                     <div>
                                         <small class="text-muted d-block">Status</small>
-                                        <?php 
+                                        <?php
                                         $eventDate = strtotime($event['event_date']);
                                         $today = strtotime(date('Y-m-d'));
                                         if ($eventDate > $today): ?>

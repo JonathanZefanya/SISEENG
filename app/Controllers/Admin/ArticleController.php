@@ -19,14 +19,14 @@ class ArticleController extends Controller
     protected $layout = 'admin';
     private $articleModel;
     private $categoryModel;
-    
+
     public function __construct()
     {
         RoleMiddleware::requireAdmin();
         $this->articleModel = new Article();
         $this->categoryModel = new ArticleCategory();
     }
-    
+
     /**
      * Daftar artikel
      */
@@ -34,10 +34,10 @@ class ArticleController extends Controller
     {
         $page = (int) ($this->get('page') ?? 1);
         $categoryId = $this->get('category') ? (int) $this->get('category') : null;
-        
+
         $articles = $this->articleModel->getWithPagination($page, ITEMS_PER_PAGE, null, $categoryId);
         $categories = $this->categoryModel->getActive();
-        
+
         $this->view('admin/articles/index', [
             'title' => 'Kelola Artikel - ' . APP_NAME,
             'articles' => $articles['data'],
@@ -46,20 +46,20 @@ class ArticleController extends Controller
             'selectedCategory' => $categoryId
         ]);
     }
-    
+
     /**
      * Form tambah artikel
      */
     public function create(): void
     {
         $categories = $this->categoryModel->getActive();
-        
+
         $this->view('admin/articles/create', [
             'title' => 'Tambah Artikel - ' . APP_NAME,
             'categories' => $categories
         ]);
     }
-    
+
     /**
      * Simpan artikel baru
      */
@@ -69,11 +69,11 @@ class ArticleController extends Controller
             $this->redirect('admin/artikel');
             return;
         }
-        
+
         $this->validateCsrf();
-        
+
         $title = $this->post('title');
-        
+
         $data = [
             'title' => $title,
             'slug' => $this->articleModel->generateSlug($title),
@@ -84,17 +84,17 @@ class ArticleController extends Controller
             'status' => $this->post('status'),
             'published_at' => $this->post('status') === 'published' ? date('Y-m-d H:i:s') : null,
         ];
-        
+
         // Validasi
         $errors = $this->validateArticle($data);
-        
+
         if (!empty($errors)) {
             setFlash('error', implode('<br>', $errors));
             $this->saveOldInput();
             $this->redirect('admin/artikel/tambah');
             return;
         }
-        
+
         // Handle upload gambar
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = $this->uploadImage($_FILES['image']);
@@ -102,12 +102,12 @@ class ArticleController extends Controller
                 $data['image'] = $imagePath;
             }
         }
-        
+
         try {
             $id = $this->articleModel->create($data);
-            
+
             ActivityLog::log(auth('id'), 'create_article', "Menambah artikel: {$data['title']}");
-            
+
             setFlash('success', 'Artikel berhasil ditambahkan.');
             $this->clearOldInput();
         } catch (\Exception $e) {
@@ -116,32 +116,32 @@ class ArticleController extends Controller
             $this->redirect('admin/artikel/tambah');
             return;
         }
-        
+
         $this->redirect('admin/artikel');
     }
-    
+
     /**
      * Form edit artikel
      */
     public function edit(int $id = 0): void
     {
         $article = $this->articleModel->find($id);
-        
+
         if (!$article) {
             setFlash('error', 'Artikel tidak ditemukan.');
             $this->redirect('admin/artikel');
             return;
         }
-        
+
         $categories = $this->categoryModel->getActive();
-        
+
         $this->view('admin/articles/edit', [
             'title' => 'Edit Artikel - ' . APP_NAME,
             'article' => $article,
             'categories' => $categories
         ]);
     }
-    
+
     /**
      * Update artikel
      */
@@ -151,20 +151,20 @@ class ArticleController extends Controller
             $this->redirect('admin/artikel');
             return;
         }
-        
+
         $this->validateCsrf();
-        
+
         $id = (int) $this->post('id');
         $article = $this->articleModel->find($id);
-        
+
         if (!$article) {
             setFlash('error', 'Artikel tidak ditemukan.');
             $this->redirect('admin/artikel');
             return;
         }
-        
+
         $title = $this->post('title');
-        
+
         $data = [
             'title' => $title,
             'slug' => $this->articleModel->generateSlug($title, $id),
@@ -173,39 +173,39 @@ class ArticleController extends Controller
             'category_id' => $this->post('category_id') ?: null,
             'status' => $this->post('status'),
         ];
-        
+
         // Update published_at jika status berubah ke published
         if ($data['status'] === 'published' && $article['status'] !== 'published') {
             $data['published_at'] = date('Y-m-d H:i:s');
         }
-        
+
         // Validasi
         $errors = $this->validateArticle($data);
-        
+
         if (!empty($errors)) {
             setFlash('error', implode('<br>', $errors));
             $this->saveOldInput();
             $this->redirect('admin/artikel/edit/' . $id);
             return;
         }
-        
+
         // Handle upload gambar
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = $this->uploadImage($_FILES['image']);
             if ($imagePath) {
                 // Hapus gambar lama
-                if ($article['image'] && file_exists(PUBLIC_PATH . $article['image'])) {
-                    unlink(PUBLIC_PATH . $article['image']);
+                if ($article['image'] && file_exists(PUBLIC_PATH . 'uploads/' . $article['image'])) {
+                    unlink(PUBLIC_PATH . 'uploads/' . $article['image']);
                 }
                 $data['image'] = $imagePath;
             }
         }
-        
+
         try {
             $this->articleModel->update($id, $data);
-            
+
             ActivityLog::log(auth('id'), 'update_article', "Mengupdate artikel: {$data['title']}");
-            
+
             setFlash('success', 'Artikel berhasil diupdate.');
             $this->clearOldInput();
         } catch (\Exception $e) {
@@ -214,10 +214,10 @@ class ArticleController extends Controller
             $this->redirect('admin/artikel/edit/' . $id);
             return;
         }
-        
+
         $this->redirect('admin/artikel');
     }
-    
+
     /**
      * Hapus artikel
      */
@@ -227,35 +227,35 @@ class ArticleController extends Controller
             $this->redirect('admin/artikel');
             return;
         }
-        
+
         $this->validateCsrf();
-        
+
         $article = $this->articleModel->find($id);
-        
+
         if (!$article) {
             setFlash('error', 'Artikel tidak ditemukan.');
             $this->redirect('admin/artikel');
             return;
         }
-        
+
         try {
             // Hapus gambar
-            if ($article['image'] && file_exists(PUBLIC_PATH . $article['image'])) {
-                unlink(PUBLIC_PATH . $article['image']);
+            if ($article['image'] && file_exists(PUBLIC_PATH . 'uploads/' . $article['image'])) {
+                unlink(PUBLIC_PATH . 'uploads/' . $article['image']);
             }
-            
+
             $this->articleModel->delete($id);
-            
+
             ActivityLog::log(auth('id'), 'delete_article', "Menghapus artikel: {$article['title']}");
-            
+
             setFlash('success', 'Artikel berhasil dihapus.');
         } catch (\Exception $e) {
             setFlash('error', 'Gagal menghapus artikel.');
         }
-        
+
         $this->redirect('admin/artikel');
     }
-    
+
     /**
      * Upload gambar
      */
@@ -263,53 +263,53 @@ class ArticleController extends Controller
     {
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         $maxSize = 5 * 1024 * 1024; // 5MB
-        
+
         if (!in_array($file['type'], $allowedTypes)) {
             setFlash('warning', 'Format gambar tidak didukung.');
             return null;
         }
-        
+
         if ($file['size'] > $maxSize) {
             setFlash('warning', 'Ukuran gambar terlalu besar (maks 5MB).');
             return null;
         }
-        
-        $uploadDir = 'uploads/articles/';
-        $fullPath = PUBLIC_PATH . $uploadDir;
-        
+
+        $uploadDir = 'articles/';
+        $fullPath = PUBLIC_PATH . 'uploads/' . $uploadDir;
+
         if (!is_dir($fullPath)) {
             mkdir($fullPath, 0755, true);
         }
-        
+
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $filename = uniqid('article_') . '.' . $extension;
-        
+
         if (move_uploaded_file($file['tmp_name'], $fullPath . $filename)) {
-            return $uploadDir . $filename;
+            return $uploadDir . $filename; // simpan: 'articles/file.jpg'
         }
-        
+
         return null;
     }
-    
+
     /**
      * Validasi data artikel
      */
     private function validateArticle(array $data): array
     {
         $errors = [];
-        
+
         if (empty($data['title'])) {
             $errors[] = 'Judul artikel wajib diisi.';
         }
-        
+
         if (empty($data['content'])) {
             $errors[] = 'Konten artikel wajib diisi.';
         }
-        
+
         if (!in_array($data['status'], ['draft', 'published'])) {
             $errors[] = 'Status tidak valid.';
         }
-        
+
         return $errors;
     }
 }

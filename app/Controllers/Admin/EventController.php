@@ -17,13 +17,13 @@ class EventController extends Controller
 {
     protected $layout = 'admin';
     private $eventModel;
-    
+
     public function __construct()
     {
         RoleMiddleware::requireAdmin();
         $this->eventModel = new Event();
     }
-    
+
     /**
      * Daftar kegiatan
      */
@@ -31,14 +31,14 @@ class EventController extends Controller
     {
         $page = (int) ($this->get('page') ?? 1);
         $events = $this->eventModel->getWithPagination($page);
-        
+
         $this->view('admin/events/index', [
             'title' => 'Kelola Kegiatan - ' . APP_NAME,
             'events' => $events['data'],
             'pagination' => $events,
         ]);
     }
-    
+
     /**
      * Form tambah kegiatan
      */
@@ -48,7 +48,7 @@ class EventController extends Controller
             'title' => 'Tambah Kegiatan - ' . APP_NAME,
         ]);
     }
-    
+
     /**
      * Simpan kegiatan baru
      */
@@ -58,11 +58,11 @@ class EventController extends Controller
             $this->redirect('admin/kegiatan');
             return;
         }
-        
+
         $this->validateCsrf();
-        
+
         $title = $this->post('title');
-        
+
         $data = [
             'title' => $title,
             'slug' => $this->eventModel->generateSlug($title),
@@ -73,17 +73,17 @@ class EventController extends Controller
             'status' => $this->post('status'),
             'created_by' => auth('id'),
         ];
-        
+
         // Validasi
         $errors = $this->validateEvent($data);
-        
+
         if (!empty($errors)) {
             setFlash('error', implode('<br>', $errors));
             $this->saveOldInput();
             $this->redirect('admin/kegiatan/tambah');
             return;
         }
-        
+
         // Handle upload gambar
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = $this->uploadImage($_FILES['image']);
@@ -91,12 +91,12 @@ class EventController extends Controller
                 $data['image'] = $imagePath;
             }
         }
-        
+
         try {
             $id = $this->eventModel->create($data);
-            
+
             ActivityLog::log(auth('id'), 'create_event', "Menambah kegiatan: {$data['title']}");
-            
+
             setFlash('success', 'Kegiatan berhasil ditambahkan.');
             $this->clearOldInput();
         } catch (\Exception $e) {
@@ -105,29 +105,29 @@ class EventController extends Controller
             $this->redirect('admin/kegiatan/tambah');
             return;
         }
-        
+
         $this->redirect('admin/kegiatan');
     }
-    
+
     /**
      * Form edit kegiatan
      */
     public function edit(int $id = 0): void
     {
         $event = $this->eventModel->find($id);
-        
+
         if (!$event) {
             setFlash('error', 'Kegiatan tidak ditemukan.');
             $this->redirect('admin/kegiatan');
             return;
         }
-        
+
         $this->view('admin/events/edit', [
             'title' => 'Edit Kegiatan - ' . APP_NAME,
             'event' => $event,
         ]);
     }
-    
+
     /**
      * Update kegiatan
      */
@@ -137,20 +137,20 @@ class EventController extends Controller
             $this->redirect('admin/kegiatan');
             return;
         }
-        
+
         $this->validateCsrf();
-        
+
         $id = (int) $this->post('id');
         $event = $this->eventModel->find($id);
-        
+
         if (!$event) {
             setFlash('error', 'Kegiatan tidak ditemukan.');
             $this->redirect('admin/kegiatan');
             return;
         }
-        
+
         $title = $this->post('title');
-        
+
         $data = [
             'title' => $title,
             'slug' => $this->eventModel->generateSlug($title, $id),
@@ -160,34 +160,34 @@ class EventController extends Controller
             'location' => $this->post('location'),
             'status' => $this->post('status'),
         ];
-        
+
         // Validasi
         $errors = $this->validateEvent($data);
-        
+
         if (!empty($errors)) {
             setFlash('error', implode('<br>', $errors));
             $this->saveOldInput();
             $this->redirect('admin/kegiatan/edit/' . $id);
             return;
         }
-        
+
         // Handle upload gambar
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $imagePath = $this->uploadImage($_FILES['image']);
             if ($imagePath) {
                 // Hapus gambar lama
-                if ($event['image'] && file_exists(PUBLIC_PATH . $event['image'])) {
-                    unlink(PUBLIC_PATH . $event['image']);
+                if ($event['image'] && file_exists(PUBLIC_PATH . 'uploads/' . $event['image'])) {
+                    unlink(PUBLIC_PATH . 'uploads/' . $event['image']);
                 }
                 $data['image'] = $imagePath;
             }
         }
-        
+
         try {
             $this->eventModel->update($id, $data);
-            
+
             ActivityLog::log(auth('id'), 'update_event', "Mengupdate kegiatan: {$data['title']}");
-            
+
             setFlash('success', 'Kegiatan berhasil diupdate.');
             $this->clearOldInput();
         } catch (\Exception $e) {
@@ -196,10 +196,10 @@ class EventController extends Controller
             $this->redirect('admin/kegiatan/edit/' . $id);
             return;
         }
-        
+
         $this->redirect('admin/kegiatan');
     }
-    
+
     /**
      * Hapus kegiatan
      */
@@ -209,35 +209,35 @@ class EventController extends Controller
             $this->redirect('admin/kegiatan');
             return;
         }
-        
+
         $this->validateCsrf();
-        
+
         $event = $this->eventModel->find($id);
-        
+
         if (!$event) {
             setFlash('error', 'Kegiatan tidak ditemukan.');
             $this->redirect('admin/kegiatan');
             return;
         }
-        
+
         try {
             // Hapus gambar
-            if ($event['image'] && file_exists(PUBLIC_PATH . $event['image'])) {
-                unlink(PUBLIC_PATH . $event['image']);
+            if ($event['image'] && file_exists(PUBLIC_PATH . 'uploads/' . $event['image'])) {
+                unlink(PUBLIC_PATH . 'uploads/' . $event['image']);
             }
-            
+
             $this->eventModel->delete($id);
-            
+
             ActivityLog::log(auth('id'), 'delete_event', "Menghapus kegiatan: {$event['title']}");
-            
+
             setFlash('success', 'Kegiatan berhasil dihapus.');
         } catch (\Exception $e) {
             setFlash('error', 'Gagal menghapus kegiatan.');
         }
-        
+
         $this->redirect('admin/kegiatan');
     }
-    
+
     /**
      * Upload gambar
      */
@@ -245,53 +245,58 @@ class EventController extends Controller
     {
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         $maxSize = 5 * 1024 * 1024;
-        
+
         if (!in_array($file['type'], $allowedTypes)) {
             setFlash('warning', 'Format gambar tidak didukung.');
             return null;
         }
-        
+
         if ($file['size'] > $maxSize) {
             setFlash('warning', 'Ukuran gambar terlalu besar (maks 5MB).');
             return null;
         }
-        
-        $uploadDir = 'uploads/events/';
-        $fullPath = PUBLIC_PATH . $uploadDir;
-        
+
+        $uploadDir = 'events/';
+        $fullPath = PUBLIC_PATH . 'uploads/' . $uploadDir;
+
         if (!is_dir($fullPath)) {
             mkdir($fullPath, 0755, true);
         }
-        
+
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $filename = uniqid('event_') . '.' . $extension;
-        
+
         if (move_uploaded_file($file['tmp_name'], $fullPath . $filename)) {
-            return $uploadDir . $filename;
+            return $uploadDir . $filename; // simpan: 'events/file.jpg'
         }
-        
+
         return null;
     }
-    
+
     /**
      * Validasi data kegiatan
      */
     private function validateEvent(array $data): array
     {
         $errors = [];
-        
+
         if (empty($data['title'])) {
             $errors[] = 'Judul kegiatan wajib diisi.';
         }
-        
+
+        if (empty($data['description'])) {
+            $errors[] = 'Deskripsi kegiatan wajib diisi.';
+        }
+
         if (empty($data['event_date'])) {
             $errors[] = 'Tanggal kegiatan wajib diisi.';
         }
-        
-        if (!in_array($data['status'], ['draft', 'published'])) {
-            $errors[] = 'Status tidak valid.';
+
+        $validStatuses = ['draft', 'published'];
+        if (empty($data['status']) || !in_array($data['status'], $validStatuses)) {
+            $errors[] = 'Status tidak valid. Pilih: draft atau published.';
         }
-        
+
         return $errors;
     }
 }

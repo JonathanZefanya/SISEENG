@@ -40,12 +40,12 @@ define('APP_VERSION', '1.0.0');
 // Deteksi APP_URL secara otomatis
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-// define('APP_URL', $protocol . '://' . $host); // Uncomment untuk deployment
+// define('APP_URL', $protocol . '://' . $host);
 
 // TEMPORARY FIX FOR LOCALHOST
-define('APP_URL', 'http://localhost/project-website/siseeng/public');
+define('APP_URL', 'http://localhost/latihan-web/gbi-ciseeng');
 
-define('ADMIN_EMAIL', 'admin@gereja.com');
+define('ADMIN_EMAIL', 'admin@gbiciseeng.com');
 
 // =========================================================
 // PATH DEFINITIONS
