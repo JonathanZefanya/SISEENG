@@ -27,9 +27,51 @@ class ContactController extends Controller
      */
     public function index(): void
     {
+        // Generate captcha baru setiap kali halaman dimuat
+        $captcha = $this->generateCaptcha();
+
         $this->view('public/contact', [
-            'title' => 'Hubungi Kami - ' . APP_NAME,
+            'title'         => 'Hubungi Kami - ' . APP_NAME,
+            'captchaQuestion' => $captcha['question'],
         ]);
+    }
+
+    /**
+     * Generate soal captcha sederhana (aritmatika)
+     * dan simpan jawaban ke session
+     */
+    private function generateCaptcha(): array
+    {
+        $a = random_int(1, 15);
+        $b = random_int(1, 15);
+        $ops = ['+', '-', '*'];
+        $op = $ops[array_rand($ops)];
+
+        switch ($op) {
+            case '+':
+                $answer = $a + $b;
+                break;
+            case '-':
+                // Pastikan hasil tidak negatif
+                if ($a < $b) [$a, $b] = [$b, $a];
+                $answer = $a - $b;
+                break;
+            case '*':
+                // Batasi perkalian agar tidak terlalu besar
+                $a = random_int(1, 9);
+                $b = random_int(1, 9);
+                $answer = $a * $b;
+                break;
+            default:
+                $answer = $a + $b;
+                $op = '+';
+        }
+
+        $question = $a . ' ' . $op . ' ' . $b . ' = ?';
+
+        \Core\Session::set('captcha_answer', (string) $answer);
+
+        return ['question' => $question, 'answer' => $answer];
     }
     
     /**
@@ -55,9 +97,19 @@ class ContactController extends Controller
             'ip_address' => Security::getClientIp(),
         ];
         
+        // Validasi CAPTCHA
+        $captchaInput  = trim($this->post('captcha') ?? '');
+        $captchaAnswer = \Core\Session::get('captcha_answer');
+        // Hapus jawaban dari session agar tidak bisa dipakai ulang
+        \Core\Session::remove('captcha_answer');
+
         // Validasi sederhana
         $errors = [];
-        
+
+        if ($captchaAnswer === null || $captchaInput !== $captchaAnswer) {
+            $errors[] = 'Jawaban verifikasi tidak benar. Silakan coba lagi.';
+        }
+
         if (empty($data['name'])) {
             $errors[] = 'Nama wajib diisi.';
         }

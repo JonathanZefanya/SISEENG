@@ -60,6 +60,24 @@ $siteOperationalHours = setting('site_operational_hours');
                                     <textarea class="form-control form-control-lg" id="message" name="message" rows="5" required><?= e(old('message')) ?></textarea>
                                 </div>
                                 
+                                <!-- Captcha -->
+                                <div class="col-12">
+                                    <label for="captcha" class="form-label fw-semibold fs-5">
+                                        Verifikasi <span class="text-danger">*</span>
+                                        <span class="ms-1 text-muted" style="font-weight:normal;">
+                                            (Buktikan Anda bukan robot)
+                                        </span>
+                                    </label>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text bg-primary text-white fw-bold fs-5 px-4" id="captcha-question">
+                                            <?= e($captchaQuestion) ?>
+                                        </span>
+                                        <input type="number" class="form-control form-control-lg"
+                                               id="captcha" name="captcha"
+                                               placeholder="Jawaban" autocomplete="off" required>
+                                    </div>
+                                </div>
+                                
                                 <div class="col-12">
                                     <button type="submit" class="btn btn-primary btn-lg px-5 py-3 fs-5">
                                         <i class="bi bi-send me-2"></i>Kirim Pesan

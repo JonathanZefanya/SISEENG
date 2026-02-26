@@ -9,7 +9,7 @@ RewriteEngine On
 # Deteksi RewriteBase secara otomatis
 # CATATAN: Untuk production, sesuaikan dengan path jika perlu
 # Contoh: /siseeng/public/ atau /public/ tergantung struktur hosting
-RewriteBase /latihan-web/gbi-ciseeng/public/
+RewriteBase /project-website/siseeng/public/
 
 # Jika file atau direktori ada, jangan rewrite
 RewriteCond %{REQUEST_FILENAME} !-f

@@ -94,7 +94,7 @@ Sistem Informasi Manajemen Gereja (SISEENG) adalah aplikasi web berbasis PHP Nat
    - Admin: `http://localhost/siseeng/login`
 
 ### Default Admin Login
-- **Email**: admin@siseeng.com
+- **Email**: admin@gbiciseeng.com
 - **Password**: admin123
 
 ⚠️ **PENTING**: Segera ubah password setelah login pertama!

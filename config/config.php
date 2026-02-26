@@ -43,7 +43,7 @@ $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 // define('APP_URL', $protocol . '://' . $host);
 
 // TEMPORARY FIX FOR LOCALHOST
-define('APP_URL', 'http://localhost/latihan-web/gbi-ciseeng');
+define('APP_URL', 'http://localhost/project-website/siseeng');
 
 define('ADMIN_EMAIL', 'admin@gbiciseeng.com');
 
@@ -86,7 +86,7 @@ define('PASSWORD_OPTIONS', ['cost' => 12]);
 // DATABASE SETTINGS
 // =========================================================
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'gbi_ciseeng');
+define('DB_NAME', 'siseeng');
 define('DB_USER', 'root');
 define('DB_PASS', 'root');
 define('DB_CHARSET', 'utf8mb4');
