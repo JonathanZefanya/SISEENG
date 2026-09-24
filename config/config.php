@@ -43,7 +43,7 @@ $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 // define('APP_URL', $protocol . '://' . $host);
 
 // TEMPORARY FIX FOR LOCALHOST
-define('APP_URL', 'http://localhost/project-website/siseeng');
+define('APP_URL', getenv('APP_URL') ?: 'http://localhost/project-website/siseeng');
 
 define('ADMIN_EMAIL', 'admin@gbiciseeng.com');
 
@@ -85,10 +85,10 @@ define('PASSWORD_OPTIONS', ['cost' => 12]);
 // =========================================================
 // DATABASE SETTINGS
 // =========================================================
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'siseeng');
-define('DB_USER', 'root');
-define('DB_PASS', 'root');
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_NAME', getenv('DB_NAME') ?: 'db_siseeng');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : 'root');
 define('DB_CHARSET', 'utf8mb4');
 
 // =========================================================

@@ -104,7 +104,7 @@ class PreacherSchedule extends Model
         
         $sql = "SELECT * FROM {$this->table} 
                 {$whereClause}
-                ORDER BY schedule_date DESC, service_time ASC 
+                ORDER BY schedule_date ASC, service_time ASC
                 LIMIT :limit OFFSET :offset";
         
         return Database::fetchAll($sql, $params);

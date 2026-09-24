@@ -1,0 +1,66 @@
+# =========================================================
+# Setup lengkap (Apache + PHP + MySQL + phpMyAdmin)
+# Untuk komputer gereja yang belum punya MySQL.
+#
+# Cara pakai:
+#   docker compose -f docker-compose.gereja.yml up -d --build
+#
+# Nama database, user & password diambil dari config/config.php
+# (DB_NAME, DB_USER, DB_PASS). Nilai MYSQL_* di bawah HARUS sama
+# dengan config.php.
+#
+# Database otomatis dibuat & diisi dari database/deploy.sql
+# HANYA saat pertama kali dijalankan (volume db_data masih kosong).
+# =========================================================
+name: siseeng-gereja
+
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      # Mount di sub-path agar RewriteBase /project-website/siseeng/public/ tetap valid
+      - ./:/var/www/html/project-website/siseeng
+    environment:
+      # Hanya yang berbeda dari config.php saat jalan di Docker
+      APP_URL: http://localhost:8080/project-website/siseeng
+      DB_HOST: db
+      TZ: Asia/Jakarta
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      # Samakan dengan DB_NAME & DB_PASS di config/config.php (DB_USER = root)
+      MYSQL_DATABASE: db_siseeng
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Jakarta
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/deploy.sql:/docker-entrypoint-initdb.d/01-deploy.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      UPLOAD_LIMIT: 64M
+    depends_on:
+      - db
+
+volumes:
+  db_data:

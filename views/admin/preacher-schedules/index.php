@@ -25,7 +25,8 @@
                 <label class="form-label mb-0 fw-semibold">Filter Bulan:</label>
             </div>
             <div class="col-auto">
-                <input type="month" name="month" class="form-control" value="<?= e($currentMonth) ?>">
+                <input type="month" name="month" class="form-control" value="<?= e($currentMonth) ?>"
+                       onchange="if (this.value) this.form.submit()">
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-outline-primary">
@@ -33,7 +34,7 @@
                 </button>
             </div>
             <div class="col-auto">
-                <a href="<?= url('admin/jadwal-pengkhotbah') ?>" class="btn btn-outline-secondary">
+                <a href="<?= url('admin/jadwal-pengkhotbah?month=' . date('Y-m')) ?>" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
                 </a>
             </div>
@@ -74,12 +75,31 @@
                 <tbody>
                     <?php 
                     $lastDate = '';
-                    foreach ($schedules as $schedule): 
+                    $lastWeek = 0;
+                    foreach ($schedules as $schedule):
                         $isNewDate = $schedule['schedule_date'] !== $lastDate;
                         $lastDate = $schedule['schedule_date'];
                         $dayName = getDayName(date('w', strtotime($schedule['schedule_date'])));
                         $isPast = strtotime($schedule['schedule_date']) < strtotime('today');
+
+                        // Minggu ke-N dalam bulan (Senin s/d Minggu), minggu pertama dimulai tgl 1
+                        $ts = strtotime($schedule['schedule_date']);
+                        $firstOffset = (int) date('N', strtotime(date('Y-m-01', $ts))) - 1; // 0 = Senin
+                        $week = intdiv((int) date('j', $ts) + $firstOffset - 1, 7) + 1;
+                        $isNewWeek = $week !== $lastWeek;
+                        $lastWeek = $week;
+                        if ($isNewWeek) {
+                            $weekStart = max(1, ($week - 1) * 7 - $firstOffset + 1);
+                            $weekEnd = min((int) date('t', $ts), $week * 7 - $firstOffset);
+                        }
                     ?>
+                    <?php if ($isNewWeek): ?>
+                    <tr class="week-separator">
+                        <td colspan="7" class="bg-primary-subtle text-primary fw-bold py-2">
+                            <i class="bi bi-calendar-week me-2"></i>Minggu ke-<?= $week ?>
+                        </td>
+                    </tr>
+                    <?php endif; ?>
                     <tr class="<?= $isPast ? 'table-secondary' : '' ?>">
                         <td>
                             <?php if ($isNewDate): ?>

@@ -1,0 +1,25 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      # Mount di sub-path agar RewriteBase /project-website/siseeng/public/ tetap valid
+      - ./:/var/www/html/project-website/siseeng
+    environment:
+      APP_URL: http://localhost:8080/project-website/siseeng
+      # MySQL yang berjalan di host (bukan di container)
+      DB_HOST: host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      # Arahkan ke MySQL yang berjalan di host
+      PMA_HOST: host.docker.internal
+      PMA_PORT: 3306
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

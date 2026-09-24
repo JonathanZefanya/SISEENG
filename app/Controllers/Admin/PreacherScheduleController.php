@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use Core\Controller;
+use Core\Session;
 use App\Models\PreacherSchedule;
 use App\Models\Schedule;
 use App\Middleware\RoleMiddleware;
@@ -32,7 +33,13 @@ class PreacherScheduleController extends Controller
     public function index(): void
     {
         $page = (int) ($this->get('page') ?? 1);
-        $month = $this->get('month') ?? date('Y-m');
+        // Pakai bulan dari URL, atau bulan terakhir yang dipilih (session), atau bulan ini
+        $month = $this->get('month');
+        if ($month && preg_match('/^\d{4}-\d{2}$/', $month)) {
+            Session::set('preacher_schedule_month', $month);
+        } else {
+            $month = Session::get('preacher_schedule_month', date('Y-m'));
+        }
         $perPage = 30;
         
         $schedules = $this->scheduleModel->getAllPaginated($page, $perPage, $month);
