@@ -4,94 +4,121 @@
 ![PHP](https://img.shields.io/badge/PHP-8.0+-purple)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-Sistem Informasi Manajemen Gereja (SISEENG) adalah aplikasi web berbasis PHP Native dengan arsitektur MVC yang dirancang untuk membantu gereja dalam mengelola informasi dan kegiatan jemaat.
+Sistem Informasi Manajemen Gereja (SISEENG) adalah aplikasi web berbasis PHP Native dengan arsitektur MVC untuk membantu gereja mengelola informasi, jadwal, dan kegiatan jemaat. Tampilannya bergaya *super-app* (mobile-first, bottom navigation, kartu membulat) dan responsif di HP maupun desktop.
 
 ## 📋 Fitur Utama
 
 ### Website Publik
-- **Beranda** - Tampilan informasi utama gereja
-- **Tentang Kami** - Profil, visi-misi, dan sejarah gereja
-- **Jadwal Ibadah** - Informasi waktu dan lokasi ibadah
-- **Kegiatan/Acara** - Daftar event dan kegiatan gereja
-- **Artikel/Renungan** - Artikel rohani dan renungan harian
-- **Donasi** - Informasi rekening dan QRIS untuk donasi
-- **Kontak** - Form kontak dan informasi lokasi gereja
+- **Beranda**: sapaan sesuai waktu (WIB), kartu ibadah terdekat beserta pengkhotbahnya, menu ikon, kegiatan mendatang, artikel terbaru, lokasi, dan ajakan donasi
+- **Tentang Kami**: profil, visi-misi, dan sejarah gereja
+- **Jadwal Ibadah & Jadwal Pengkhotbah**: jadwal ibadah rutin dan jadwal pengkhotbah per bulan
+- **Kegiatan/Acara**: daftar dan detail event gereja
+- **Artikel/Renungan**: artikel rohani dengan kategori
+- **Donasi**: rekening bank dan QRIS
+- **Kontak**: form kontak dengan captcha aritmatika, serta peta lokasi
+- **Navigasi mobile**: bottom navigation dan menu "Lainnya" berupa bottom sheet
 
 ### Panel Admin
-- **Dashboard** - Ringkasan statistik dan aktivitas
-- **Manajemen User** - CRUD admin (Super Admin only)
-- **Jadwal Ibadah** - CRUD jadwal ibadah rutin
-- **Artikel** - CRUD artikel dan renungan
-- **Kegiatan** - CRUD event dan acara
-- **Data Jemaat** - CRUD data anggota jemaat
-- **Pesan Masuk** - Kelola pesan dari form kontak
-- **Log Aktivitas** - Riwayat aktivitas admin (Super Admin only)
+- **Dashboard**: sapaan, aksi cepat, statistik, pesan terbaru, dan kegiatan mendatang
+- **Jadwal Ibadah**: CRUD jadwal ibadah rutin
+- **Jadwal Pengkhotbah**:
+  - Generate jadwal otomatis untuk satu bulan dari jadwal ibadah
+  - Filter bulan tanpa perlu klik tombol
+  - Pemisah per minggu
+  - Mengingat bulan terakhir yang dibuka
+- **Artikel & Kategori Artikel**: CRUD artikel dan kategori
+- **Kegiatan**: CRUD event dan acara
+- **Data Jemaat**: CRUD data anggota jemaat
+- **Pesan Masuk**: pesan dari form kontak, dengan badge jumlah pesan belum dibaca
+- **Rekening Donasi**: kelola rekening dan gambar QRIS
+- **Pengaturan Website**:
+  - Identitas gereja, logo (otomatis dipakai sebagai favicon), dan **warna tema**
+  - Hero, kontak, donasi, media sosial, dan halaman Tentang
+- **Kelola Admin & Log Aktivitas** (khusus Super Admin)
+- **Tampilan mobile**: bottom navigation, dan tabel otomatis berubah menjadi kartu di layar kecil
 
 ### Keamanan
 - ✅ SQL Injection Protection (PDO Prepared Statements)
-- ✅ XSS Protection (htmlspecialchars)
+- ✅ XSS Protection (`htmlspecialchars` lewat helper `e()`)
 - ✅ CSRF Token pada semua form
-- ✅ Secure Session (regenerate_id, HttpOnly, SameSite)
+- ✅ Secure Session (regenerate ID, HttpOnly, SameSite)
 - ✅ Password Hashing (bcrypt)
 - ✅ Rate Limiting pada login
+- ✅ Captcha pada form kontak
 - ✅ Role-Based Access Control (RBAC)
 
 ## 🛠️ Teknologi
 
-- **Backend**: PHP 8.0+ (Native MVC, tanpa framework berat)
-- **Database**: MySQL 5.7+ / MariaDB
-- **Frontend**: Bootstrap 5.3, Bootstrap Icons
-- **Font**: Google Fonts (Inter, Merriweather)
+- **Backend**: PHP 8.0+ (Native MVC, tanpa framework)
+- **Database**: MySQL 5.7+ / 8.0 / MariaDB
+- **Frontend**: Bootstrap 5.3, Bootstrap Icons, vanilla JavaScript
+- **Font**: Plus Jakarta Sans (Google Fonts)
+- **Container** (opsional): Docker + Docker Compose (PHP 8.3 + Apache)
 
 ## 📦 Instalasi
 
-### Persyaratan Sistem
-- PHP 8.0 atau lebih tinggi
+Ada tiga cara menjalankan aplikasi. Pilih salah satu.
+
+### Opsi A: Docker, pakai MySQL yang sudah ada di komputer
+
+Cocok untuk development, jika MySQL sudah terpasang di komputer (misalnya dari XAMPP atau Laragon).
+
+1. Buat database dan import skema (lihat [Database](#-database)).
+2. Pastikan user dan password MySQL di [config/config.php](config/config.php) sesuai.
+3. Jalankan:
+   ```bash
+   docker compose up -d --build
+   ```
+4. Akses:
+   - Website: http://localhost:8080/project-website/siseeng/
+   - Admin: http://localhost:8080/project-website/siseeng/auth/login
+   - phpMyAdmin: http://localhost:8081 (terhubung ke MySQL di komputer)
+
+Container web terhubung ke MySQL di komputer lewat `host.docker.internal`.
+
+### Opsi B: Docker lengkap (Apache + PHP + MySQL + phpMyAdmin)
+
+Cocok untuk komputer yang belum punya MySQL, misalnya komputer gereja.
+
+```bash
+docker compose -f docker-compose.gereja.yml up -d --build
+```
+
+- Saat pertama kali dijalankan, database dibuat dan diisi otomatis dari `database/deploy.sql`. Import ini hanya terjadi sekali, selama volume `db_data` masih kosong.
+- Semua container otomatis hidup lagi setelah komputer restart (`restart: unless-stopped`).
+- Nilai `MYSQL_DATABASE` dan `MYSQL_ROOT_PASSWORD` di `docker-compose.gereja.yml` **harus sama** dengan `DB_NAME` dan `DB_PASS` di `config/config.php`.
+- Jika website ingin dibuka dari perangkat lain di jaringan gereja, ganti `APP_URL` di compose dengan IP komputer tersebut, misalnya `http://192.168.1.10:8080/project-website/siseeng`.
+
+Alamat akses sama dengan Opsi A.
+
+### Opsi C: Manual (XAMPP / Laragon / Apache)
+
+1. Salin project ke folder web server, misalnya `htdocs/project-website/siseeng`.
+2. Buat database dan import skema (lihat [Database](#-database)).
+3. Sesuaikan [config/config.php](config/config.php) (lihat [Konfigurasi](#-konfigurasi)).
+4. Pastikan `mod_rewrite` aktif dan `AllowOverride All`.
+5. Pastikan folder `public/uploads/` bisa ditulis oleh web server.
+6. Akses `http://localhost/project-website/siseeng/`.
+
+> Jika project diletakkan di path lain, sesuaikan juga `RewriteBase` di [public/.htaccess](public/.htaccess).
+
+### Persyaratan (untuk instalasi manual)
+- PHP 8.0+ dengan ekstensi `pdo_mysql`
 - MySQL 5.7+ / MariaDB 10.3+
-- Apache/Nginx dengan mod_rewrite
-- Composer (opsional)
+- Apache dengan `mod_rewrite` (dan `mod_headers` untuk security header)
 
-### Langkah Instalasi
+## 🗄️ Database
 
-1. **Clone atau Download Repository**
-   ```bash
-   git clone https://github.com/username/siseeng.git
-   # atau extract ZIP ke folder htdocs/www
-   ```
+File skema lengkap yang disarankan adalah **`database/deploy.sql`**. File ini sudah mencakup semua tabel, termasuk jadwal pengkhotbah, kategori artikel, rekening donasi, dan settings.
 
-2. **Konfigurasi Database**
-   - Buat database baru di MySQL:
-     ```sql
-     CREATE DATABASE siseeng CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-     ```
-   - Import schema database:
-     ```bash
-     mysql -u root -p siseeng < database/schema.sql
-     ```
+```sql
+CREATE DATABASE db_siseeng CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+```bash
+mysql -u root -p db_siseeng < database/deploy.sql
+```
 
-3. **Konfigurasi Aplikasi**
-   - Buka file `config/config.php`
-   - Sesuaikan konfigurasi database:
-     ```php
-     define('DB_HOST', 'localhost');
-     define('DB_NAME', 'siseeng');
-     define('DB_USER', 'root');
-     define('DB_PASS', '');
-     ```
-   - Sesuaikan `BASE_URL` sesuai environment:
-     ```php
-     define('BASE_URL', 'http://localhost/siseeng/');
-     ```
-
-4. **Set Permissions**
-   ```bash
-   chmod 755 -R /path/to/siseeng
-   chmod 777 -R /path/to/siseeng/public/assets/uploads
-   ```
-
-5. **Akses Aplikasi**
-   - Website: `http://localhost/siseeng/`
-   - Admin: `http://localhost/siseeng/login`
+Atau import lewat phpMyAdmin. File `add_*.sql` dan file SQL per fitur di folder `database/` adalah migrasi untuk database lama.
 
 ### Default Admin Login
 - **Email**: admin@gbiciseeng.com
@@ -99,42 +126,83 @@ Sistem Informasi Manajemen Gereja (SISEENG) adalah aplikasi web berbasis PHP Nat
 
 ⚠️ **PENTING**: Segera ubah password setelah login pertama!
 
+## ⚙️ Konfigurasi
+
+Semua pengaturan ada di [config/config.php](config/config.php). Nilai database dan URL bisa di-override lewat environment variable. Docker memakai mekanisme ini, sehingga instalasi manual tetap memakai nilai default di file.
+
+| Konstanta | Env var | Default | Keterangan |
+|---|---|---|---|
+| `APP_URL` | `APP_URL` | `http://localhost/project-website/siseeng` | URL dasar aplikasi |
+| `DB_HOST` | `DB_HOST` | `localhost` | Host MySQL |
+| `DB_NAME` | `DB_NAME` | `db_siseeng` | Nama database |
+| `DB_USER` | `DB_USER` | `root` | User MySQL |
+| `DB_PASS` | `DB_PASS` | `root` | Password MySQL |
+
+Pengaturan lain di file yang sama:
+
+```php
+define('ENVIRONMENT', 'development');   // 'production' untuk menyembunyikan error
+date_default_timezone_set('Asia/Jakarta'); // Zona waktu WIB
+
+define('SESSION_LIFETIME', 7200);       // 2 jam
+define('CSRF_TOKEN_EXPIRE', 3600);      // 1 jam
+define('LOGIN_MAX_ATTEMPTS', 5);        // Maksimal percobaan login
+define('LOGIN_LOCKOUT_TIME', 60);       // Lama blokir (detik)
+```
+
+## 🎨 Kustomisasi Tampilan
+
+Semua kustomisasi berikut bisa dilakukan dari **Admin → Pengaturan → tab Umum**, tanpa mengubah kode.
+
+- **Warna tema**: pilih dari 10 preset atau warna kustom (color picker / kode hex).
+  - Warna turunan (gelap, terang, latar muda) dihitung otomatis.
+  - Berlaku untuk website publik, halaman login, dan panel admin.
+  - Pratinjau langsung tampil sebelum disimpan, dan ada peringatan jika warnanya terlalu terang untuk teks putih.
+- **Logo**: dipakai di header website dan otomatis menjadi **favicon** serta ikon *Add to Home Screen*. Logo berbentuk persegi akan tampil paling rapi sebagai favicon.
+
+Warna tema disimpan sebagai setting `theme_color`, lalu dirender oleh helper `themeStyleTag()` di [core/Helpers.php](core/Helpers.php) sebagai CSS variable (`--brand`, `--brand-dark`, `--brand-soft`, dan lainnya).
+
 ## 📁 Struktur Folder
 
 ```
 siseeng/
 ├── app/
-│   ├── Controllers/        # Controller classes
-│   │   ├── Admin/          # Admin controllers
-│   │   └── ...             # Public controllers
-│   ├── Middleware/         # Middleware (Auth, RBAC)
-│   └── Models/             # Model classes
+│   ├── Controllers/            # Controller publik
+│   │   └── Admin/              # Controller panel admin
+│   ├── Middleware/             # AuthMiddleware, RoleMiddleware (RBAC & menu)
+│   └── Models/                 # Model
 ├── config/
-│   └── config.php          # Konfigurasi aplikasi
+│   └── config.php              # Konfigurasi aplikasi
 ├── core/
-│   ├── App.php             # Router/Application core
-│   ├── Controller.php      # Base controller
-│   ├── Database.php        # Database wrapper
-│   ├── Helpers.php         # Helper functions
-│   ├── Model.php           # Base model
-│   ├── Security.php        # Security utilities
-│   └── Session.php         # Session management
+│   ├── App.php                 # Router & daftar route
+│   ├── Controller.php          # Base controller
+│   ├── Database.php            # Wrapper PDO
+│   ├── Helpers.php             # Helper (url, e, setting, tema, favicon, dll)
+│   ├── Model.php               # Base model
+│   ├── Security.php            # Utilitas keamanan
+│   └── Session.php             # Manajemen session & flash
 ├── database/
-│   └── schema.sql          # Database schema
+│   ├── deploy.sql              # Skema lengkap (disarankan)
+│   ├── schema.sql              # Skema awal
+│   └── *.sql                   # Migrasi per fitur
 ├── public/
 │   ├── assets/
-│   │   ├── css/            # Stylesheets
-│   │   ├── js/             # JavaScript files
-│   │   ├── images/         # Image assets
-│   │   └── uploads/        # User uploads
-│   ├── index.php           # Entry point
-│   └── .htaccess           # URL rewriting
+│   │   ├── css/style.css       # Stylesheet website publik
+│   │   ├── css/admin.css       # Stylesheet panel admin
+│   │   ├── js/                 # JavaScript
+│   │   └── images/
+│   ├── uploads/                # File upload (logo, hero, QRIS, dll)
+│   ├── index.php               # Entry point
+│   └── .htaccess               # URL rewriting
 ├── views/
-│   ├── admin/              # Admin views
-│   ├── auth/               # Auth views (login)
-│   ├── errors/             # Error pages
-│   ├── layouts/            # Layout templates
-│   └── public/             # Public views
+│   ├── admin/                  # View admin
+│   ├── auth/                   # Halaman login
+│   ├── errors/                 # Halaman error
+│   ├── layouts/                # Layout public & admin
+│   └── public/                 # View website publik
+├── Dockerfile                  # PHP 8.3 + Apache + pdo_mysql
+├── docker-compose.yml          # Web + phpMyAdmin (MySQL di komputer)
+├── docker-compose.gereja.yml   # Web + MySQL + phpMyAdmin (lengkap)
 └── README.md
 ```
 
@@ -142,82 +210,68 @@ siseeng/
 
 ### Super Admin
 - Semua akses Admin
-- Manajemen User (CRUD admin lain)
-- Lihat Log Aktivitas
-- Toggle status user
+- Kelola Admin (CRUD & aktif/nonaktifkan admin lain)
+- Lihat & bersihkan Log Aktivitas
 
 ### Admin
-- CRUD Jadwal Ibadah
-- CRUD Artikel
-- CRUD Kegiatan
-- CRUD Data Jemaat
-- Lihat & Balas Pesan
+- Jadwal Ibadah & Jadwal Pengkhotbah
+- Artikel & Kategori Artikel
+- Kegiatan
+- Data Jemaat
+- Pesan Masuk
+- Rekening Donasi
+- Pengaturan Website
 
-## 🔧 Konfigurasi Lanjutan
+## 📝 Routes
 
-### Rate Limiting
-Edit di `config/config.php`:
-```php
-define('RATE_LIMIT_ATTEMPTS', 5);    // Max attempts
-define('RATE_LIMIT_DECAY', 60);       // Cooldown (seconds)
-```
+Semua route didefinisikan di [core/App.php](core/App.php). Beberapa modul admin juga menerima alias berbahasa Inggris, misalnya `admin/articles` dan `admin/events`.
 
-### Session Security
-```php
-define('SESSION_LIFETIME', 3600);     // 1 hour
-define('SESSION_REGENERATE_TIME', 300); // 5 minutes
-```
+### Public
+| URL | Controller |
+|-----|------------|
+| `/` | HomeController@index |
+| `/tentang` | AboutController@index |
+| `/tentang/visi-misi` | AboutController@visiMisi |
+| `/tentang/sejarah` | AboutController@sejarah |
+| `/jadwal-pengkhotbah` | HomeController@preacherSchedule |
+| `/kegiatan` | EventController@index |
+| `/kegiatan/detail/{slug}` | EventController@detail |
+| `/artikel` | ArticleController@index |
+| `/artikel/baca/{slug}` | ArticleController@read |
+| `/donasi` | DonationController@index |
+| `/kontak` | ContactController@index |
+| `/kontak/kirim` (POST) | ContactController@send |
+| `/auth/login` | AuthController@login |
+| `/auth/proses-login` (POST) | AuthController@processLogin |
+| `/auth/logout` (POST) | AuthController@logout |
 
-### CSRF Token
-```php
-define('CSRF_TOKEN_EXPIRE', 3600);    // 1 hour
-```
-
-## 📝 API Routes
-
-### Public Routes
-| Method | URL | Controller |
-|--------|-----|------------|
-| GET | / | HomeController@index |
-| GET | /tentang | AboutController@index |
-| GET | /tentang/visi-misi | AboutController@visiMisi |
-| GET | /tentang/sejarah | AboutController@sejarah |
-| GET | /kegiatan | EventController@index |
-| GET | /kegiatan/{id} | EventController@detail |
-| GET | /artikel | ArticleController@index |
-| GET | /artikel/{slug} | ArticleController@read |
-| GET | /donasi | DonationController@index |
-| GET | /kontak | ContactController@index |
-| POST | /kontak/kirim | ContactController@send |
-| GET | /login | AuthController@login |
-| POST | /login | AuthController@authenticate |
-| GET | /logout | AuthController@logout |
-
-### Admin Routes
-| Method | URL | Controller |
-|--------|-----|------------|
-| GET | /admin | DashboardController@index |
-| GET | /admin/users | UserController@index |
-| GET | /admin/schedules | ScheduleController@index |
-| GET | /admin/articles | ArticleController@index |
-| GET | /admin/events | EventController@index |
-| GET | /admin/members | MemberController@index |
-| GET | /admin/messages | MessageController@index |
-| GET | /admin/logs | ActivityLogController@index |
+### Admin
+| URL | Controller |
+|-----|------------|
+| `/admin/dashboard` | Admin\DashboardController |
+| `/admin/jadwal` | Admin\ScheduleController |
+| `/admin/jadwal-pengkhotbah` | Admin\PreacherScheduleController |
+| `/admin/artikel` | Admin\ArticleController |
+| `/admin/kategori-artikel` | Admin\ArticleCategoryController |
+| `/admin/kegiatan` | Admin\EventController |
+| `/admin/jemaat` | Admin\MemberController |
+| `/admin/pesan` | Admin\MessageController |
+| `/admin/rekening-donasi` | Admin\DonationAccountController |
+| `/admin/pengaturan` | Admin\SettingController |
+| `/admin/users` | Admin\UserController (Super Admin) |
+| `/admin/logs` | Admin\ActivityLogController (Super Admin) |
 
 ## 🤝 Kontribusi
 
-Kontribusi sangat diterima! Silakan:
-
 1. Fork repository
-2. Buat branch baru (`git checkout -b feature/AmazingFeature`)
-3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
-4. Push ke branch (`git push origin feature/AmazingFeature`)
+2. Buat branch baru (`git checkout -b feature/NamaFitur`)
+3. Commit perubahan (`git commit -m 'feat: tambah NamaFitur'`)
+4. Push ke branch (`git push origin feature/NamaFitur`)
 5. Buka Pull Request
 
 ## 📄 Lisensi
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Didistribusikan di bawah MIT License. Lihat [LICENSE](LICENSE) untuk detailnya.
 
 ## 📞 Kontak & Support
 
