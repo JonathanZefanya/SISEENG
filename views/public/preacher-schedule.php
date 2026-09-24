@@ -29,18 +29,17 @@
         <!-- Month Navigation -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body py-3">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                    <a href="<?= url('jadwal-pengkhotbah?month=' . $prevMonth) ?>" class="btn btn-outline-primary">
-                        <i class="bi bi-chevron-left me-2"></i>Bulan Sebelumnya
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <a href="<?= url('jadwal-pengkhotbah?month=' . $prevMonth) ?>" class="btn btn-outline-primary" aria-label="Bulan sebelumnya">
+                        <i class="bi bi-chevron-left"></i><span class="d-none d-md-inline ms-2">Sebelumnya</span>
                     </a>
-                    
-                    <h3 class="mb-0 fw-bold text-primary">
-                        <i class="bi bi-calendar3 me-2"></i>
-                        <?= $monthName ?> <?= $year ?>
+
+                    <h3 class="mb-0 fw-bold fs-5 text-center">
+                        <i class="bi bi-calendar3 me-2 text-primary"></i><?= $monthName ?> <?= $year ?>
                     </h3>
-                    
-                    <a href="<?= url('jadwal-pengkhotbah?month=' . $nextMonth) ?>" class="btn btn-outline-primary">
-                        Bulan Berikutnya<i class="bi bi-chevron-right ms-2"></i>
+
+                    <a href="<?= url('jadwal-pengkhotbah?month=' . $nextMonth) ?>" class="btn btn-outline-primary" aria-label="Bulan berikutnya">
+                        <span class="d-none d-md-inline me-2">Berikutnya</span><i class="bi bi-chevron-right"></i>
                     </a>
                 </div>
             </div>
@@ -67,10 +66,10 @@
             ?>
             <div class="col-md-6 col-lg-4">
                 <div class="card h-100 border-0 shadow-sm <?= $isToday ? 'border-primary border-2' : '' ?> <?= $isPast ? 'opacity-75' : '' ?>">
-                    <div class="card-header <?= $isToday ? 'bg-primary text-white' : ($dayOfWeek == 0 ? 'bg-danger text-white' : 'bg-light') ?> py-3">
+                    <div class="card-header <?= $isToday ? 'bg-primary text-white' : ($dayOfWeek == 0 ? 'bg-primary-subtle' : 'bg-light') ?> py-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <span class="badge <?= $isToday ? 'bg-white text-primary' : ($dayOfWeek == 0 ? 'bg-white text-danger' : 'bg-secondary') ?> mb-1">
+                                <span class="badge <?= $isToday ? 'bg-white text-primary' : ($dayOfWeek == 0 ? 'bg-danger' : 'bg-secondary') ?> mb-1">
                                     <?= getDayName($dayOfWeek) ?>
                                 </span>
                                 <h5 class="mb-0 fw-bold"><?= $dateObj->format('d F Y') ?></h5>

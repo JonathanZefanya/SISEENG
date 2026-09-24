@@ -1,20 +1,51 @@
-<!-- Page Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h3 mb-1 fw-bold text-dark">Dashboard</h1>
-        <p class="text-muted mb-0">Selamat datang kembali, <?= e(auth('name')) ?>! 👋</p>
-    </div>
-    <div>
-        <span class="badge bg-<?= isSuperAdmin() ? 'danger' : 'primary' ?> px-3 py-2">
-            <i class="bi bi-shield-check me-1"></i>
-            <?= isSuperAdmin() ? 'Super Admin' : 'Admin' ?>
+<!-- Sapaan -->
+<div class="hello-card mb-4">
+    <div class="d-flex justify-content-between align-items-start gap-3 position-relative" style="z-index:1;">
+        <div>
+            <h1>Halo, <?= e(auth('name')) ?> 👋</h1>
+            <p>Apa yang mau kamu kelola hari ini?</p>
+        </div>
+        <span class="badge bg-white text-dark px-3 py-2 flex-shrink-0">
+            <i class="bi bi-shield-check me-1 text-primary"></i><?= isSuperAdmin() ? 'Super Admin' : 'Admin' ?>
         </span>
     </div>
 </div>
 
+<!-- Aksi cepat -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="quick-grid">
+            <a href="<?= url('admin/jadwal-pengkhotbah') ?>" class="quick-item">
+                <span class="quick-icon tone-green"><i class="bi bi-person-video3"></i></span>Pengkhotbah
+            </a>
+            <a href="<?= url('admin/jadwal') ?>" class="quick-item">
+                <span class="quick-icon tone-teal"><i class="bi bi-calendar-check-fill"></i></span>Jadwal Ibadah
+            </a>
+            <a href="<?= url('admin/kegiatan') ?>" class="quick-item">
+                <span class="quick-icon tone-orange"><i class="bi bi-calendar-event-fill"></i></span>Kegiatan
+            </a>
+            <a href="<?= url('admin/artikel') ?>" class="quick-item">
+                <span class="quick-icon tone-blue"><i class="bi bi-journal-text"></i></span>Artikel
+            </a>
+            <a href="<?= url('admin/jemaat') ?>" class="quick-item">
+                <span class="quick-icon tone-purple"><i class="bi bi-people-fill"></i></span>Jemaat
+            </a>
+            <a href="<?= url('admin/pesan') ?>" class="quick-item">
+                <span class="quick-icon tone-pink"><i class="bi bi-envelope-fill"></i></span>Pesan
+            </a>
+            <a href="<?= url('admin/rekening-donasi') ?>" class="quick-item">
+                <span class="quick-icon tone-red"><i class="bi bi-credit-card-fill"></i></span>Donasi
+            </a>
+            <a href="<?= url('admin/pengaturan') ?>" class="quick-item">
+                <span class="quick-icon tone-dark"><i class="bi bi-gear-fill"></i></span>Pengaturan
+            </a>
+        </div>
+    </div>
+</div>
+
 <!-- Statistics Cards -->
-<div class="row g-4 mb-4">
-    <div class="col-sm-6 col-xl-3">
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
         <div class="stat-card bg-primary text-white">
             <div class="d-flex align-items-center justify-content-between">
                 <div>
@@ -28,7 +59,7 @@
         </div>
     </div>
     
-    <div class="col-sm-6 col-xl-3">
+    <div class="col-6 col-xl-3">
         <div class="stat-card bg-success text-white">
             <div class="d-flex align-items-center justify-content-between">
                 <div>
@@ -42,7 +73,7 @@
         </div>
     </div>
     
-    <div class="col-sm-6 col-xl-3">
+    <div class="col-6 col-xl-3">
         <div class="stat-card bg-warning text-white">
             <div class="d-flex align-items-center justify-content-between">
                 <div>
@@ -56,7 +87,7 @@
         </div>
     </div>
     
-    <div class="col-sm-6 col-xl-3">
+    <div class="col-6 col-xl-3">
         <div class="stat-card bg-info text-white">
             <div class="d-flex align-items-center justify-content-between">
                 <div>

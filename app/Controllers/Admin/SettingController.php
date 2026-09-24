@@ -102,6 +102,12 @@ class SettingController extends Controller
             'about_pastor' => $this->post('about_pastor') ?? '',
         ];
 
+        // Warna tema: hanya terima format #rrggbb
+        $themeColor = strtolower(trim($this->post('theme_color') ?? ''));
+        if (preg_match('/^#[0-9a-f]{6}$/', $themeColor)) {
+            $data['theme_color'] = $themeColor;
+        }
+
         // Tambahkan file yang diupload jika ada
         if ($logoFilename) {
             $data['site_logo'] = $logoFilename;

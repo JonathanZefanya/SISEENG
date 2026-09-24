@@ -1,172 +1,96 @@
+<?php
+$siteName = setting('site_name', APP_NAME);
+$route = trim($_GET['url'] ?? '', '/');
+
+// Cek menu aktif berdasarkan segmen URL pertama
+$isActive = function (string $path) use ($route): bool {
+    if ($path === '') {
+        return $route === '' || $route === 'home';
+    }
+    return $route === $path || strpos($route, $path . '/') === 0;
+};
+$aboutActive = $isActive('tentang');
+$moreActive = $aboutActive || $isActive('donasi') || $isActive('kontak');
+?>
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="<?= themeColor() ?>">
     <meta name="description" content="<?= e($description ?? APP_NAME . ' - Gereja yang Mengasihi dan Melayani') ?>">
     <title><?= e($title ?? APP_NAME) ?></title>
 
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Google Fonts - Untuk keterbacaan lansia -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap"
-        rel="stylesheet">
-
-    <!-- Custom CSS -->
     <link href="<?= asset('css/style.css') ?>" rel="stylesheet">
+    <?= themeStyleTag() ?>
 </head>
 
-<body>
-    <!-- ===== NAVBAR ===== -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+<body class="has-bottomnav">
+    <!-- ===== TOP APP BAR ===== -->
+    <header class="app-topbar" id="appTopbar">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="<?= url() ?>">
+            <a class="app-brand" href="<?= url() ?>">
                 <?php if (setting('site_logo')): ?>
-                    <img src="<?= uploads('settings/' . setting('site_logo')) ?>"
-                        alt="<?= e(setting('site_name', APP_NAME)) ?>" style="height: 45px;" class="me-2">
+                    <img src="<?= uploads('settings/' . setting('site_logo')) ?>" alt="<?= e($siteName) ?>">
                 <?php else: ?>
-                    <i class="bi bi-brightness-high-fill text-primary me-2 fs-3"></i>
+                    <span class="app-brand-mark"><i class="bi bi-brightness-high-fill"></i></span>
                 <?php endif; ?>
-                <span class="fw-bold text-primary fs-6 lh-sm"><?= e(setting('site_name', APP_NAME)) ?></span>
+                <span class="app-brand-name"><?= e($siteName) ?></span>
             </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <!-- Desktop navigation -->
+            <nav class="app-nav d-none d-lg-flex">
+                <a href="<?= url() ?>" class="<?= $isActive('') ? 'active' : '' ?>">Beranda</a>
+                <div class="dropdown">
+                    <a href="#" class="<?= $aboutActive ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">
+                        Tentang <i class="bi bi-chevron-down small"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="<?= url('tentang') ?>"><i class="bi bi-building me-2 text-primary"></i>Profil Gereja</a></li>
+                        <li><a class="dropdown-item" href="<?= url('tentang/visi-misi') ?>"><i class="bi bi-eye me-2 text-primary"></i>Visi &amp; Misi</a></li>
+                        <li><a class="dropdown-item" href="<?= url('tentang/sejarah') ?>"><i class="bi bi-book me-2 text-primary"></i>Sejarah</a></li>
+                    </ul>
+                </div>
+                <a href="<?= url('jadwal-pengkhotbah') ?>" class="<?= $isActive('jadwal-pengkhotbah') ? 'active' : '' ?>">Jadwal</a>
+                <a href="<?= url('kegiatan') ?>" class="<?= $isActive('kegiatan') ? 'active' : '' ?>">Kegiatan</a>
+                <a href="<?= url('artikel') ?>" class="<?= $isActive('artikel') ? 'active' : '' ?>">Artikel</a>
+                <a href="<?= url('kontak') ?>" class="<?= $isActive('kontak') ? 'active' : '' ?>">Kontak</a>
+                <a href="<?= url('donasi') ?>" class="btn btn-primary btn-sm">
+                    <i class="bi bi-heart-fill me-1"></i>Donasi
+                </a>
+            </nav>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
-                    <li class="nav-item">
-                        <a class="nav-link px-2 fw-medium" href="<?= url() ?>">Beranda</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle px-2 fw-medium" href="#" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Tentang Kami
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                            <li><a class="dropdown-item py-2" href="<?= url('tentang') ?>">
-                                    <i class="bi bi-building me-2 text-primary"></i>Profil Gereja</a></li>
-                            <li><a class="dropdown-item py-2" href="<?= url('tentang/visi-misi') ?>">
-                                    <i class="bi bi-eye me-2 text-primary"></i>Visi &amp; Misi</a></li>
-                            <li><a class="dropdown-item py-2" href="<?= url('tentang/sejarah') ?>">
-                                    <i class="bi bi-book me-2 text-primary"></i>Sejarah</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-2 fw-medium" href="<?= url('jadwal-pengkhotbah') ?>">Jadwal</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-2 fw-medium" href="<?= url('kegiatan') ?>">Kegiatan</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-2 fw-medium" href="<?= url('artikel') ?>">Artikel</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-2 fw-medium" href="<?= url('donasi') ?>">Donasi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-2 fw-medium" href="<?= url('kontak') ?>">Kontak</a>
-                    </li>
-                </ul>
+            <!-- Mobile quick action -->
+            <div class="app-topbar-actions d-lg-none">
+                <a href="<?= url('kontak') ?>" class="icon-btn" aria-label="Kontak"><i class="bi bi-chat-dots"></i></a>
             </div>
         </div>
-    </nav>
-
-    <style>
-        .navbar-nav .nav-link {
-            color: #444;
-            transition: color .2s;
-            font-size: .95rem;
-        }
-
-        .navbar-nav .nav-link:hover,
-        .navbar-nav .nav-link.active {
-            color: #0d6efd;
-        }
-
-        @media (max-width: 991.98px) {
-            .navbar-collapse {
-                border-top: 1px solid #f0f0f0;
-                padding-top: .75rem;
-                padding-bottom: .5rem;
-            }
-
-            .navbar-nav .nav-link {
-                padding: .6rem .75rem;
-                border-radius: .4rem;
-            }
-
-            .navbar-nav .nav-link:hover {
-                background: #f0f4ff;
-            }
-
-            .navbar-nav .dropdown-menu {
-                border: none;
-                background: #f8f9ff;
-                border-radius: .5rem;
-                margin-left: .5rem;
-            }
-        }
-
-        @media (min-width: 992px) {
-            .navbar-nav .dropdown-menu {
-                border-radius: .6rem;
-                min-width: 200px;
-                animation: fadeDown .15s ease;
-            }
-        }
-
-        @keyframes fadeDown {
-            from {
-                opacity: 0;
-                transform: translateY(-6px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const links = document.querySelectorAll('.navbar-nav .nav-link:not(.dropdown-toggle)');
-            const current = window.location.href;
-            links.forEach(link => {
-                if (link.href && link.href !== '#' && current.startsWith(link.href) && link.href !== window.location.origin + '/') {
-                    link.classList.add('active', 'fw-bold');
-                    link.style.color = '#0d6efd';
-                }
-            });
-        });
-    </script>
+    </header>
 
     <!-- ===== FLASH MESSAGES ===== -->
-    <?php if (hasFlash('success')): ?>
-        <div class="alert alert-success alert-dismissible fade show m-0 rounded-0" role="alert">
-            <div class="container">
-                <i class="bi bi-check-circle me-2"></i>
-                <?= getFlash('success') ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        </div>
-    <?php endif; ?>
-
-    <?php if (hasFlash('error')): ?>
-        <div class="alert alert-danger alert-dismissible fade show m-0 rounded-0" role="alert">
-            <div class="container">
-                <i class="bi bi-exclamation-circle me-2"></i>
-                <?= getFlash('error') ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+    <?php if (hasFlash('success') || hasFlash('error')): ?>
+        <div class="flash-stack">
+            <?php if (hasFlash('success')): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert" data-auto-dismiss="5000">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <div><?= getFlash('success') ?></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
+                </div>
+            <?php endif; ?>
+            <?php if (hasFlash('error')): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" data-auto-dismiss="6000">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <div><?= getFlash('error') ?></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
+                </div>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
 
@@ -176,92 +100,117 @@
     </main>
 
     <!-- ===== FOOTER ===== -->
-    <footer class="bg-dark text-white py-5">
+    <footer class="app-footer">
         <div class="container">
             <div class="row g-4">
-                <div class="col-lg-4">
-                    <h5 class="mb-3">
-                        <i class="bi bi-brightness-high-fill me-2"></i>
-                        <?= e(setting('site_name', APP_NAME)) ?>
-                    </h5>
-                    <p class="text-white-50 fs-5">
+                <div class="col-lg-5">
+                    <div class="app-brand mb-3">
+                        <span class="app-brand-mark"><i class="bi bi-brightness-high-fill"></i></span>
+                        <span class="app-brand-name"><?= e($siteName) ?></span>
+                    </div>
+                    <p class="mb-3">
                         <?= e(setting('site_tagline', 'Gereja yang mengasihi Tuhan dan sesama, melayani dengan kasih dan kebenaran.')) ?>
                     </p>
-                </div>
-
-                <div class="col-lg-4">
-                    <h5 class="mb-3">Tautan Cepat</h5>
-                    <ul class="list-unstyled fs-5">
-                        <li class="mb-2"><a href="<?= url() ?>" class="text-white-50 text-decoration-none">Beranda</a>
-                        </li>
-                        <li class="mb-2"><a href="<?= url('tentang') ?>"
-                                class="text-white-50 text-decoration-none">Tentang Kami</a></li>
-                        <li class="mb-2"><a href="<?= url('kegiatan') ?>"
-                                class="text-white-50 text-decoration-none">Kegiatan</a></li>
-                        <li class="mb-2"><a href="<?= url('kontak') ?>"
-                                class="text-white-50 text-decoration-none">Hubungi Kami</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-4">
-                    <h5 class="mb-3">Kontak</h5>
-                    <ul class="list-unstyled text-white-50 fs-5">
-                        <li class="mb-2">
-                            <i class="bi bi-geo-alt me-2"></i>
-                            <?= e(setting('site_address', 'Jl. Gereja No. 123, Jakarta')) ?>
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-telephone me-2"></i>
-                            <?= e(setting('site_phone', '(021) 1234-5678')) ?>
-                        </li>
-                        <li class="mb-2">
-                            <i class="bi bi-envelope me-2"></i>
-                            <?= e(setting('site_email', 'info@gereja.com')) ?>
-                        </li>
-                    </ul>
-
-                    <div class="mt-3">
-                        <?php if (setting('site_facebook')): ?>
-                            <a href="<?= e(setting('site_facebook')) ?>" target="_blank" class="text-white me-3 fs-4"><i
-                                    class="bi bi-facebook"></i></a>
-                        <?php endif; ?>
-                        <?php if (setting('site_instagram')): ?>
-                            <a href="<?= e(setting('site_instagram')) ?>" target="_blank" class="text-white me-3 fs-4"><i
-                                    class="bi bi-instagram"></i></a>
-                        <?php endif; ?>
-                        <?php if (setting('site_youtube')): ?>
-                            <a href="<?= e(setting('site_youtube')) ?>" target="_blank" class="text-white me-3 fs-4"><i
-                                    class="bi bi-youtube"></i></a>
-                        <?php endif; ?>
-                        <?php if (setting('site_tiktok')): ?>
-                            <a href="<?= e(setting('site_tiktok')) ?>" target="_blank" class="text-white me-3 fs-4"><i
-                                    class="bi bi-tiktok"></i></a>
-                        <?php endif; ?>
+                    <div class="social">
+                        <?php foreach (['facebook', 'instagram', 'youtube', 'tiktok'] as $social): ?>
+                            <?php if (setting('site_' . $social)): ?>
+                                <a href="<?= e(setting('site_' . $social)) ?>" target="_blank" rel="noopener" aria-label="<?= ucfirst($social) ?>">
+                                    <i class="bi bi-<?= $social ?>"></i>
+                                </a>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                     </div>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <h6>Jelajahi</h6>
+                    <ul>
+                        <li><a href="<?= url('tentang') ?>">Tentang Kami</a></li>
+                        <li><a href="<?= url('jadwal-pengkhotbah') ?>">Jadwal Pengkhotbah</a></li>
+                        <li><a href="<?= url('kegiatan') ?>">Kegiatan</a></li>
+                        <li><a href="<?= url('artikel') ?>">Artikel</a></li>
+                        <li><a href="<?= url('donasi') ?>">Donasi</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-6 col-lg-4">
+                    <h6>Kontak</h6>
+                    <ul>
+                        <li><i class="bi bi-geo-alt me-2 text-primary"></i><?= e(setting('site_address', 'Jl. Gereja No. 123, Jakarta')) ?></li>
+                        <li><i class="bi bi-telephone me-2 text-primary"></i><?= e(setting('site_phone', '(021) 1234-5678')) ?></li>
+                        <li><i class="bi bi-envelope me-2 text-primary"></i><?= e(setting('site_email', 'info@gereja.com')) ?></li>
+                    </ul>
                 </div>
             </div>
 
-            <hr class="my-4 border-secondary">
-
-            <div class="row">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="text-white-50 mb-0">
-                        &copy; <?= date('Y') ?> <?= e(setting('site_name', APP_NAME)) ?>. All rights reserved.
-                    </p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <a href="<?= url('auth/login') ?>" class="text-white-50 text-decoration-none small">
-                        <i class="bi bi-shield-lock me-1"></i>Admin Login
-                    </a>
-                </div>
+            <div class="copyright d-flex flex-column flex-md-row justify-content-between gap-2">
+                <span>&copy; <?= date('Y') ?> <?= e($siteName) ?></span>
+                <?php if (isLoggedIn()): ?>
+                    <a href="<?= url('admin/dashboard') ?>"><i class="bi bi-person-circle me-1"></i><?= e(auth('name')) ?></a>
+                <?php else: ?>
+                    <a href="<?= url('auth/login') ?>"><i class="bi bi-shield-lock me-1"></i>Pengerja Panel</a>
+                <?php endif; ?>
             </div>
         </div>
     </footer>
 
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- ===== BOTTOM NAVIGATION (mobile) ===== -->
+    <nav class="app-bottomnav d-lg-none" aria-label="Navigasi utama">
+        <a href="<?= url() ?>" class="<?= $isActive('') ? 'active' : '' ?>">
+            <i class="bi bi-house-door<?= $isActive('') ? '-fill' : '' ?>"></i>Beranda
+        </a>
+        <a href="<?= url('jadwal-pengkhotbah') ?>" class="<?= $isActive('jadwal-pengkhotbah') ? 'active' : '' ?>">
+            <i class="bi bi-calendar-week<?= $isActive('jadwal-pengkhotbah') ? '-fill' : '' ?>"></i>Jadwal
+        </a>
+        <a href="<?= url('kegiatan') ?>" class="<?= $isActive('kegiatan') ? 'active' : '' ?>">
+            <i class="bi bi-calendar-event<?= $isActive('kegiatan') ? '-fill' : '' ?>"></i>Kegiatan
+        </a>
+        <a href="<?= url('artikel') ?>" class="<?= $isActive('artikel') ? 'active' : '' ?>">
+            <i class="bi bi-journal-text"></i>Artikel
+        </a>
+        <button type="button" class="<?= $moreActive ? 'active' : '' ?>" data-bs-toggle="offcanvas" data-bs-target="#moreSheet">
+            <i class="bi bi-grid<?= $moreActive ? '-fill' : '' ?>"></i>Lainnya
+        </button>
+    </nav>
 
-    <!-- Custom JS -->
+    <!-- Bottom sheet "Lainnya" -->
+    <div class="offcanvas offcanvas-bottom app-sheet" tabindex="-1" id="moreSheet" aria-labelledby="moreSheetLabel">
+        <div class="sheet-handle"></div>
+        <div class="offcanvas-header pb-2">
+            <h5 class="offcanvas-title fw-bold" id="moreSheetLabel">Menu Lainnya</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Tutup"></button>
+        </div>
+        <div class="offcanvas-body pt-2 pb-4">
+            <div class="service-grid">
+                <a href="<?= url('tentang') ?>" class="service-item">
+                    <span class="service-icon tone-green"><i class="bi bi-building"></i></span>Profil
+                </a>
+                <a href="<?= url('tentang/visi-misi') ?>" class="service-item">
+                    <span class="service-icon tone-blue"><i class="bi bi-eye"></i></span>Visi &amp; Misi
+                </a>
+                <a href="<?= url('tentang/sejarah') ?>" class="service-item">
+                    <span class="service-icon tone-orange"><i class="bi bi-book"></i></span>Sejarah
+                </a>
+                <a href="<?= url('donasi') ?>" class="service-item">
+                    <span class="service-icon tone-red"><i class="bi bi-heart-fill"></i></span>Donasi
+                </a>
+                <a href="<?= url('kontak') ?>" class="service-item">
+                    <span class="service-icon tone-teal"><i class="bi bi-chat-dots-fill"></i></span>Kontak
+                </a>
+                <?php if (isLoggedIn()): ?>
+                    <a href="<?= url('admin/dashboard') ?>" class="service-item">
+                        <span class="service-icon tone-dark"><i class="bi bi-person-circle"></i></span><?= e(auth('name')) ?>
+                    </a>
+                <?php else: ?>
+                    <a href="<?= url('auth/login') ?>" class="service-item">
+                        <span class="service-icon tone-dark"><i class="bi bi-shield-lock-fill"></i></span>Admin
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= asset('js/main.js') ?>"></script>
 </body>
 

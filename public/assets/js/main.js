@@ -22,17 +22,13 @@
     // Navbar Scroll Effect
     // =====================================================
     function initNavbarScroll() {
-        const navbar = document.querySelector('.navbar');
+        const navbar = document.querySelector('.app-topbar');
         if (!navbar) return;
 
-        const scrollThreshold = 50;
+        const scrollThreshold = 8;
 
         function handleScroll() {
-            if (window.scrollY > scrollThreshold) {
-                navbar.classList.add('scrolled', 'shadow-sm');
-            } else {
-                navbar.classList.remove('scrolled', 'shadow-sm');
-            }
+            navbar.classList.toggle('scrolled', window.scrollY > scrollThreshold);
         }
 
         window.addEventListener('scroll', handleScroll);

@@ -80,6 +80,71 @@
                             <small class="text-muted">Digunakan untuk SEO dan meta description</small>
                         </div>
 
+                        <!-- Warna Tema -->
+                        <?php
+                        $themeColor = themeColor();
+                        $themePresets = [
+                            '#00aa13' => 'Hijau',
+                            '#0a7cff' => 'Biru',
+                            '#1e3a8a' => 'Navy',
+                            '#00a5a5' => 'Tosca',
+                            '#7c3aed' => 'Ungu',
+                            '#e11d48' => 'Merah',
+                            '#ea580c' => 'Oranye',
+                            '#b45309' => 'Cokelat',
+                            '#db2777' => 'Pink',
+                            '#334155' => 'Abu Gelap',
+                        ];
+                        ?>
+                        <div class="col-12">
+                            <hr class="my-2">
+                            <h6 class="fw-bold text-primary"><i class="bi bi-palette me-2"></i>Warna Tema</h6>
+                            <p class="text-muted small mb-0">Warna utama website & pengerja panel (tombol, header, menu aktif, ikon).</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Pilihan Cepat</label>
+                            <div class="d-flex flex-wrap gap-2 mb-3" id="themePresets">
+                                <?php foreach ($themePresets as $hex => $label): ?>
+                                    <button type="button" class="theme-swatch <?= $hex === $themeColor ? 'active' : '' ?>"
+                                        data-color="<?= $hex ?>" title="<?= $label ?>" aria-label="<?= $label ?>"
+                                        style="background: <?= $hex ?>;"></button>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <label for="theme_color_hex" class="form-label fw-semibold">Warna Kustom</label>
+                            <div class="input-group">
+                                <input type="color" class="form-control form-control-color" id="theme_color_picker"
+                                    value="<?= e($themeColor) ?>" title="Pilih warna">
+                                <input type="text" class="form-control" id="theme_color_hex" name="theme_color"
+                                    value="<?= e($themeColor) ?>" pattern="#[0-9a-fA-F]{6}" maxlength="7"
+                                    placeholder="#00aa13">
+                                <button type="button" class="btn btn-light" id="themeReset" title="Kembali ke hijau">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted d-block mt-1" id="themeContrastHint">
+                                Pilih warna yang cukup gelap agar teks putih di atasnya tetap terbaca.
+                            </small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Pratinjau</label>
+                            <div class="theme-preview" id="themePreview">
+                                <div class="tp-header">
+                                    <i class="bi bi-brightness-high-fill"></i>
+                                    <span><?= e($settings['site_name'] ?? 'Nama Gereja') ?></span>
+                                </div>
+                                <div class="tp-body">
+                                    <div class="d-flex gap-2 mb-3">
+                                        <span class="tp-icon"><i class="bi bi-calendar-check-fill"></i></span>
+                                        <span class="tp-icon tp-soft"><i class="bi bi-person-video3"></i></span>
+                                        <span class="tp-chip">Menu aktif</span>
+                                    </div>
+                                    <span class="tp-btn">Tombol Utama</span>
+                                    <span class="tp-link">Tautan</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Logo Upload -->
                         <div class="col-12">
                             <hr class="my-2">
@@ -421,3 +486,76 @@
         </div>
     </div>
 </form>
+<style>
+    .theme-swatch {
+        width: 38px; height: 38px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        box-shadow: 0 0 0 1px var(--line);
+        cursor: pointer;
+        transition: transform .12s ease;
+    }
+    .theme-swatch:hover { transform: scale(1.08); }
+    .theme-swatch.active { box-shadow: 0 0 0 2px var(--ink); }
+    .form-control-color { max-width: 56px; padding: .35rem; }
+
+    .theme-preview { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--canvas); }
+    .theme-preview .tp-header { background: var(--brand); color: #fff; padding: .9rem 1rem; font-weight: 800; display: flex; gap: .5rem; align-items: center; }
+    .theme-preview .tp-body { padding: 1rem; }
+    .theme-preview .tp-icon { width: 42px; height: 42px; border-radius: 13px; background: var(--brand); color: #fff; display: grid; place-items: center; font-size: 1.1rem; }
+    .theme-preview .tp-icon.tp-soft { background: var(--brand-soft); color: var(--brand-darker); }
+    .theme-preview .tp-chip { align-self: center; background: var(--brand-soft); color: var(--brand-darker); font-weight: 800; font-size: .8rem; padding: .35rem .8rem; border-radius: 999px; }
+    .theme-preview .tp-btn { display: inline-block; background: var(--brand); color: #fff; font-weight: 700; font-size: .85rem; padding: .5rem 1.1rem; border-radius: 999px; margin-right: .75rem; }
+    .theme-preview .tp-link { color: var(--brand-dark); font-weight: 700; font-size: .85rem; }
+</style>
+
+<script>
+    (function () {
+        const DEFAULT = '#00aa13';
+        const picker = document.getElementById('theme_color_picker');
+        const hexInput = document.getElementById('theme_color_hex');
+        const hint = document.getElementById('themeContrastHint');
+        const swatches = document.querySelectorAll('.theme-swatch');
+
+        // Sama dengan mixColor() di core/Helpers.php
+        const toRgb = hex => [1, 3, 5].map(i => parseInt(hex.substr(i, 2), 16));
+        const mix = (rgb, w, a) => rgb.map((c, i) => Math.round(c * (1 - a) + w[i] * a));
+        const toHex = rgb => '#' + rgb.map(c => c.toString(16).padStart(2, '0')).join('');
+
+        // Terapkan langsung ke seluruh halaman admin sebagai pratinjau
+        function apply(hex) {
+            if (!/^#[0-9a-f]{6}$/i.test(hex)) return;
+            hex = hex.toLowerCase();
+            const rgb = toRgb(hex);
+            const dark = mix(rgb, [0, 0, 0], .18);
+            const root = document.documentElement.style;
+            root.setProperty('--brand', hex);
+            root.setProperty('--brand-rgb', rgb.join(', '));
+            root.setProperty('--brand-dark', toHex(dark));
+            root.setProperty('--brand-dark-rgb', dark.join(', '));
+            root.setProperty('--brand-darker', toHex(mix(rgb, [0, 0, 0], .35)));
+            root.setProperty('--brand-light', toHex(mix(rgb, [255, 255, 255], .25)));
+            root.setProperty('--brand-soft', toHex(mix(rgb, [255, 255, 255], .88)));
+
+            picker.value = hex;
+            swatches.forEach(s => s.classList.toggle('active', s.dataset.color === hex));
+
+            // Peringatan kontras: luminans relatif (WCAG) terhadap teks putih
+            const lum = rgb.map(c => { c /= 255; return c <= .03928 ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4); });
+            const L = .2126 * lum[0] + .7152 * lum[1] + .0722 * lum[2];
+            const contrast = 1.05 / (L + .05);
+            hint.classList.toggle('text-danger', contrast < 3);
+            hint.classList.toggle('text-muted', contrast >= 3);
+            hint.textContent = contrast < 3
+                ? '⚠ Warna ini terlalu terang, teks putih di atasnya akan sulit dibaca.'
+                : 'Pilih warna yang cukup gelap agar teks putih di atasnya tetap terbaca.';
+        }
+
+        picker.addEventListener('input', () => { hexInput.value = picker.value; apply(picker.value); });
+        hexInput.addEventListener('input', () => apply(hexInput.value.trim()));
+        swatches.forEach(s => s.addEventListener('click', () => { hexInput.value = s.dataset.color; apply(s.dataset.color); }));
+        document.getElementById('themeReset').addEventListener('click', () => { hexInput.value = DEFAULT; apply(DEFAULT); });
+
+        apply(hexInput.value);
+    })();
+</script>

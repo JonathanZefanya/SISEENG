@@ -317,3 +317,66 @@ function formatDateIndo(string $date, bool $withDay = false): string {
     
     return "$day $month $year";
 }
+
+/**
+ * Warna tema default (hijau)
+ */
+const DEFAULT_THEME_COLOR = '#00aa13';
+
+/**
+ * Ambil warna tema dari pengaturan (format #rrggbb)
+ * @return string
+ */
+function themeColor() {
+    $color = strtolower(trim((string) setting('theme_color', DEFAULT_THEME_COLOR)));
+    return preg_match('/^#[0-9a-f]{6}$/', $color) ? $color : DEFAULT_THEME_COLOR;
+}
+
+/**
+ * Campur warna hex dengan warna lain
+ * @param string $hex Warna asal (#rrggbb)
+ * @param array $with RGB warna pencampur, mis. [0,0,0] untuk menggelapkan
+ * @param float $amount 0..1, porsi warna pencampur
+ * @return array RGB
+ */
+function mixColor($hex, array $with, $amount) {
+    $rgb = sscanf($hex, '#%02x%02x%02x');
+    foreach ($rgb as $i => $c) {
+        $rgb[$i] = (int) round($c * (1 - $amount) + $with[$i] * $amount);
+    }
+    return $rgb;
+}
+
+/**
+ * Tag <style> yang meng-override variabel warna tema di CSS
+ * Dipanggil di <head> setelah stylesheet utama.
+ * @return string
+ */
+function themeStyleTag() {
+    $base = themeColor();
+    if ($base === DEFAULT_THEME_COLOR) {
+        return '';
+    }
+
+    $toHex = function (array $rgb) {
+        return vsprintf('#%02x%02x%02x', $rgb);
+    };
+    $rgb = sscanf($base, '#%02x%02x%02x');
+    $dark = mixColor($base, [0, 0, 0], 0.18);
+
+    $vars = [
+        '--brand' => $base,
+        '--brand-rgb' => implode(', ', $rgb),
+        '--brand-dark' => $toHex($dark),
+        '--brand-dark-rgb' => implode(', ', $dark),
+        '--brand-darker' => $toHex(mixColor($base, [0, 0, 0], 0.35)),
+        '--brand-light' => $toHex(mixColor($base, [255, 255, 255], 0.25)),
+        '--brand-soft' => $toHex(mixColor($base, [255, 255, 255], 0.88)),
+    ];
+
+    $css = '';
+    foreach ($vars as $name => $value) {
+        $css .= $name . ':' . $value . ';';
+    }
+    return '<style>:root{' . $css . '}</style>';
+}
