@@ -27,6 +27,7 @@ $pageTitle = trim(explode(' - ', $title ?? 'Dashboard')[0]);
 
     <link href="<?= asset('css/admin.css') ?>" rel="stylesheet">
     <?= themeStyleTag() ?>
+    <?= faviconTag() ?>
 </head>
 
 <body>

@@ -30,6 +30,7 @@ $moreActive = $aboutActive || $isActive('donasi') || $isActive('kontak');
 
     <link href="<?= asset('css/style.css') ?>" rel="stylesheet">
     <?= themeStyleTag() ?>
+    <?= faviconTag() ?>
 </head>
 
 <body class="has-bottomnav">

@@ -35,6 +35,9 @@ if (ENVIRONMENT === 'development') {
 // APPLICATION SETTINGS
 // =========================================================
 define('APP_NAME', 'GBI HOP Ciseeng');
+
+// Zona waktu WIB (dipakai date(), strtotime(), sapaan di beranda, dll)
+date_default_timezone_set('Asia/Jakarta');
 define('APP_VERSION', '1.0.0');
 
 // Deteksi APP_URL secara otomatis

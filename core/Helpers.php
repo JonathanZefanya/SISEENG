@@ -380,3 +380,28 @@ function themeStyleTag() {
     }
     return '<style>:root{' . $css . '}</style>';
 }
+
+/**
+ * Tag favicon dari logo yang diupload di Pengaturan (site_logo)
+ * Versi file ditambahkan ke URL agar browser memuat ulang saat logo diganti.
+ * @return string
+ */
+function faviconTag() {
+    $logo = setting('site_logo');
+    if (!$logo) {
+        return '';
+    }
+
+    $types = [
+        'png' => 'image/png', 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg',
+        'gif' => 'image/gif', 'svg' => 'image/svg+xml', 'webp' => 'image/webp', 'ico' => 'image/x-icon',
+    ];
+    $ext = strtolower(pathinfo($logo, PATHINFO_EXTENSION));
+    $type = $types[$ext] ?? 'image/png';
+
+    $file = PUBLIC_PATH . 'uploads' . DIRECTORY_SEPARATOR . 'settings' . DIRECTORY_SEPARATOR . $logo;
+    $href = e(uploads('settings/' . $logo) . (is_file($file) ? '?v=' . filemtime($file) : ''));
+
+    return '<link rel="icon" type="' . $type . '" href="' . $href . '">' . "\n"
+         . '    <link rel="apple-touch-icon" href="' . $href . '">';
+}
