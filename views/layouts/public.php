@@ -204,7 +204,7 @@ $moreActive = $aboutActive || $isActive('donasi') || $isActive('kontak');
                     </a>
                 <?php else: ?>
                     <a href="<?= url('auth/login') ?>" class="service-item">
-                        <span class="service-icon tone-dark"><i class="bi bi-shield-lock-fill"></i></span>Admin
+                        <span class="service-icon tone-dark"><i class="bi bi-shield-lock-fill"></i></span>Pengerja
                     </a>
                 <?php endif; ?>
             </div>
