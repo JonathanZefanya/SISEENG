@@ -6,6 +6,7 @@ use App\Models\Schedule;
 use App\Models\Article;
 use App\Models\Event;
 use App\Models\PreacherSchedule;
+use Core\YouTubeFeed;
 
 /**
  * =========================================================
@@ -46,6 +47,9 @@ class HomeController extends Controller
             'events' => $eventModel->getUpcoming(3),
             'preachersByTime' => $preachersByTime,
             'nextSunday' => $nextSunday,
+            // Kosong jika link YouTube belum diisi di Pengaturan -> section disembunyikan
+            'videos' => YouTubeFeed::latest(setting('site_youtube'), 5),
+            'youtubeUrl' => setting('site_youtube'),
         ]);
     }
     

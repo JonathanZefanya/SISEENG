@@ -222,6 +222,108 @@ $firstPreacher = $firstService ? ($preachersByTime[$firstService['start_time']] 
     </div>
 </section>
 
+<?php if (!empty($videos)): ?>
+<!-- ===== VIDEO TERBARU (YouTube, dari Pengaturan > Media Sosial) ===== -->
+<section class="pt-0">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <h2>Video Terbaru</h2>
+                <p>Ibadah dan konten terbaru di YouTube</p>
+            </div>
+            <a href="<?= e($youtubeUrl) ?>" class="see-all" target="_blank" rel="noopener">
+                Kunjungi channel <i class="bi bi-chevron-right"></i>
+            </a>
+        </div>
+
+        <?php
+        $featured = $videos[0];
+        $others = array_slice($videos, 1);
+        $videoDate = fn($v) => formatDate(date('Y-m-d', strtotime($v['published'])));
+        $videoViews = fn($v) => $v['views'] !== null ? number_format($v['views'], 0, ',', '.') . ' x ditonton' : '';
+        ?>
+        <div class="row g-3">
+            <div class="<?= $others ? 'col-lg-7' : 'col-12' ?>">
+                <a href="<?= e($featured['url']) ?>" class="video-card video-featured h-100" target="_blank" rel="noopener"
+                   data-video-id="<?= e($featured['id']) ?>" data-video-title="<?= e($featured['title']) ?>">
+                    <div class="video-thumb">
+                        <img src="<?= e($featured['thumbnail']) ?>" alt="<?= e($featured['title']) ?>" loading="lazy">
+                        <span class="video-play"><i class="bi bi-play-fill"></i></span>
+                        <span class="video-badge"><i class="bi bi-youtube me-1"></i>Terbaru</span>
+                    </div>
+                    <div class="video-body">
+                        <div class="video-title"><?= e($featured['title']) ?></div>
+                        <div class="video-meta">
+                            <?= $videoDate($featured) ?>
+                            <?php if ($videoViews($featured)): ?> · <?= $videoViews($featured) ?><?php endif; ?>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <?php if ($others): ?>
+                <div class="col-lg-5">
+                    <div class="video-list">
+                        <?php foreach ($others as $video): ?>
+                            <a href="<?= e($video['url']) ?>" class="video-card video-row" target="_blank" rel="noopener"
+                               data-video-id="<?= e($video['id']) ?>" data-video-title="<?= e($video['title']) ?>">
+                                <div class="video-thumb">
+                                    <img src="<?= e($video['thumbnail']) ?>" alt="<?= e($video['title']) ?>" loading="lazy">
+                                    <span class="video-play"><i class="bi bi-play-fill"></i></span>
+                                </div>
+                                <div class="video-body min-w-0">
+                                    <div class="video-title"><?= e($video['title']) ?></div>
+                                    <div class="video-meta"><?= $videoDate($video) ?></div>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+
+<!-- Pemutar video -->
+<div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content video-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-truncate" id="videoModalTitle"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="ratio ratio-16x9">
+                <iframe id="videoModalFrame" title="Video YouTube" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Putar video di pop-up; klik tengah / Ctrl+klik tetap membuka YouTube
+    document.addEventListener('DOMContentLoaded', function () {
+        const modalEl = document.getElementById('videoModal');
+        const frame = document.getElementById('videoModalFrame');
+        const title = document.getElementById('videoModalTitle');
+        if (!modalEl || !window.bootstrap) return;
+        const modal = new bootstrap.Modal(modalEl);
+
+        document.querySelectorAll('[data-video-id]').forEach(card => {
+            card.addEventListener('click', e => {
+                if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+                e.preventDefault();
+                title.textContent = card.dataset.videoTitle;
+                frame.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(card.dataset.videoId) + '?autoplay=1&rel=0';
+                modal.show();
+            });
+        });
+
+        // Hentikan video saat pop-up ditutup
+        modalEl.addEventListener('hidden.bs.modal', () => { frame.src = ''; });
+    });
+</script>
+<?php endif; ?>
+
 <!-- ===== LOKASI & KONTAK ===== -->
 <section class="pt-0">
     <div class="container">
