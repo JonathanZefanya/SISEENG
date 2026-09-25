@@ -16,7 +16,40 @@
         initFormValidation();
         initBackToTop();
         initAlertDismiss();
+        initPageTransitionFallback();
     });
+
+    // =====================================================
+    // Page Transition Fallback
+    // Browser modern memakai View Transitions (CSS di style.css).
+    // Browser lain: isi halaman memudar dulu sebelum pindah halaman.
+    // =====================================================
+    function initPageTransitionFallback() {
+        const root = document.documentElement;
+        if (!root.classList.contains('vt-fallback')) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        document.addEventListener('click', function (e) {
+            const link = e.target.closest('a[href]');
+            if (!link || e.defaultPrevented || e.button !== 0) return;
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+            if ((link.target && link.target !== '_self') || link.hasAttribute('download') || link.dataset.bsToggle) return;
+            if (link.getAttribute('href').startsWith('#')) return;
+
+            const url = new URL(link.href, location.href);
+            if (url.origin !== location.origin) return;
+            if (url.pathname === location.pathname && url.search === location.search) return;
+
+            e.preventDefault();
+            root.classList.add('page-leaving');
+            setTimeout(function () { location.href = url.href; }, 180);
+        });
+
+        // Kembali lewat tombol Back (bfcache): tampilkan lagi isinya
+        window.addEventListener('pageshow', function (e) {
+            if (e.persisted) root.classList.remove('page-leaving');
+        });
+    }
 
     // =====================================================
     // Navbar Scroll Effect

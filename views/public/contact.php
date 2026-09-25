@@ -20,7 +20,7 @@ $siteOperationalHours = setting('site_operational_hours');
 
 <section class="py-5">
     <div class="container">
-        <div class="row g-5">
+        <div class="row g-4 g-lg-5">
             <!-- Contact Form -->
             <div class="col-lg-7">
                 <div class="card border-0 shadow-sm">

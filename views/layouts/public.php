@@ -11,6 +11,22 @@ $isActive = function (string $path) use ($route): bool {
 };
 $aboutActive = $isActive('tentang');
 $moreActive = $aboutActive || $isActive('donasi') || $isActive('kontak');
+
+// Penanda menu aktif; dianimasikan bergeser antar halaman (View Transitions, lihat style.css)
+$navPill = fn(bool $on) => $on ? '<span class="nav-pill" aria-hidden="true"></span>' : '';
+
+// Bottom nav (mobile): menu aktif naik ke lingkaran di atas bar yang berlekuk
+$bnItems = [
+    ['href' => url(), 'active' => $isActive(''), 'icon' => 'house-door', 'iconActive' => 'house-door-fill', 'label' => 'Beranda'],
+    ['href' => url('jadwal-pengkhotbah'), 'active' => $isActive('jadwal-pengkhotbah'), 'icon' => 'calendar-week', 'iconActive' => 'calendar-week-fill', 'label' => 'Jadwal'],
+    ['href' => url('kegiatan'), 'active' => $isActive('kegiatan'), 'icon' => 'calendar-event', 'iconActive' => 'calendar-event-fill', 'label' => 'Kegiatan'],
+    ['href' => url('artikel'), 'active' => $isActive('artikel'), 'icon' => 'journal-text', 'iconActive' => 'journal-richtext', 'label' => 'Artikel'],
+    ['href' => null, 'active' => $moreActive, 'icon' => 'grid', 'iconActive' => 'grid-fill', 'label' => 'Lainnya'],
+];
+$bnIndex = -1;
+foreach ($bnItems as $i => $item) {
+    if ($item['active']) { $bnIndex = $i; break; }
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -31,6 +47,10 @@ $moreActive = $aboutActive || $isActive('donasi') || $isActive('kontak');
     <link href="<?= asset('css/style.css') ?>" rel="stylesheet">
     <?= themeStyleTag() ?>
     <?= faviconTag() ?>
+    <script>
+        // Browser tanpa View Transitions lintas halaman memakai animasi fade sederhana (main.js)
+        if (!('CSSViewTransitionRule' in window)) document.documentElement.classList.add('vt-fallback');
+    </script>
 </head>
 
 <body class="has-bottomnav">
@@ -48,10 +68,10 @@ $moreActive = $aboutActive || $isActive('donasi') || $isActive('kontak');
 
             <!-- Desktop navigation -->
             <nav class="app-nav d-none d-lg-flex">
-                <a href="<?= url() ?>" class="<?= $isActive('') ? 'active' : '' ?>">Beranda</a>
+                <a href="<?= url() ?>" class="<?= $isActive('') ? 'active' : '' ?>"><?= $navPill($isActive('')) ?>Beranda</a>
                 <div class="dropdown">
                     <a href="#" class="<?= $aboutActive ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">
-                        Tentang <i class="bi bi-chevron-down small"></i>
+                        <?= $navPill($aboutActive) ?>Tentang <i class="bi bi-chevron-down small"></i>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="<?= url('tentang') ?>"><i class="bi bi-building me-2 text-primary"></i>Profil Gereja</a></li>
@@ -59,10 +79,10 @@ $moreActive = $aboutActive || $isActive('donasi') || $isActive('kontak');
                         <li><a class="dropdown-item" href="<?= url('tentang/sejarah') ?>"><i class="bi bi-book me-2 text-primary"></i>Sejarah</a></li>
                     </ul>
                 </div>
-                <a href="<?= url('jadwal-pengkhotbah') ?>" class="<?= $isActive('jadwal-pengkhotbah') ? 'active' : '' ?>">Jadwal</a>
-                <a href="<?= url('kegiatan') ?>" class="<?= $isActive('kegiatan') ? 'active' : '' ?>">Kegiatan</a>
-                <a href="<?= url('artikel') ?>" class="<?= $isActive('artikel') ? 'active' : '' ?>">Artikel</a>
-                <a href="<?= url('kontak') ?>" class="<?= $isActive('kontak') ? 'active' : '' ?>">Kontak</a>
+                <a href="<?= url('jadwal-pengkhotbah') ?>" class="<?= $isActive('jadwal-pengkhotbah') ? 'active' : '' ?>"><?= $navPill($isActive('jadwal-pengkhotbah')) ?>Jadwal</a>
+                <a href="<?= url('kegiatan') ?>" class="<?= $isActive('kegiatan') ? 'active' : '' ?>"><?= $navPill($isActive('kegiatan')) ?>Kegiatan</a>
+                <a href="<?= url('artikel') ?>" class="<?= $isActive('artikel') ? 'active' : '' ?>"><?= $navPill($isActive('artikel')) ?>Artikel</a>
+                <a href="<?= url('kontak') ?>" class="<?= $isActive('kontak') ? 'active' : '' ?>"><?= $navPill($isActive('kontak')) ?>Kontak</a>
                 <a href="<?= url('donasi') ?>" class="btn btn-primary btn-sm">
                     <i class="bi bi-heart-fill me-1"></i>Donasi
                 </a>
@@ -156,23 +176,44 @@ $moreActive = $aboutActive || $isActive('donasi') || $isActive('kontak');
     </footer>
 
     <!-- ===== BOTTOM NAVIGATION (mobile) ===== -->
-    <nav class="app-bottomnav d-lg-none" aria-label="Navigasi utama">
-        <a href="<?= url() ?>" class="<?= $isActive('') ? 'active' : '' ?>">
-            <i class="bi bi-house-door<?= $isActive('') ? '-fill' : '' ?>"></i>Beranda
-        </a>
-        <a href="<?= url('jadwal-pengkhotbah') ?>" class="<?= $isActive('jadwal-pengkhotbah') ? 'active' : '' ?>">
-            <i class="bi bi-calendar-week<?= $isActive('jadwal-pengkhotbah') ? '-fill' : '' ?>"></i>Jadwal
-        </a>
-        <a href="<?= url('kegiatan') ?>" class="<?= $isActive('kegiatan') ? 'active' : '' ?>">
-            <i class="bi bi-calendar-event<?= $isActive('kegiatan') ? '-fill' : '' ?>"></i>Kegiatan
-        </a>
-        <a href="<?= url('artikel') ?>" class="<?= $isActive('artikel') ? 'active' : '' ?>">
-            <i class="bi bi-journal-text"></i>Artikel
-        </a>
-        <button type="button" class="<?= $moreActive ? 'active' : '' ?>" data-bs-toggle="offcanvas" data-bs-target="#moreSheet">
-            <i class="bi bi-grid<?= $moreActive ? '-fill' : '' ?>"></i>Lainnya
-        </button>
+    <nav class="app-bottomnav d-lg-none<?= $bnIndex < 0 ? ' no-active' : '' ?>" id="appBottomnav" aria-label="Navigasi utama"
+         style="--bn-count: <?= count($bnItems) ?>; --bn-i: <?= max($bnIndex, 0) ?>;" data-bn-index="<?= $bnIndex ?>">
+        <span class="bn-bar" aria-hidden="true"></span>
+        <?php if ($bnIndex >= 0): ?>
+            <span class="bn-bubble" aria-hidden="true"><i class="bi bi-<?= $bnItems[$bnIndex]['iconActive'] ?>"></i></span>
+        <?php endif; ?>
+
+        <?php foreach ($bnItems as $item): ?>
+            <?php $cls = $item['active'] ? 'active' : ''; ?>
+            <?php if ($item['href']): ?>
+                <a href="<?= $item['href'] ?>" class="<?= $cls ?>"<?= $item['active'] ? ' aria-current="page"' : '' ?>>
+            <?php else: ?>
+                <button type="button" class="<?= $cls ?>" data-bs-toggle="offcanvas" data-bs-target="#moreSheet">
+            <?php endif; ?>
+                    <i class="bi bi-<?= $item['icon'] ?>"></i><span><?= $item['label'] ?></span>
+            <?= $item['href'] ? '</a>' : '</button>' ?>
+        <?php endforeach; ?>
     </nav>
+    <script>
+        // Lingkaran & lekukan bergeser dari menu halaman sebelumnya ke menu halaman ini
+        (function () {
+            var nav = document.getElementById('appBottomnav');
+            var cur = +nav.dataset.bnIndex, prev = null;
+            try { prev = sessionStorage.getItem('bnIndex'); sessionStorage.setItem('bnIndex', cur); } catch (e) {}
+            if (prev === null || +prev === cur || +prev < 0 || cur < 0) return;
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+            nav.style.setProperty('--bn-pos', prev);
+            nav.classList.add('bn-moving');
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    nav.classList.add('bn-animate');
+                    nav.style.setProperty('--bn-pos', cur);
+                });
+            });
+            setTimeout(function () { nav.classList.remove('bn-moving'); }, 700);
+        })();
+    </script>
 
     <!-- Bottom sheet "Lainnya" -->
     <div class="offcanvas offcanvas-bottom app-sheet" tabindex="-1" id="moreSheet" aria-labelledby="moreSheetLabel">

@@ -13,7 +13,7 @@
 
 <section class="py-5">
     <div class="container">
-        <div class="row g-5">
+        <div class="row g-4 g-lg-5">
             <div class="col-lg-8">
                 <?php if ($event['image']): ?>
                     <img src="<?= uploads(e($event['image'])) ?>" class="img-fluid rounded shadow-sm mb-4 w-100"
