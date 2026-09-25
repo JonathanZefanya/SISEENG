@@ -23,12 +23,12 @@
                     <option value="read" <?= ($_GET['status'] ?? '') === 'read' ? 'selected' : '' ?>>Sudah Dibaca</option>
                 </select>
             </div>
-            <div class="col-md-2">
+            <div class="col-6 col-md-2">
                 <button type="submit" class="btn btn-primary w-100">
                     <i class="bi bi-search me-2"></i>Filter
                 </button>
             </div>
-            <div class="col-md-2">
+            <div class="col-6 col-md-2">
                 <a href="<?= url('admin/messages') ?>" class="btn btn-outline-secondary w-100">Reset</a>
             </div>
         </form>
@@ -46,40 +46,25 @@
         <?php else: ?>
             <div class="list-group list-group-flush">
                 <?php foreach ($messages as $message): ?>
-                    <a href="<?= url('admin/messages/read/' . $message['id']) ?>" 
-                       class="list-group-item list-group-item-action p-4 <?= $message['is_read'] ? '' : 'bg-light' ?>">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="d-flex align-items-start">
-                                <div class="bg-<?= $message['is_read'] ? 'secondary' : 'primary' ?> text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
-                                     style="width: 50px; height: 50px; flex-shrink: 0;">
-                                    <i class="bi bi-envelope<?= $message['is_read'] ? '-open' : '-fill' ?>"></i>
-                                </div>
-                                <div>
-                                    <div class="d-flex align-items-center mb-1">
-                                        <h6 class="mb-0 fw-bold <?= $message['is_read'] ? '' : 'text-primary' ?>">
-                                            <?= e($message['name']) ?>
-                                        </h6>
-                                        <?php if (!$message['is_read']): ?>
-                                            <span class="badge bg-primary ms-2">Baru</span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <p class="mb-1 text-muted small"><?= e($message['email']) ?></p>
-                                    <p class="mb-1 <?= $message['is_read'] ? 'text-muted' : 'fw-semibold' ?>">
-                                        <?= $message['subject'] ? e($message['subject']) : '(Tanpa Subjek)' ?>
-                                    </p>
-                                    <p class="mb-0 text-muted small">
-                                        <?= e(substr($message['message'], 0, 100)) ?>...
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="text-end ms-3" style="flex-shrink: 0;">
-                                <small class="text-muted d-block">
+                    <a href="<?= url('admin/messages/read/' . $message['id']) ?>"
+                       class="list-group-item list-group-item-action msg-item <?= $message['is_read'] ? '' : 'is-unread' ?>">
+                        <div class="msg-avatar">
+                            <i class="bi bi-envelope<?= $message['is_read'] ? '-open' : '-fill' ?>"></i>
+                        </div>
+                        <div class="msg-body">
+                            <div class="msg-head">
+                                <span class="msg-name"><?= e($message['name']) ?></span>
+                                <?php if (!$message['is_read']): ?>
+                                    <span class="badge bg-primary">Baru</span>
+                                <?php endif; ?>
+                                <span class="msg-time" title="<?= e(formatDate($message['created_at'])) ?>">
                                     <?= timeAgo($message['created_at']) ?>
-                                </small>
-                                <small class="text-muted">
-                                    <?= formatDate($message['created_at']) ?>
-                                </small>
+                                    <span class="d-none d-md-inline"> · <?= formatDate($message['created_at']) ?></span>
+                                </span>
                             </div>
+                            <div class="msg-email"><?= e($message['email']) ?></div>
+                            <div class="msg-subject"><?= $message['subject'] ? e($message['subject']) : '(Tanpa Subjek)' ?></div>
+                            <div class="msg-preview"><?= e(mb_substr($message['message'], 0, 160)) ?></div>
                         </div>
                     </a>
                 <?php endforeach; ?>
@@ -115,14 +100,44 @@
     </div>
 </div>
 
+<style>
+    .msg-item { display: flex; align-items: flex-start; gap: .9rem; padding: 1rem 1.25rem; border-color: var(--line); }
+    .msg-item.is-unread { background: var(--brand-soft); }
+    .msg-avatar {
+        width: 44px; height: 44px; flex-shrink: 0;
+        border-radius: 50%;
+        display: grid; place-items: center;
+        background: #eceff3; color: var(--muted);
+        font-size: 1.1rem;
+    }
+    .is-unread .msg-avatar { background: var(--brand); color: #fff; }
+    .msg-body { flex: 1; min-width: 0; }
+    .msg-head { display: flex; align-items: center; gap: .5rem; min-width: 0; }
+    .msg-name { font-weight: 800; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+    .is-unread .msg-name { color: var(--brand-darker); }
+    .msg-head .badge { flex-shrink: 0; font-size: .65rem; }
+    .msg-time { margin-left: auto; flex-shrink: 0; font-size: .75rem; color: var(--muted); white-space: nowrap; }
+    .msg-email { font-size: .8rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .msg-subject { margin-top: .2rem; font-weight: 600; color: var(--ink-2); overflow-wrap: anywhere; }
+    .is-unread .msg-subject { font-weight: 800; color: var(--ink); }
+    .msg-preview {
+        font-size: .85rem; color: var(--muted); overflow-wrap: anywhere;
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    @media (max-width: 575.98px) {
+        .msg-item { padding: .9rem 1rem; gap: .75rem; }
+        .msg-avatar { width: 38px; height: 38px; font-size: 1rem; }
+    }
+</style>
+
 <?php
 function timeAgo($datetime) {
     $now = new DateTime();
     $ago = new DateTime($datetime);
     $diff = $now->diff($ago);
     
-    if ($diff->d > 0) {
-        return $diff->d . ' hari lalu';
+    if ($diff->days > 0) {
+        return $diff->days . ' hari lalu';
     } elseif ($diff->h > 0) {
         return $diff->h . ' jam lalu';
     } elseif ($diff->i > 0) {
