@@ -71,6 +71,7 @@ $pageTitle = trim(explode(' - ', $title ?? 'Dashboard')[0]);
                             <i class="bi bi-chevron-down dropdown-arrow"></i>
                         </a>
                         <div class="nav-dropdown-menu">
+                            <div class="nav-dropdown-inner">
                             <?php foreach ($menu['submenu'] as $submenu): ?>
                                 <a href="<?= url($submenu['url']) ?>"
                                     class="nav-link nav-submenu-link <?= $matches($submenu['active']) ? 'active' : '' ?>">
@@ -78,6 +79,7 @@ $pageTitle = trim(explode(' - ', $title ?? 'Dashboard')[0]);
                                     <span><?= e($submenu['title']) ?></span>
                                 </a>
                             <?php endforeach; ?>
+                            </div>
                         </div>
                     </div>
                 <?php else: ?>
@@ -196,7 +198,28 @@ $pageTitle = trim(explode(' - ', $title ?? 'Dashboard')[0]);
         const main = document.querySelector('.admin-main');
         const isDesktop = () => window.innerWidth >= 992;
 
-        function openDrawer() { sidebar.classList.add('show'); backdrop.classList.add('show'); }
+        // Isi sidebar masuk berurutan setiap kali sidebar dibuka
+        [sidebar.querySelector('.sidebar-header'), sidebar.querySelector('.sidebar-user'),
+            ...sidebar.querySelectorAll('.sidebar-nav > *')].forEach((el, i) => el?.style.setProperty('--i', i));
+
+        let animTimer;
+        function playSidebarIntro() {
+            sidebar.classList.remove('animating-in');
+            void sidebar.offsetWidth; // restart animasi
+            sidebar.classList.add('animating-in');
+            clearTimeout(animTimer);
+            animTimer = setTimeout(() => sidebar.classList.remove('animating-in'), 1200);
+        }
+
+        const toggleBtn = document.getElementById('sidebarToggle');
+        function spinToggle() {
+            if (!toggleBtn) return;
+            toggleBtn.classList.remove('spin');
+            void toggleBtn.offsetWidth;
+            toggleBtn.classList.add('spin');
+        }
+
+        function openDrawer() { sidebar.classList.add('show'); backdrop.classList.add('show'); playSidebarIntro(); }
         function closeDrawer() { sidebar.classList.remove('show'); backdrop.classList.remove('show'); }
 
         // Pulihkan state collapse di desktop
@@ -208,9 +231,11 @@ $pageTitle = trim(explode(' - ', $title ?? 'Dashboard')[0]);
         } catch (e) {}
 
         document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+            spinToggle();
             if (isDesktop()) {
                 sidebar.classList.toggle('collapsed');
                 main.classList.toggle('expanded');
+                if (!sidebar.classList.contains('collapsed')) playSidebarIntro();
                 try {
                     localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed') ? '1' : '0');
                 } catch (e) {}
