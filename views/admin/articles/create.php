@@ -30,7 +30,7 @@
                     <div class="mb-4">
                         <label for="slug" class="form-label fw-semibold">Slug (URL)</label>
                         <div class="input-group">
-                            <span class="input-group-text"><?= url('artikel/') ?></span>
+                            <span class="input-group-text slug-prefix" title="<?= url('artikel/') ?>"><span class="d-none d-md-inline"><?= url('artikel/') ?></span><span class="d-md-none">/artikel/</span></span>
                             <input type="text" class="form-control" id="slug" name="slug" 
                                    value="<?= e(old('slug')) ?>"
                                    placeholder="judul-artikel-anda">
@@ -89,7 +89,7 @@
             
             <hr class="my-4">
             
-            <div class="d-flex justify-content-end gap-2">
+            <div class="form-actions">
                 <a href="<?= url('admin/articles') ?>" class="btn btn-outline-secondary btn-lg">Batal</a>
                 <button type="submit" name="action" value="draft" class="btn btn-secondary btn-lg">
                     <i class="bi bi-file-earmark me-2"></i>Simpan Draft

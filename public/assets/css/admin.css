@@ -1,13 +1,12 @@
 /* =====================================================
    SISEENG - Admin Panel Stylesheet
    Gaya "super-app": sidebar putih, aksen hijau, kartu
-   membulat, bottom navigation di mobile.
+   membulat, sidebar jadi drawer di mobile.
    ===================================================== */
 
 :root {
     --sidebar-width: 264px;
     --header-height: 64px;
-    --bottomnav-h: 66px;
 
     --brand: #00aa13;
     --brand-dark: #008c10;
@@ -301,6 +300,15 @@ a { color: var(--brand-dark); }
 .btn-group-sm, .table .btn-group { gap: .35rem; }
 .btn-icon { width: 36px; height: 36px; padding: 0; display: inline-grid; place-items: center; border-radius: 50%; }
 
+/* Baris tombol di bawah form (Batal / Simpan / ...) */
+.form-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .5rem; }
+.form-actions .btn { white-space: nowrap; }
+
+/* Prefix URL panjang pada input slug tidak boleh melebarkan form */
+.slug-prefix { max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+.input-group:has(.slug-prefix) { flex-wrap: nowrap; }
+.input-group:has(.slug-prefix) .form-control { min-width: 0; }
+
 .form-label { font-weight: 700; color: var(--ink); font-size: .86rem; margin-bottom: .4rem; }
 .form-control, .form-select {
     border-radius: 12px;
@@ -462,52 +470,6 @@ a { color: var(--brand-dark); }
 /* Pemisah minggu di tabel jadwal */
 .week-separator td { background: var(--brand-soft) !important; color: var(--brand-darker) !important; font-size: .82rem; }
 
-/* =====================================================
-   Bottom navigation (mobile)
-   ===================================================== */
-.admin-bottomnav {
-    position: fixed;
-    left: 0; right: 0; bottom: 0;
-    z-index: 1030;
-    height: calc(var(--bottomnav-h) + env(safe-area-inset-bottom));
-    padding-bottom: env(safe-area-inset-bottom);
-    background: #fff;
-    border-top: 1px solid var(--line);
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, .04);
-    display: none;
-}
-.admin-bottomnav a, .admin-bottomnav button {
-    flex: 1;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 2px;
-    border: 0; background: none;
-    font-size: .68rem;
-    font-weight: 700;
-    color: #8a8a8a;
-    text-decoration: none;
-    position: relative;
-}
-.admin-bottomnav i { font-size: 1.3rem; line-height: 1; }
-.admin-bottomnav .active { color: var(--brand); }
-.admin-bottomnav .active::before {
-    content: '';
-    position: absolute; top: 0; left: 30%; right: 30%;
-    height: 3px; border-radius: 0 0 3px 3px;
-    background: var(--brand);
-}
-.admin-bottomnav .bn-badge {
-    position: absolute;
-    top: 8px; left: 50%;
-    margin-left: 6px;
-    min-width: 18px; height: 18px;
-    padding: 0 5px;
-    border-radius: 9px;
-    background: #ee2737;
-    color: #fff;
-    font-size: .62rem;
-    display: grid; place-items: center;
-}
-
 .sidebar-backdrop {
     position: fixed; inset: 0;
     background: rgba(0, 0, 0, .45);
@@ -530,8 +492,7 @@ a { color: var(--brand-dark); }
 @media (max-width: 991.98px) {
     .admin-sidebar { transform: translateX(-100%); box-shadow: var(--shadow-2); }
     .admin-sidebar.show { transform: translateX(0); }
-    .admin-main { margin-left: 0; padding-bottom: calc(var(--bottomnav-h) + env(safe-area-inset-bottom)); }
-    .admin-bottomnav { display: flex; }
+    .admin-main { margin-left: 0; }
 }
 
 @media (max-width: 767.98px) {
@@ -551,6 +512,19 @@ a { color: var(--brand-dark); }
         gap: .75rem;
     }
     .page-content h1.h3 { font-size: 1.3rem; }
+
+    /* Tombol lebih ringkas di mobile (btn-lg ikut mengecil) */
+    .btn { padding: .5rem 1rem; font-size: .86rem; }
+    .btn-lg { padding: .6rem 1.15rem; font-size: .9rem; }
+    .btn.px-4, .btn.px-5 { padding-left: 1.15rem !important; padding-right: 1.15rem !important; }
+    .btn-sm { padding: .35rem .75rem; font-size: .78rem; }
+    .btn-icon { padding: 0; }
+
+    /* Tombol form: aksi utama penuh di atas, sisanya berbagi baris */
+    .form-actions .btn { flex: 1 1 0; }
+    .form-actions .btn-primary { flex-basis: 100%; order: -1; }
+
+    .card-body.p-4 { padding: 1rem !important; }
 
     .modal-dialog { margin: .75rem; }
 

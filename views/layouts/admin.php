@@ -188,26 +188,6 @@ $pageTitle = trim(explode(' - ', $title ?? 'Dashboard')[0]);
         </div>
     </main>
 
-    <!-- ===== BOTTOM NAVIGATION (mobile) ===== -->
-    <nav class="admin-bottomnav" aria-label="Navigasi admin">
-        <a href="<?= url('admin/dashboard') ?>" class="<?= $matches('admin/dashboard') ? 'active' : '' ?>">
-            <i class="bi bi-house-door<?= $matches('admin/dashboard') ? '-fill' : '' ?>"></i>Beranda
-        </a>
-        <a href="<?= url('admin/jadwal-pengkhotbah') ?>" class="<?= $matches('admin/jadwal-pengkhotbah') || $matches('admin/jadwal') ? 'active' : '' ?>">
-            <i class="bi bi-calendar-week"></i>Jadwal
-        </a>
-        <a href="<?= url('admin/kegiatan') ?>" class="<?= $matches('admin/kegiatan') ? 'active' : '' ?>">
-            <i class="bi bi-calendar-event"></i>Kegiatan
-        </a>
-        <a href="<?= url('admin/pesan') ?>" class="<?= $matches('admin/pesan') ? 'active' : '' ?>">
-            <i class="bi bi-envelope<?= $matches('admin/pesan') ? '-fill' : '' ?>"></i>Pesan
-            <?php if ($unreadCount > 0): ?><span class="bn-badge"><?= $unreadCount ?></span><?php endif; ?>
-        </a>
-        <button type="button" id="bottomMenuBtn">
-            <i class="bi bi-grid"></i>Menu
-        </button>
-    </nav>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -239,7 +219,6 @@ $pageTitle = trim(explode(' - ', $title ?? 'Dashboard')[0]);
             }
         });
 
-        document.getElementById('bottomMenuBtn')?.addEventListener('click', openDrawer);
         backdrop?.addEventListener('click', closeDrawer);
 
         document.querySelectorAll('.admin-sidebar .nav-link:not(.nav-dropdown-toggle)').forEach(link => {

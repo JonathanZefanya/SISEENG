@@ -198,15 +198,6 @@ $moreActive = $aboutActive || $isActive('donasi') || $isActive('kontak');
                 <a href="<?= url('kontak') ?>" class="service-item">
                     <span class="service-icon tone-teal"><i class="bi bi-chat-dots-fill"></i></span>Kontak
                 </a>
-                <?php if (isLoggedIn()): ?>
-                    <a href="<?= url('admin/dashboard') ?>" class="service-item">
-                        <span class="service-icon tone-dark"><i class="bi bi-person-circle"></i></span><?= e(auth('name')) ?>
-                    </a>
-                <?php else: ?>
-                    <a href="<?= url('auth/login') ?>" class="service-item">
-                        <span class="service-icon tone-dark"><i class="bi bi-shield-lock-fill"></i></span>Pengerja
-                    </a>
-                <?php endif; ?>
             </div>
         </div>
     </div>

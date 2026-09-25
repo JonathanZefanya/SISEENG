@@ -49,7 +49,16 @@ function url($path = '') {
  * @return string URL asset
  */
 function asset($path) {
-    return APP_URL . '/assets/' . ltrim($path, '/');
+    $path = ltrim($path, '/');
+    $url = APP_URL . '/assets/' . $path;
+
+    // Cache-busting: versi berubah setiap file diubah, jadi browser tidak memakai CSS/JS lama
+    $file = PUBLIC_PATH . 'assets' . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $path);
+    if (is_file($file)) {
+        $url .= '?v=' . filemtime($file);
+    }
+
+    return $url;
 }
 
 /**

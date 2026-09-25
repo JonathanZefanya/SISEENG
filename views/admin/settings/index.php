@@ -10,45 +10,28 @@
     <?= csrfField() ?>
 
     <!-- Nav Tabs -->
-    <ul class="nav nav-tabs mb-4 bg-white rounded-top" id="settingsTabs" role="tablist"
-        style="border-bottom: 2px solid #dee2e6;">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active px-4 py-3" id="general-tab" data-bs-toggle="tab" data-bs-target="#general"
-                type="button" style="color: #333; font-weight: 500;">
-                <i class="bi bi-gear me-2 text-primary"></i>Umum
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link px-4 py-3" id="hero-tab" data-bs-toggle="tab" data-bs-target="#hero" type="button"
-                style="color: #333; font-weight: 500;">
-                <i class="bi bi-image me-2 text-success"></i>Hero Section
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link px-4 py-3" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact"
-                type="button" style="color: #333; font-weight: 500;">
-                <i class="bi bi-telephone me-2 text-info"></i>Kontak
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link px-4 py-3" id="donation-tab" data-bs-toggle="tab" data-bs-target="#donation"
-                type="button" style="color: #333; font-weight: 500;">
-                <i class="bi bi-heart me-2 text-danger"></i>Donasi
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link px-4 py-3" id="social-tab" data-bs-toggle="tab" data-bs-target="#social"
-                type="button" style="color: #333; font-weight: 500;">
-                <i class="bi bi-share me-2 text-warning"></i>Media Sosial
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link px-4 py-3" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button"
-                style="color: #333; font-weight: 500;">
-                <i class="bi bi-info-circle me-2 text-secondary"></i>Tentang
-            </button>
-        </li>
-    </ul>
+    <?php
+    $settingTabs = [
+        ['id' => 'general',  'icon' => 'gear',        'label' => 'Umum'],
+        ['id' => 'hero',     'icon' => 'image',       'label' => 'Hero Section'],
+        ['id' => 'contact',  'icon' => 'telephone',   'label' => 'Kontak'],
+        ['id' => 'donation', 'icon' => 'heart',       'label' => 'Donasi'],
+        ['id' => 'social',   'icon' => 'share',       'label' => 'Media Sosial'],
+        ['id' => 'about',    'icon' => 'info-circle', 'label' => 'Tentang'],
+    ];
+    ?>
+    <div class="settings-tabs-wrap mb-4">
+        <div class="nav settings-tabs" id="settingsTabs" role="tablist">
+            <span class="settings-tab-indicator" aria-hidden="true"></span>
+            <?php foreach ($settingTabs as $i => $tab): ?>
+                <button class="nav-link settings-tab<?= $i === 0 ? ' active' : '' ?>" id="<?= $tab['id'] ?>-tab"
+                    data-bs-toggle="tab" data-bs-target="#<?= $tab['id'] ?>" type="button" role="tab"
+                    aria-controls="<?= $tab['id'] ?>" aria-selected="<?= $i === 0 ? 'true' : 'false' ?>">
+                    <i class="bi bi-<?= $tab['icon'] ?>"></i><span><?= $tab['label'] ?></span>
+                </button>
+            <?php endforeach; ?>
+        </div>
+    </div>
 
     <!-- Tab Content -->
     <div class="tab-content" id="settingsTabContent">
@@ -476,17 +459,99 @@
     </div>
 
     <!-- Submit Button -->
-    <div class="card border-0 shadow-sm mt-4">
-        <div class="card-body p-4">
-            <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary btn-lg px-5">
-                    <i class="bi bi-check-lg me-2"></i>Simpan Semua Pengaturan
-                </button>
-            </div>
-        </div>
+    <div class="settings-save mt-4">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg me-1"></i>Simpan Pengaturan
+        </button>
     </div>
 </form>
 <style>
+    /* ===== Tab pengaturan: segmented control dengan indikator geser ===== */
+    .settings-tabs-wrap {
+        position: sticky;
+        top: calc(var(--header-height) + .5rem);
+        z-index: 5;
+        background: #fff;
+        border-radius: 999px;
+        padding: .35rem;
+        box-shadow: var(--shadow-1);
+    }
+    .settings-tabs {
+        position: relative;
+        flex-wrap: nowrap;
+        gap: .25rem;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+    }
+    .settings-tabs::-webkit-scrollbar { display: none; }
+
+    .settings-tab-indicator {
+        position: absolute;
+        top: 0; left: 0;
+        height: 100%;
+        width: 0;
+        border-radius: 999px;
+        background: var(--brand);
+        box-shadow: 0 6px 16px rgba(var(--brand-rgb), .35);
+        transition: transform .4s cubic-bezier(.65, 0, .35, 1.25), width .4s cubic-bezier(.65, 0, .35, 1.25);
+        z-index: 0;
+    }
+
+    .settings-tabs .settings-tab {
+        position: relative;
+        z-index: 1;
+        flex: 1 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .5rem;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        padding: .65rem 1.1rem;
+        font-weight: 700;
+        font-size: .9rem;
+        color: var(--ink-2);
+        white-space: nowrap;
+        transition: color .3s ease, background .2s ease, transform .15s ease;
+    }
+    .settings-tabs .settings-tab i { font-size: 1.05rem; transition: transform .3s ease; }
+    .settings-tabs .settings-tab:hover:not(.active) { background: var(--brand-soft); color: var(--brand-darker); }
+    .settings-tabs .settings-tab:active { transform: scale(.95); }
+    .settings-tabs .settings-tab.active { color: #fff; background: transparent; }
+    .settings-tabs .settings-tab.active i { animation: tabIconPop .45s ease; }
+    .settings-tabs .settings-tab:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+    @keyframes tabIconPop {
+        0% { transform: scale(1) rotate(0); }
+        40% { transform: scale(1.35) rotate(-12deg); }
+        100% { transform: scale(1) rotate(0); }
+    }
+
+    /* Konten tab muncul dengan geser ke atas */
+    #settingsTabContent > .tab-pane.active { animation: paneIn .4s cubic-bezier(.2, .8, .2, 1); }
+    @keyframes paneIn {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 767.98px) {
+        .settings-tabs-wrap { top: calc(var(--header-height) + .25rem); margin-left: -.25rem; margin-right: -.25rem; }
+        .settings-tabs .settings-tab { flex: 0 0 auto; padding: .6rem .95rem; font-size: .85rem; }
+    }
+
+    .settings-save { display: flex; justify-content: flex-end; }
+    .settings-save .btn { white-space: nowrap; padding: .6rem 1.4rem; font-size: .92rem; }
+    @media (max-width: 767.98px) {
+        .settings-save .btn { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .settings-tab-indicator, .settings-tabs .settings-tab { transition: none; }
+        .settings-tabs .settings-tab.active i, #settingsTabContent > .tab-pane.active { animation: none; }
+    }
+
     .theme-swatch {
         width: 38px; height: 38px;
         border-radius: 50%;
@@ -510,6 +575,33 @@
 </style>
 
 <script>
+    // Indikator tab yang bergeser mengikuti tab aktif
+    (function () {
+        const tabs = document.getElementById('settingsTabs');
+        const indicator = tabs.querySelector('.settings-tab-indicator');
+
+        function moveIndicator(btn, instant) {
+            if (!btn) return;
+            if (instant) indicator.style.transition = 'none';
+            indicator.style.width = btn.offsetWidth + 'px';
+            indicator.style.transform = 'translateX(' + btn.offsetLeft + 'px)';
+            if (instant) { indicator.offsetWidth; indicator.style.transition = ''; }
+
+            // Di mobile: pastikan tab aktif terlihat di area scroll
+            const target = btn.offsetLeft - (tabs.clientWidth - btn.offsetWidth) / 2;
+            tabs.scrollTo({ left: target });
+        }
+
+        tabs.querySelectorAll('.settings-tab').forEach(btn => {
+            btn.addEventListener('shown.bs.tab', () => moveIndicator(btn));
+        });
+
+        const current = () => tabs.querySelector('.settings-tab.active');
+        window.addEventListener('resize', () => moveIndicator(current(), true));
+        document.fonts?.ready.then(() => moveIndicator(current(), true));
+        moveIndicator(current(), true);
+    })();
+
     (function () {
         const DEFAULT = '#00aa13';
         const picker = document.getElementById('theme_color_picker');
