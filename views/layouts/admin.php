@@ -36,7 +36,7 @@ $pageTitle = trim(explode(' - ', $title ?? 'Dashboard')[0]);
     <!-- ===== SIDEBAR ===== -->
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-header">
-            <div class="sidebar-logo"><i class="bi bi-brightness-high-fill"></i></div>
+            <div class="sidebar-logo"><?= brandMark() ?></div>
             <div class="sidebar-brand">
                 SISEENG
                 <small>Pengerja Panel</small>

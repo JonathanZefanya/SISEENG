@@ -53,6 +53,8 @@
             margin-bottom: 1.25rem;
         }
 
+        .login-logo .brand-logo-img { width: 100%; height: 100%; object-fit: contain; padding: 10px; }
+
         .login-panel h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: .5rem; }
         .login-panel p { opacity: .9; margin: 0; line-height: 1.6; }
 
@@ -196,7 +198,7 @@
             <span class="bubble b2"></span>
 
             <div class="panel-content">
-                <div class="login-logo"><i class="bi bi-brightness-high-fill"></i></div>
+                <div class="login-logo"><?= brandMark() ?></div>
                 <h1>Pengerja Panel</h1>
                 <p>Selamat datang kembali di <?= e(APP_NAME) ?>. Masuk untuk mengelola konten dan jadwal pelayanan.</p>
             </div>

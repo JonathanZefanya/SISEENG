@@ -395,6 +395,22 @@ function themeStyleTag() {
  * Versi file ditambahkan ke URL agar browser memuat ulang saat logo diganti.
  * @return string
  */
+/**
+ * Isi tanda brand: logo gereja (setting site_logo) jika ada, jika tidak ikon matahari
+ * @return string HTML <img> atau <i>
+ */
+function brandMark() {
+    $logo = setting('site_logo');
+    if (!$logo) {
+        return '<i class="bi bi-brightness-high-fill"></i>';
+    }
+
+    $file = PUBLIC_PATH . 'uploads' . DIRECTORY_SEPARATOR . 'settings' . DIRECTORY_SEPARATOR . $logo;
+    $src = uploads('settings/' . $logo) . (is_file($file) ? '?v=' . filemtime($file) : '');
+
+    return '<img class="brand-logo-img" src="' . e($src) . '" alt="' . e(setting('site_name') ?: APP_NAME) . '">';
+}
+
 function faviconTag() {
     $logo = setting('site_logo');
     if (!$logo) {

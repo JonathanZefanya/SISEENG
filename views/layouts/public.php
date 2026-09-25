@@ -41,7 +41,7 @@ $moreActive = $aboutActive || $isActive('donasi') || $isActive('kontak');
                 <?php if (setting('site_logo')): ?>
                     <img src="<?= uploads('settings/' . setting('site_logo')) ?>" alt="<?= e($siteName) ?>">
                 <?php else: ?>
-                    <span class="app-brand-mark"><i class="bi bi-brightness-high-fill"></i></span>
+                    <span class="app-brand-mark"><?= brandMark() ?></span>
                 <?php endif; ?>
                 <span class="app-brand-name"><?= e($siteName) ?></span>
             </a>
@@ -106,7 +106,7 @@ $moreActive = $aboutActive || $isActive('donasi') || $isActive('kontak');
             <div class="row g-4">
                 <div class="col-lg-5">
                     <div class="app-brand mb-3">
-                        <span class="app-brand-mark"><i class="bi bi-brightness-high-fill"></i></span>
+                        <span class="app-brand-mark"><?= brandMark() ?></span>
                         <span class="app-brand-name"><?= e($siteName) ?></span>
                     </div>
                     <p class="mb-3">

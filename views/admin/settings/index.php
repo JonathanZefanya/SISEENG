@@ -113,7 +113,7 @@
                             <label class="form-label fw-semibold">Pratinjau</label>
                             <div class="theme-preview" id="themePreview">
                                 <div class="tp-header">
-                                    <i class="bi bi-brightness-high-fill"></i>
+                                    <?= brandMark() ?>
                                     <span><?= e($settings['site_name'] ?? 'Nama Gereja') ?></span>
                                 </div>
                                 <div class="tp-body">
@@ -566,6 +566,7 @@
 
     .theme-preview { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--canvas); }
     .theme-preview .tp-header { background: var(--brand); color: #fff; padding: .9rem 1rem; font-weight: 800; display: flex; gap: .5rem; align-items: center; }
+    .theme-preview .tp-header .brand-logo-img { height: 26px; width: auto; max-width: 60px; object-fit: contain; border-radius: 6px; background: #fff; padding: 2px; }
     .theme-preview .tp-body { padding: 1rem; }
     .theme-preview .tp-icon { width: 42px; height: 42px; border-radius: 13px; background: var(--brand); color: #fff; display: grid; place-items: center; font-size: 1.1rem; }
     .theme-preview .tp-icon.tp-soft { background: var(--brand-soft); color: var(--brand-darker); }
