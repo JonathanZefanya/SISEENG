@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="intro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -181,6 +181,79 @@
             .cloud:nth-child(5) { width: 160px; height: 160px; left: -110px; top: 66%; }
             .cloud:nth-child(6) { width: 140px; height: 140px; left: -40px; top: 86%; }
             .cloud:nth-child(7) { width: 120px; height: 120px; left: 22%;  top: 92%; }
+        }
+
+        /* ===== Animasi masuk (diputar setiap kali halaman login dibuka) ===== */
+        .bubble { animation: bubbleFloat 9s ease-in-out infinite alternate; }
+        .bubble.b2 { animation-duration: 7s; animation-delay: -3s; }
+
+        .intro .login-card { animation: cardIn .7s cubic-bezier(.2, .8, .2, 1) both; }
+        .intro .login-panel { animation: panelReveal .9s cubic-bezier(.7, 0, .2, 1) .15s both; }
+        .intro .cloud { animation: cloudPop .6s cubic-bezier(.34, 1.56, .64, 1) both; }
+        .intro .cloud:nth-child(1) { animation-delay: .55s; }
+        .intro .cloud:nth-child(2) { animation-delay: .62s; }
+        .intro .cloud:nth-child(3) { animation-delay: .69s; }
+        .intro .cloud:nth-child(4) { animation-delay: .76s; }
+        .intro .cloud:nth-child(5) { animation-delay: .83s; }
+        .intro .cloud:nth-child(6) { animation-delay: .90s; }
+        .intro .cloud:nth-child(7) { animation-delay: .97s; }
+
+        .intro .login-logo { animation: logoIn .9s cubic-bezier(.34, 1.56, .64, 1) .8s both; }
+        .intro .login-logo > i { display: inline-block; animation: sunSpin 1.4s cubic-bezier(.2, .8, .2, 1) .9s both; }
+        .intro .panel-content h1 { animation: fadeUp .6s ease 1.05s both; }
+        .intro .panel-content p { animation: fadeUp .6s ease 1.15s both; }
+
+        .intro .login-head,
+        .intro .login-inner form > *,
+        .intro .login-inner > .text-center,
+        .intro .login-inner > p:last-child { animation: fadeUp .55s cubic-bezier(.2, .8, .2, 1) both; }
+        .intro .login-head { animation-delay: .45s; }
+        .intro .login-inner form > :nth-child(2) { animation-delay: .6s; }
+        .intro .login-inner form > :nth-child(3) { animation-delay: .7s; }
+        .intro .login-inner form > :nth-child(4) { animation-delay: .8s; }
+        .intro .login-inner > .text-center { animation-delay: .95s; }
+        .intro .login-inner > p:last-child { animation-delay: 1.05s; }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(24px) scale(.96); }
+            to { opacity: 1; transform: none; }
+        }
+        @keyframes panelReveal {
+            from { clip-path: inset(0 0 100% 0); }
+            to { clip-path: inset(0 0 0 0); }
+        }
+        @keyframes cloudPop {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        @keyframes logoIn {
+            0% { opacity: 0; transform: translateY(-30px) scale(.4) rotate(-20deg); }
+            60% { opacity: 1; transform: translateY(4px) scale(1.08) rotate(4deg); }
+            100% { opacity: 1; transform: none; }
+        }
+        @keyframes sunSpin {
+            from { transform: rotate(-180deg); }
+            to { transform: rotate(0); }
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: none; }
+        }
+        @keyframes bubbleFloat {
+            from { transform: translate(0, 0); }
+            to { transform: translate(-18px, 22px); }
+        }
+
+        @media (min-width: 768px) {
+            /* Desktop: panel terbuka dari kanan */
+            @keyframes panelReveal {
+                from { clip-path: inset(0 0 0 100%); }
+                to { clip-path: inset(0 0 0 0); }
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .bubble, .intro *, .intro .login-card { animation: none !important; }
         }
     </style>
 </head>
