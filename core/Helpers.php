@@ -222,6 +222,40 @@ function truncate($text, $length = 100, $suffix = '...') {
 }
 
 /**
+ * Render konten rich text (HTML dari editor) dengan aman.
+ * Konten lama berupa teks biasa diubah menjadi paragraf.
+ * @param string|null $content Konten dari database
+ * @return string HTML yang sudah disanitasi, siap di-echo tanpa e()
+ */
+function richText($content) {
+    $content = (string) $content;
+
+    if (!preg_match('/<\/?[a-z][^>]*>/i', $content)) {
+        $paragraphs = preg_split('/\R{2,}/', trim($content), -1, PREG_SPLIT_NO_EMPTY);
+        return implode('', array_map(fn($p) => '<p>' . nl2br(e(trim($p)), false) . '</p>', $paragraphs));
+    }
+
+    return \Core\HtmlSanitizer::clean($content);
+}
+
+/**
+ * Ringkasan teks polos dari konten rich text
+ * @param string|null $content Konten HTML
+ * @param int $length Panjang maksimal (karakter)
+ * @return string Teks polos (tetap perlu di-escape dengan e())
+ */
+function excerpt($content, $length = 100, $suffix = '...') {
+    $text = preg_replace('/<[^>]*>/', ' ', (string) $content);
+    $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $text = trim(preg_replace('/\s+/u', ' ', str_replace("\u{00A0}", ' ', $text)));
+
+    if (mb_strlen($text) <= $length) {
+        return $text;
+    }
+    return rtrim(mb_substr($text, 0, $length)) . $suffix;
+}
+
+/**
  * Generate slug dari string
  * @param string $string String input
  * @return string Slug

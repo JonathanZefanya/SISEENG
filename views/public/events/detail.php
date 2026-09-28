@@ -23,8 +23,8 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4 p-md-5">
                         <h3 class="fw-bold text-primary mb-4">Deskripsi Kegiatan</h3>
-                        <div class="fs-5 text-muted content">
-                            <?= nl2br(e($event['description'])) ?>
+                        <div class="fs-5 text-muted content rich-content">
+                            <?= richText($event['description']) ?>
                         </div>
                     </div>
                 </div>

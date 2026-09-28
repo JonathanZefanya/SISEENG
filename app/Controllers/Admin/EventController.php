@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use Core\Controller;
+use Core\HtmlSanitizer;
 use App\Models\Event;
 use App\Models\ActivityLog;
 use App\Middleware\RoleMiddleware;
@@ -66,7 +67,7 @@ class EventController extends Controller
         $data = [
             'title' => $title,
             'slug' => $this->eventModel->generateSlug($title),
-            'description' => $this->post('description'),
+            'description' => HtmlSanitizer::clean($_POST['description'] ?? ''),
             'event_date' => $this->post('event_date'),
             'event_time' => $this->post('event_time'),
             'location' => $this->post('location'),
@@ -154,7 +155,8 @@ class EventController extends Controller
         $data = [
             'title' => $title,
             'slug' => $this->eventModel->generateSlug($title, $id),
-            'description' => $this->post('description'),
+            // Rich text: dibaca mentah lalu disanitasi whitelist (post() menjalankan stripslashes)
+            'description' => HtmlSanitizer::clean($_POST['description'] ?? ''),
             'event_date' => $this->post('event_date'),
             'event_time' => $this->post('event_time'),
             'location' => $this->post('location'),
@@ -284,8 +286,10 @@ class EventController extends Controller
             $errors[] = 'Judul kegiatan wajib diisi.';
         }
 
-        if (empty($data['description'])) {
+        if (HtmlSanitizer::isEmpty($data['description'])) {
             $errors[] = 'Deskripsi kegiatan wajib diisi.';
+        } elseif (strlen($data['description']) > 65535) {
+            $errors[] = 'Deskripsi kegiatan terlalu panjang.';
         }
 
         if (empty($data['event_date'])) {

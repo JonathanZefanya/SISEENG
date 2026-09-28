@@ -38,8 +38,8 @@
 
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4 p-md-5">
-                        <div class="article-content fs-5 lh-lg">
-                            <?= nl2br(e($article['content'])) ?>
+                        <div class="article-content rich-content fs-5 lh-lg">
+                            <?= richText($article['content']) ?>
                         </div>
                     </div>
                 </div>

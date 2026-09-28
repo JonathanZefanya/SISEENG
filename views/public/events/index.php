@@ -48,7 +48,7 @@
                                 </div>
 
                                 <p class="card-text text-muted">
-                                    <?= e(substr(strip_tags($event['description']), 0, 100)) ?>...
+                                    <?= e(excerpt($event['description'], 100)) ?>
                                 </p>
 
                                 <?php if ($event['location']): ?>

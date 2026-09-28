@@ -51,7 +51,7 @@
                                         <div>
                                             <h6 class="mb-1 fw-semibold"><?= e($event['title']) ?></h6>
                                             <small class="text-muted">
-                                                <?= e(substr($event['description'], 0, 50)) ?>...
+                                                <?= e(excerpt($event['description'], 50)) ?>
                                             </small>
                                         </div>
                                     </div>

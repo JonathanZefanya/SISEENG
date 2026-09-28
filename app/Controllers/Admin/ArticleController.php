@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use Core\Controller;
+use Core\HtmlSanitizer;
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Models\ActivityLog;
@@ -77,7 +78,8 @@ class ArticleController extends Controller
         $data = [
             'title' => $title,
             'slug' => $this->articleModel->generateSlug($title),
-            'content' => $this->post('content'),
+            // Rich text: dibaca mentah lalu disanitasi whitelist (post() menjalankan stripslashes)
+            'content' => HtmlSanitizer::clean($_POST['content'] ?? ''),
             'excerpt' => $this->post('excerpt'),
             'author_id' => auth('id'),
             'category_id' => $this->post('category_id') ?: null,
@@ -168,7 +170,8 @@ class ArticleController extends Controller
         $data = [
             'title' => $title,
             'slug' => $this->articleModel->generateSlug($title, $id),
-            'content' => $this->post('content'),
+            // Rich text: dibaca mentah lalu disanitasi whitelist (post() menjalankan stripslashes)
+            'content' => HtmlSanitizer::clean($_POST['content'] ?? ''),
             'excerpt' => $this->post('excerpt'),
             'category_id' => $this->post('category_id') ?: null,
             'status' => $this->post('status'),
@@ -302,8 +305,10 @@ class ArticleController extends Controller
             $errors[] = 'Judul artikel wajib diisi.';
         }
 
-        if (empty($data['content'])) {
+        if (HtmlSanitizer::isEmpty($data['content'])) {
             $errors[] = 'Konten artikel wajib diisi.';
+        } elseif (strlen($data['content']) > 65535) {
+            $errors[] = 'Konten artikel terlalu panjang.';
         }
 
         if (!in_array($data['status'], ['draft', 'published'])) {

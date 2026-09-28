@@ -67,7 +67,7 @@
                                         <div>
                                             <h6 class="mb-1 fw-semibold"><?= e($article['title']) ?></h6>
                                             <small class="text-muted">
-                                                <?= e(substr(strip_tags($article['content']), 0, 60)) ?>...
+                                                <?= e(excerpt($article['content'], 60)) ?>
                                             </small>
                                         </div>
                                     </div>

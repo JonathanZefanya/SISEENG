@@ -173,7 +173,7 @@ $firstPreacher = $firstService ? ($preachersByTime[$firstService['start_time']] 
                                     <span><i class="bi bi-geo-alt me-1"></i><?= e($event['location']) ?></span>
                                 <?php endif; ?>
                             </div>
-                            <p class="promo-excerpt"><?= e(truncate($event['description'], 90)) ?></p>
+                            <p class="promo-excerpt"><?= e(excerpt($event['description'], 90)) ?></p>
                         </div>
                     </a>
                 <?php endforeach; ?>

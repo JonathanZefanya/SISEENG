@@ -42,7 +42,8 @@
                         <label for="content" class="form-label fw-semibold">Konten Artikel <span
                                 class="text-danger">*</span></label>
                         <textarea class="form-control" id="content" name="content" rows="15" required
-                            placeholder="Tulis konten artikel di sini..."><?= e($article['content']) ?></textarea>
+                            data-rich-editor data-min-height="420"
+                            placeholder="Tulis konten artikel di sini..."><?= e(richText($article['content'])) ?></textarea>
                     </div>
                 </div>
 
@@ -123,6 +124,8 @@
         </form>
     </div>
 </div>
+
+<?php require VIEW_PATH . 'admin/partials/rich-editor.php'; ?>
 
 <script>
     // Image preview

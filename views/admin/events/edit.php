@@ -32,7 +32,8 @@
                         <label for="description" class="form-label fw-semibold">Deskripsi <span
                                 class="text-danger">*</span></label>
                         <textarea class="form-control" id="description" name="description" rows="8" required
-                            placeholder="Deskripsikan kegiatan ini..."><?= e($event['description']) ?></textarea>
+                            data-rich-editor data-min-height="320"
+                            placeholder="Deskripsikan kegiatan ini..."><?= e(richText($event['description'])) ?></textarea>
                     </div>
                 </div>
 
@@ -110,6 +111,8 @@
         </form>
     </div>
 </div>
+
+<?php require VIEW_PATH . 'admin/partials/rich-editor.php'; ?>
 
 <script>
     // Image preview

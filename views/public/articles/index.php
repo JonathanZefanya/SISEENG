@@ -90,7 +90,7 @@
                                 <?php endif; ?>
                                 <h2 class="card-title fw-bold"><?= e($articles[0]['title']) ?></h2>
                                 <p class="card-text text-muted fs-5 flex-grow-1">
-                                    <?= e(substr(strip_tags($articles[0]['content']), 0, 200)) ?>...
+                                    <?= e(excerpt($articles[0]['content'], 200)) ?>
                                 </p>
                                 <div class="d-flex align-items-center justify-content-between mt-auto">
                                     <small class="text-muted">
@@ -132,7 +132,7 @@
                                     <?php endif; ?>
                                     <h5 class="card-title fw-bold"><?= e($article['title']) ?></h5>
                                     <p class="card-text text-muted">
-                                        <?= e(substr(strip_tags($article['content']), 0, 100)) ?>...
+                                        <?= e(excerpt($article['content'], 100)) ?>
                                     </p>
                                 </div>
 
