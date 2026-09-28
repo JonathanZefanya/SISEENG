@@ -718,3 +718,54 @@ a { color: var(--brand-dark); }
 .rich-editor .ql-snow.ql-toolbar button:hover .ql-stroke, .rich-editor .ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke: var(--brand); }
 .rich-editor .ql-snow.ql-toolbar button:hover .ql-fill, .rich-editor .ql-snow.ql-toolbar button.ql-active .ql-fill { fill: var(--brand); }
 .rich-editor .ql-snow.ql-toolbar button:hover, .rich-editor .ql-snow.ql-toolbar button.ql-active, .rich-editor .ql-snow .ql-picker-label.ql-active { color: var(--brand); }
+
+/* Input keyword berbentuk chip (Pengaturan > Umum) */
+.tag-input {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .4rem;
+    min-height: 3.1rem;
+    cursor: text;
+}
+.tag-input:focus-within {
+    border-color: var(--brand);
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(var(--brand-rgb), .12);
+}
+.tag-input-field {
+    flex: 1 1 160px;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    padding: .2rem 0;
+    font-size: .94rem;
+}
+.tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .15rem;
+    max-width: 100%;
+    background: var(--brand);
+    color: #fff;
+    font-weight: 600;
+    font-size: .88rem;
+    line-height: 1.2;
+    padding: .38rem .35rem .38rem .7rem;
+    border-radius: 8px;
+    overflow-wrap: anywhere;
+}
+.tag-chip-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.3rem; height: 1.3rem;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    opacity: .8;
+}
+.tag-chip-remove:hover, .tag-chip-remove:focus-visible { opacity: 1; background: rgba(255, 255, 255, .2); }

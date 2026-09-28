@@ -478,7 +478,38 @@ main, .app-footer { overflow-x: clip; }
     border-radius: 50%;
     background: rgba(255, 255, 255, .06);
 }
-.home-hero .container { position: relative; z-index: 1; }
+.home-hero .container { position: relative; z-index: 2; }
+
+/* Video latar hero (opsional, dari Pengaturan) di balik lapisan warna tema transparan */
+.home-hero.has-video::before, .home-hero.has-video::after { z-index: 1; }
+.home-hero-video {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+.home-hero-video video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    /* Disembunyikan sampai video benar-benar diputar, jadi saat loading tetap warna polos */
+    opacity: 0;
+    transition: opacity .8s ease;
+}
+.home-hero-video.is-playing video { opacity: 1; }
+.home-hero-video::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(var(--brand-rgb), .78);
+}
+@media (prefers-reduced-motion: reduce) {
+    .home-hero-video { display: none; }
+}
 .home-hero .greeting { font-size: .95rem; opacity: .9; font-weight: 600; }
 .home-hero h1 { font-size: clamp(1.6rem, 4.5vw, 2.6rem); font-weight: 800; margin: .25rem 0 .75rem; }
 .home-hero .verse { font-size: clamp(.95rem, 2vw, 1.1rem); opacity: .92; max-width: 640px; margin-bottom: 0; }

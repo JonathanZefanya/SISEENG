@@ -35,7 +35,10 @@ foreach ($bnItems as $i => $item) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="<?= themeColor() ?>">
-    <meta name="description" content="<?= e($description ?? APP_NAME . ' - Gereja yang Mengasihi dan Melayani') ?>">
+    <meta name="description" content="<?= e($description ?? (setting('site_description') ?: APP_NAME . ' - Gereja yang Mengasihi dan Melayani')) ?>">
+    <?php if (setting('site_keywords')): ?>
+    <meta name="keywords" content="<?= e(setting('site_keywords')) ?>">
+    <?php endif; ?>
     <title><?= e($title ?? APP_NAME) ?></title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">

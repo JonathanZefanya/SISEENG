@@ -47,3 +47,16 @@ Options -Indexes
     Order allow,deny
     Deny from all
 </FilesMatch>
+
+# =========================================================
+# BATAS UPLOAD (video latar hero maks 20MB)
+# Hanya berlaku jika PHP berjalan sebagai modul Apache (mod_php)
+# =========================================================
+<IfModule mod_php.c>
+    php_value upload_max_filesize 25M
+    php_value post_max_size 45M
+</IfModule>
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 25M
+    php_value post_max_size 45M
+</IfModule>

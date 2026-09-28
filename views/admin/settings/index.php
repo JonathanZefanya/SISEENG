@@ -8,6 +8,7 @@
 
 <form action="<?= url('admin/pengaturan/update') ?>" method="POST" enctype="multipart/form-data">
     <?= csrfField() ?>
+    <input type="hidden" name="active_tab" id="activeTabInput" value="<?= e($activeTab) ?>">
 
     <!-- Nav Tabs -->
     <?php
@@ -19,14 +20,16 @@
         ['id' => 'social',   'icon' => 'share',       'label' => 'Media Sosial'],
         ['id' => 'about',    'icon' => 'info-circle', 'label' => 'Tentang'],
     ];
+    // Kelas tab-pane: tab yang aktif (dari ?tab=, divalidasi di controller) langsung ditampilkan
+    $paneClass = fn($id) => 'tab-pane fade' . ($id === $activeTab ? ' show active' : '');
     ?>
     <div class="settings-tabs-wrap mb-4">
         <div class="nav settings-tabs" id="settingsTabs" role="tablist">
             <span class="settings-tab-indicator" aria-hidden="true"></span>
-            <?php foreach ($settingTabs as $i => $tab): ?>
-                <button class="nav-link settings-tab<?= $i === 0 ? ' active' : '' ?>" id="<?= $tab['id'] ?>-tab"
+            <?php foreach ($settingTabs as $tab): ?>
+                <button class="nav-link settings-tab<?= $tab['id'] === $activeTab ? ' active' : '' ?>" id="<?= $tab['id'] ?>-tab"
                     data-bs-toggle="tab" data-bs-target="#<?= $tab['id'] ?>" type="button" role="tab"
-                    aria-controls="<?= $tab['id'] ?>" aria-selected="<?= $i === 0 ? 'true' : 'false' ?>">
+                    aria-controls="<?= $tab['id'] ?>" aria-selected="<?= $tab['id'] === $activeTab ? 'true' : 'false' ?>">
                     <i class="bi bi-<?= $tab['icon'] ?>"></i><span><?= $tab['label'] ?></span>
                 </button>
             <?php endforeach; ?>
@@ -37,7 +40,7 @@
     <div class="tab-content" id="settingsTabContent">
 
         <!-- Tab: Umum -->
-        <div class="tab-pane fade show active" id="general" role="tabpanel">
+        <div class="<?= $paneClass('general') ?>" id="general" role="tabpanel">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0 fw-bold"><i class="bi bi-gear me-2 text-primary"></i>Pengaturan Umum</h5>
@@ -61,6 +64,15 @@
                             <textarea class="form-control" id="site_description" name="site_description" rows="3"
                                 placeholder="Deskripsi singkat tentang gereja"><?= e($settings['site_description'] ?? '') ?></textarea>
                             <small class="text-muted">Digunakan untuk SEO dan meta description</small>
+                        </div>
+                        <div class="col-12">
+                            <label for="site_keywords_input" class="form-label fw-semibold">Keyword SEO</label>
+                            <div class="tag-input form-control" data-tag-input>
+                                <input type="hidden" name="site_keywords" value="<?= e($settings['site_keywords'] ?? '') ?>">
+                                <input type="text" id="site_keywords_input" class="tag-input-field" autocomplete="off"
+                                    placeholder="Ketik keyword lalu tekan koma atau Enter">
+                            </div>
+                            <small class="text-muted">Pisahkan dengan koma, mis. <em>gereja ciseeng, ibadah minggu, GBI</em>. Maksimal 30 keyword.</small>
                         </div>
 
                         <!-- Warna Tema -->
@@ -135,7 +147,7 @@
                         </div>
                         <div class="col-md-6">
                             <label for="site_logo" class="form-label fw-semibold">Upload Logo</label>
-                            <input type="file" class="form-control form-control-lg" id="site_logo" name="site_logo"
+                            <input type="file" class="form-control form-control-lg" id="site_logo" name="site_logo" data-max-mb="5"
                                 accept="image/*">
                             <small class="text-muted">Format: JPG, PNG, SVG. Ukuran maksimal: 2MB. Rekomendasi: 200x60
                                 px</small>
@@ -159,7 +171,7 @@
         </div>
 
         <!-- Tab: Hero Section -->
-        <div class="tab-pane fade" id="hero" role="tabpanel">
+        <div class="<?= $paneClass('hero') ?>" id="hero" role="tabpanel">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0 fw-bold"><i class="bi bi-image me-2 text-primary"></i>Hero Section (Bagian Atas
@@ -170,7 +182,7 @@
                         <!-- Hero Image Upload -->
                         <div class="col-md-6">
                             <label for="hero_image" class="form-label fw-semibold">Upload Gambar Hero</label>
-                            <input type="file" class="form-control form-control-lg" id="hero_image" name="hero_image"
+                            <input type="file" class="form-control form-control-lg" id="hero_image" name="hero_image" data-max-mb="5"
                                 accept="image/*">
                             <small class="text-muted">Format: JPG, PNG, SVG. Ukuran maksimal: 5MB. Rekomendasi: 600x400
                                 px</small>
@@ -185,6 +197,33 @@
                                 <?php else: ?>
                                     <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
                                     <p class="small text-muted mb-0">Menggunakan gambar default</p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <hr class="my-2">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="hero_video" class="form-label fw-semibold">Video Latar <span class="text-muted fw-normal">- opsional</span></label>
+                            <input type="file" class="form-control form-control-lg" id="hero_video" name="hero_video" data-max-mb="20"
+                                accept="video/mp4,video/webm">
+                            <small class="text-muted">Format: MP4 atau WebM. Maksimal 20MB. Diputar otomatis tanpa suara dan berulang di belakang warna tema yang transparan. Rekomendasi: 720p, 10–30 detik, tanpa audio.</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Video Latar Saat Ini</label>
+                            <div class="p-3 bg-light rounded text-center">
+                                <?php if (!empty($settings['hero_video'])): ?>
+                                    <video src="<?= uploads('settings/' . $settings['hero_video']) ?>" muted loop autoplay playsinline
+                                        style="max-height: 100px; max-width: 100%;" class="rounded"></video>
+                                    <p class="small text-muted mt-2 mb-2"><?= e($settings['hero_video']) ?></p>
+                                    <div class="form-check d-inline-block">
+                                        <input class="form-check-input" type="checkbox" id="hero_video_remove" name="hero_video_remove" value="1">
+                                        <label class="form-check-label small" for="hero_video_remove">Hapus video (kembali ke warna polos)</label>
+                                    </div>
+                                <?php else: ?>
+                                    <i class="bi bi-camera-video text-muted" style="font-size: 3rem;"></i>
+                                    <p class="small text-muted mb-0">Tidak ada video, latar memakai warna tema</p>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -221,7 +260,7 @@
         </div>
 
         <!-- Tab: Kontak -->
-        <div class="tab-pane fade" id="contact" role="tabpanel">
+        <div class="<?= $paneClass('contact') ?>" id="contact" role="tabpanel">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0 fw-bold"><i class="bi bi-telephone me-2 text-primary"></i>Informasi Kontak</h5>
@@ -312,7 +351,7 @@
         </div>
 
         <!-- Tab: Donasi -->
-        <div class="tab-pane fade" id="donation" role="tabpanel">
+        <div class="<?= $paneClass('donation') ?>" id="donation" role="tabpanel">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0 fw-bold"><i class="bi bi-heart me-2 text-primary"></i>Informasi Donasi</h5>
@@ -346,7 +385,7 @@
         </div>
 
         <!-- Tab: Media Sosial -->
-        <div class="tab-pane fade" id="social" role="tabpanel">
+        <div class="<?= $paneClass('social') ?>" id="social" role="tabpanel">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0 fw-bold"><i class="bi bi-share me-2 text-primary"></i>Media Sosial</h5>
@@ -395,7 +434,7 @@
         </div>
 
         <!-- Tab: Tentang -->
-        <div class="tab-pane fade" id="about" role="tabpanel">
+        <div class="<?= $paneClass('about') ?>" id="about" role="tabpanel">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0 fw-bold"><i class="bi bi-info-circle me-2 text-primary"></i>Tentang Gereja</h5>
@@ -409,7 +448,7 @@
                         </div>
                         <div class="col-md-6">
                             <label for="about_image" class="form-label fw-semibold">Upload Foto Gereja</label>
-                            <input type="file" class="form-control form-control-lg" id="about_image" name="about_image"
+                            <input type="file" class="form-control form-control-lg" id="about_image" name="about_image" data-max-mb="5"
                                 accept="image/*">
                             <small class="text-muted">Format: JPG, PNG, WebP. Maks: 5MB. Rekomendasi: 600x400 px</small>
                         </div>
@@ -576,6 +615,89 @@
 </style>
 
 <script>
+    // Cek ukuran file sebelum diupload, agar file besar tidak sempat dikirim ke server
+    document.querySelectorAll('input[type="file"][data-max-mb]').forEach(input => {
+        const feedback = document.createElement('div');
+        feedback.className = 'invalid-feedback';
+        input.after(feedback);
+
+        input.addEventListener('change', () => {
+            const maxMb = Number(input.dataset.maxMb);
+            const file = input.files[0];
+            const tooBig = file && file.size > maxMb * 1024 * 1024;
+
+            input.classList.toggle('is-invalid', !!tooBig);
+            if (tooBig) {
+                const sizeMb = (file.size / 1024 / 1024).toFixed(1);
+                feedback.textContent = `Ukuran file ${sizeMb}MB melebihi batas ${maxMb}MB. Kompres file terlebih dahulu.`;
+                input.value = '';
+            }
+        });
+    });
+
+    // Input keyword berbentuk chip: koma / Enter mengubah teks menjadi chip,
+    // nilainya disimpan sebagai teks dipisah koma di input hidden
+    document.querySelectorAll('[data-tag-input]').forEach(box => {
+        const MAX_TAGS = 30;
+        const hidden = box.querySelector('input[type="hidden"]');
+        const field = box.querySelector('.tag-input-field');
+        let tags = [];
+
+        function render() {
+            box.querySelectorAll('.tag-chip').forEach(chip => chip.remove());
+            tags.forEach((tag, i) => {
+                const chip = document.createElement('span');
+                chip.className = 'tag-chip';
+                chip.textContent = tag;
+
+                const remove = document.createElement('button');
+                remove.type = 'button';
+                remove.className = 'tag-chip-remove';
+                remove.setAttribute('aria-label', 'Hapus keyword ' + tag);
+                remove.innerHTML = '<i class="bi bi-x"></i>';
+                remove.addEventListener('click', () => { tags.splice(i, 1); render(); field.focus(); });
+
+                chip.appendChild(remove);
+                box.insertBefore(chip, field);
+            });
+            hidden.value = tags.join(', ');
+            field.placeholder = tags.length ? '' : 'Ketik keyword lalu tekan koma atau Enter';
+        }
+
+        function add(text) {
+            text.split(',').forEach(part => {
+                const tag = part.replace(/\s+/g, ' ').trim().slice(0, 50);
+                const exists = tags.some(t => t.toLowerCase() === tag.toLowerCase());
+                if (tag && !exists && tags.length < MAX_TAGS) tags.push(tag);
+            });
+            render();
+        }
+
+        field.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault(); // Enter jangan sampai submit form
+                add(field.value);
+                field.value = '';
+            } else if (e.key === 'Backspace' && field.value === '' && tags.length) {
+                tags.pop();
+                render();
+            }
+        });
+        // Mis. paste "a, b, c" atau keyboard HP yang tidak mengirim keydown koma
+        field.addEventListener('input', () => {
+            if (field.value.includes(',')) {
+                const parts = field.value.split(',');
+                field.value = parts.pop();
+                add(parts.join(','));
+            }
+        });
+        // Teks yang belum jadi chip tetap disimpan
+        field.addEventListener('blur', () => { if (field.value.trim()) { add(field.value); field.value = ''; } });
+        box.addEventListener('click', e => { if (e.target === box) field.focus(); });
+
+        add(hidden.value);
+    });
+
     // Indikator tab yang bergeser mengikuti tab aktif
     (function () {
         const tabs = document.getElementById('settingsTabs');
@@ -593,8 +715,18 @@
             tabs.scrollTo({ left: target });
         }
 
+        const activeTabInput = document.getElementById('activeTabInput');
         tabs.querySelectorAll('.settings-tab').forEach(btn => {
-            btn.addEventListener('shown.bs.tab', () => moveIndicator(btn));
+            btn.addEventListener('shown.bs.tab', () => {
+                moveIndicator(btn);
+
+                // Ingat tab aktif: dikirim saat simpan & disimpan di URL agar refresh tetap di tab ini
+                const id = btn.getAttribute('aria-controls');
+                activeTabInput.value = id;
+                const url = new URL(window.location.href);
+                url.searchParams.set('tab', id);
+                history.replaceState(null, '', url);
+            });
         });
 
         const current = () => tabs.querySelector('.settings-tab.active');

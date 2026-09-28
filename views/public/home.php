@@ -4,10 +4,19 @@ $hour = (int) date('G');
 $greeting = $hour < 11 ? 'Selamat pagi' : ($hour < 15 ? 'Selamat siang' : ($hour < 18 ? 'Selamat sore' : 'Selamat malam'));
 $firstService = $schedules[0] ?? null;
 $firstPreacher = $firstService ? ($preachersByTime[$firstService['start_time']] ?? null) : null;
+$heroVideo = setting('hero_video');
 ?>
 
 <!-- ===== HERO ===== -->
-<section class="home-hero">
+<section class="home-hero<?= $heroVideo ? ' has-video' : '' ?>">
+    <?php if ($heroVideo): ?>
+        <!-- Video latar tanpa suara & berulang di balik lapisan warna tema; tampil setelah mulai diputar -->
+        <div class="home-hero-video" aria-hidden="true">
+            <video src="<?= e(uploads('settings/' . $heroVideo)) ?>" autoplay muted loop playsinline preload="auto"
+                   disablepictureinpicture disableremoteplayback tabindex="-1"
+                   onplaying="this.parentNode.classList.add('is-playing')"></video>
+        </div>
+    <?php endif; ?>
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8">

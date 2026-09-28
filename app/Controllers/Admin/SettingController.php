@@ -15,6 +15,18 @@ use App\Middleware\RoleMiddleware;
 class SettingController extends Controller
 {
     protected $layout = 'admin';
+
+    /** Tipe file yang diizinkan (MIME hasil deteksi isi file => ekstensi yang disimpan) */
+    private const IMAGE_TYPES = [
+        'image/jpeg' => 'jpg', 'image/png' => 'png', 'image/gif' => 'gif',
+        'image/svg+xml' => 'svg', 'image/webp' => 'webp',
+    ];
+    private const VIDEO_TYPES = ['video/mp4' => 'mp4', 'video/webm' => 'webm'];
+    private const VIDEO_MAX_SIZE = 20 * 1024 * 1024; // 20MB
+
+    /** ID tab di halaman pengaturan (lihat views/admin/settings/index.php) */
+    private const TABS = ['general', 'hero', 'contact', 'donation', 'social', 'about'];
+
     private $settingModel;
     private $uploadPath;
 
@@ -40,6 +52,7 @@ class SettingController extends Controller
         $this->view('admin/settings/index', [
             'title' => 'Pengaturan Website - ' . APP_NAME,
             'settings' => $settings,
+            'activeTab' => $this->validTab($this->get('tab')),
         ]);
     }
 
@@ -53,12 +66,20 @@ class SettingController extends Controller
             return;
         }
 
+        // Jika total upload melebihi post_max_size, PHP mengosongkan $_POST (termasuk token CSRF)
+        if (empty($_POST) && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
+            setFlash('error', 'Ukuran file yang diupload terlalu besar. Maksimal video ' . round(self::VIDEO_MAX_SIZE / 1024 / 1024) . 'MB.');
+            $this->redirect('admin/pengaturan');
+            return;
+        }
+
         $this->validateCsrf();
 
         // Handle file uploads
         $logoFilename = $this->handleFileUpload('site_logo', 'logo');
         $heroFilename = $this->handleFileUpload('hero_image', 'hero');
         $aboutFilename = $this->handleFileUpload('about_image', 'about');
+        $heroVideoFilename = $this->handleFileUpload('hero_video', 'hero_video', self::VIDEO_TYPES, self::VIDEO_MAX_SIZE);
 
         // Ambil semua data dari form
         $data = [
@@ -66,6 +87,7 @@ class SettingController extends Controller
             'site_name' => $this->post('site_name') ?? '',
             'site_tagline' => $this->post('site_tagline') ?? '',
             'site_description' => $this->post('site_description') ?? '',
+            'site_keywords' => $this->normalizeKeywords($this->post('site_keywords') ?? ''),
             'site_email' => $this->post('site_email') ?? '',
             'site_phone' => $this->post('site_phone') ?? '',
             'site_whatsapp' => $this->post('site_whatsapp') ?? '',
@@ -108,6 +130,14 @@ class SettingController extends Controller
             $data['theme_color'] = $themeColor;
         }
 
+        // Video latar hero (opsional)
+        if ($heroVideoFilename) {
+            $data['hero_video'] = $heroVideoFilename;
+        } elseif ($this->post('hero_video_remove')) {
+            $this->deleteUploadedFile(Setting::get('hero_video'));
+            $data['hero_video'] = '';
+        }
+
         // Tambahkan file yang diupload jika ada
         if ($logoFilename) {
             $data['site_logo'] = $logoFilename;
@@ -126,7 +156,34 @@ class SettingController extends Controller
             setFlash('error', 'Gagal menyimpan pengaturan.');
         }
 
-        $this->redirect('admin/pengaturan');
+        // Kembali ke tab yang sedang dibuka saat menyimpan
+        $this->redirect('admin/pengaturan?tab=' . $this->validTab($this->post('active_tab')));
+    }
+
+    /**
+     * Rapikan keyword SEO: pisah koma, trim, buang duplikat & kosong,
+     * maks 30 keyword @ 50 karakter. Hasil: "a, b, c"
+     */
+    private function normalizeKeywords(string $keywords): string
+    {
+        $result = [];
+        foreach (explode(',', $keywords) as $keyword) {
+            $keyword = mb_substr(trim(preg_replace('/\s+/u', ' ', $keyword)), 0, 50);
+            $key = mb_strtolower($keyword);
+            if ($keyword !== '' && !isset($result[$key])) {
+                $result[$key] = $keyword;
+            }
+        }
+
+        return implode(', ', array_slice(array_values($result), 0, 30));
+    }
+
+    /**
+     * Pastikan tab ada di daftar, jika tidak kembali ke tab "Umum"
+     */
+    private function validTab($tab): string
+    {
+        return in_array($tab, self::TABS, true) ? $tab : 'general';
     }
 
     /**
@@ -134,47 +191,66 @@ class SettingController extends Controller
      * 
      * @param string $fieldName Nama field di form
      * @param string $prefix Prefix untuk nama file
+     * @param array $allowedTypes MIME => ekstensi yang diizinkan
+     * @param int $maxSize Ukuran maksimal (byte)
      * @return string|null Nama file atau null jika tidak ada upload
      */
-    private function handleFileUpload(string $fieldName, string $prefix): ?string
+    private function handleFileUpload(string $fieldName, string $prefix, array $allowedTypes = self::IMAGE_TYPES, int $maxSize = 5 * 1024 * 1024): ?string
     {
-        if (!isset($_FILES[$fieldName]) || $_FILES[$fieldName]['error'] !== UPLOAD_ERR_OK) {
+        if (!isset($_FILES[$fieldName]) || $_FILES[$fieldName]['error'] === UPLOAD_ERR_NO_FILE) {
             return null;
         }
 
         $file = $_FILES[$fieldName];
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 'image/webp'];
-        $maxSize = 5 * 1024 * 1024; // 5MB
+        $maxMb = round($maxSize / 1024 / 1024);
 
-        // Validasi tipe file
-        if (!in_array($file['type'], $allowedTypes)) {
-            setFlash('error', 'Tipe file tidak diizinkan. Gunakan JPG, PNG, GIF, SVG, atau WebP.');
+        if (in_array($file['error'], [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true)) {
+            setFlash('error', "Ukuran file terlalu besar. Maksimal {$maxMb}MB.");
+            return null;
+        }
+        if ($file['error'] !== UPLOAD_ERR_OK || !is_uploaded_file($file['tmp_name'])) {
+            setFlash('error', 'Gagal mengupload file.');
             return null;
         }
 
         // Validasi ukuran
         if ($file['size'] > $maxSize) {
-            setFlash('error', 'Ukuran file terlalu besar. Maksimal 5MB.');
+            setFlash('error', "Ukuran file terlalu besar. Maksimal {$maxMb}MB.");
+            return null;
+        }
+
+        // Validasi tipe dari ISI file (bukan dari $_FILES['type'] / nama file yang dikirim browser),
+        // dan ekstensi ditentukan server agar file seperti "shell.php" tidak bisa tersimpan
+        $mime = (new \finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
+        if (!isset($allowedTypes[$mime])) {
+            $allowed = strtoupper(implode(', ', array_unique($allowedTypes)));
+            setFlash('error', "Tipe file tidak diizinkan. Gunakan {$allowed}.");
             return null;
         }
 
         // Generate nama file unik
-        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $filename = $prefix . '_' . time() . '.' . $extension;
-        $destination = $this->uploadPath . $filename;
-
-        // Hapus file lama jika ada
-        $oldFile = Setting::get($fieldName);
-        if ($oldFile && file_exists($this->uploadPath . $oldFile)) {
-            unlink($this->uploadPath . $oldFile);
-        }
+        $filename = $prefix . '_' . time() . '.' . $allowedTypes[$mime];
 
         // Pindahkan file
-        if (move_uploaded_file($file['tmp_name'], $destination)) {
-            return $filename;
+        if (!move_uploaded_file($file['tmp_name'], $this->uploadPath . $filename)) {
+            setFlash('error', 'Gagal mengupload file.');
+            return null;
         }
 
-        setFlash('error', 'Gagal mengupload file.');
-        return null;
+        // Hapus file lama setelah file baru berhasil disimpan
+        $this->deleteUploadedFile(Setting::get($fieldName));
+
+        return $filename;
+    }
+
+    /**
+     * Hapus file lama di folder upload pengaturan
+     */
+    private function deleteUploadedFile(?string $filename): void
+    {
+        $filename = basename((string) $filename);
+        if ($filename !== '' && is_file($this->uploadPath . $filename)) {
+            unlink($this->uploadPath . $filename);
+        }
     }
 }
