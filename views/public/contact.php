@@ -135,14 +135,7 @@ $siteOperationalHours = setting('site_operational_hours');
                     <div class="flex-grow-1 ms-4">
                         <h5 class="fw-bold">WhatsApp</h5>
                         <p class="text-muted fs-5 mb-0">
-                            <?php 
-                            $waNumber = preg_replace('/[^0-9]/', '', $siteWhatsapp);
-                            // Convert 08xxx to 628xxx
-                            if (substr($waNumber, 0, 1) === '0') {
-                                $waNumber = '62' . substr($waNumber, 1);
-                            }
-                            ?>
-                            <a href="https://wa.me/<?= e($waNumber) ?>" target="_blank" class="text-decoration-none text-muted">
+                            <a href="<?= e(waLink($siteWhatsapp)) ?>" target="_blank" rel="noopener" class="text-decoration-none text-muted">
                                 <?= e($siteWhatsapp) ?>
                             </a>
                         </p>

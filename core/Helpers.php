@@ -256,6 +256,24 @@ function excerpt($content, $length = 100, $suffix = '...') {
 }
 
 /**
+ * Link chat WhatsApp (wa.me) dari nomor bebas format, mis. "0812-3456-7890" / "+62 812..."
+ * @param string|null $number Nomor WhatsApp
+ * @param string $text Pesan awal (opsional)
+ * @return string|null URL wa.me, atau null jika nomor kosong/tidak valid
+ */
+function waLink($number, $text = '') {
+    $digits = preg_replace('/[^0-9]/', '', (string) $number);
+    if (str_starts_with($digits, '0')) {
+        $digits = '62' . substr($digits, 1); // 08xxx -> 628xxx
+    }
+    if (strlen($digits) < 8) {
+        return null;
+    }
+
+    return 'https://wa.me/' . $digits . ($text !== '' ? '?text=' . rawurlencode($text) : '');
+}
+
+/**
  * Generate slug dari string
  * @param string $string String input
  * @return string Slug

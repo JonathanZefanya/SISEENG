@@ -178,6 +178,131 @@ foreach ($bnItems as $i => $item) {
         </div>
     </footer>
 
+    <!-- ===== CHAT WHATSAPP MENGAMBANG =====
+         Pengunjung menulis pesan di sini; tombol Kirim membuka WhatsApp dengan pesan tersebut -->
+    <?php
+    $waChatUrl = waLink(setting('site_whatsapp'));
+    $waGreeting = trim(setting('wa_greeting')) ?: 'Apakah ada yang bisa kita bantu?';
+    ?>
+    <?php if ($waChatUrl): ?>
+        <div class="wa-widget" id="waWidget" data-wa-url="<?= e($waChatUrl) ?>">
+            <div class="wa-panel" id="waPanel" role="dialog" aria-label="Chat WhatsApp <?= e($siteName) ?>" aria-hidden="true" inert>
+                <div class="wa-panel-head">
+                    <span class="wa-avatar"><?= brandMark() ?></span>
+                    <div class="wa-panel-title">
+                        <strong><?= e($siteName) ?></strong>
+                        <small><i class="bi bi-whatsapp"></i> Balasan dikirim via WhatsApp</small>
+                    </div>
+                    <button type="button" class="wa-panel-close" data-wa-close aria-label="Tutup chat"><i class="bi bi-x-lg"></i></button>
+                </div>
+
+                <div class="wa-panel-body" id="waMessages" aria-live="polite">
+                    <div class="wa-typing" aria-hidden="true"><span></span><span></span><span></span></div>
+                    <div class="wa-bubble wa-bubble-in wa-greeting">
+                        <?= nl2br(e($waGreeting)) ?>
+                        <time class="wa-bubble-time"></time>
+                    </div>
+                </div>
+
+                <form class="wa-panel-form" id="waForm">
+                    <label for="waInput" class="visually-hidden">Tulis pesan</label>
+                    <textarea id="waInput" rows="1" maxlength="1000" placeholder="Tulis pesan..." required></textarea>
+                    <button type="submit" class="wa-send" aria-label="Kirim via WhatsApp" disabled><i class="bi bi-send-fill"></i></button>
+                </form>
+            </div>
+
+            <button type="button" class="wa-float" id="waToggle" aria-expanded="false" aria-controls="waPanel" aria-label="Buka chat WhatsApp">
+                <span class="wa-float-label"><?= e($waGreeting) ?></span>
+                <span class="wa-float-btn">
+                    <i class="bi bi-whatsapp wa-icon-open"></i>
+                    <i class="bi bi-x-lg wa-icon-close"></i>
+                </span>
+            </button>
+        </div>
+        <script>
+            (function () {
+                var widget = document.getElementById('waWidget');
+                var panel = document.getElementById('waPanel');
+                var toggle = document.getElementById('waToggle');
+                var form = document.getElementById('waForm');
+                var input = document.getElementById('waInput');
+                var sendBtn = form.querySelector('.wa-send');
+                var messages = document.getElementById('waMessages');
+                var greeted = false;
+
+                function timeNow() {
+                    var d = new Date();
+                    return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+                }
+
+                function setOpen(open) {
+                    widget.classList.toggle('is-open', open);
+                    toggle.setAttribute('aria-expanded', open);
+                    toggle.setAttribute('aria-label', open ? 'Tutup chat WhatsApp' : 'Buka chat WhatsApp');
+                    panel.setAttribute('aria-hidden', !open);
+                    panel.inert = !open;
+
+                    if (open) {
+                        // Pertama kali dibuka: animasi "sedang mengetik" lalu pesan sapaan muncul
+                        if (!greeted) {
+                            greeted = true;
+                            panel.querySelector('.wa-bubble-time').textContent = timeNow();
+                            setTimeout(function () { widget.classList.add('is-greeted'); }, 900);
+                        }
+                        setTimeout(function () { input.focus(); }, 250);
+                    }
+                }
+
+                function autosize() {
+                    input.style.height = 'auto';
+                    input.style.height = Math.min(input.scrollHeight, 110) + 'px';
+                    sendBtn.disabled = input.value.trim() === '';
+                }
+
+                toggle.addEventListener('click', function () { setOpen(!widget.classList.contains('is-open')); });
+                panel.querySelector('[data-wa-close]').addEventListener('click', function () { setOpen(false); toggle.focus(); });
+                input.addEventListener('input', autosize);
+
+                // Enter = kirim, Shift+Enter = baris baru
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+                        e.preventDefault();
+                        form.requestSubmit();
+                    }
+                });
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    var text = input.value.trim();
+                    if (!text) return;
+
+                    window.open(widget.dataset.waUrl + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
+
+                    // Tampilkan pesan pengunjung di jendela chat sebagai tanda sudah dikirim
+                    var bubble = document.createElement('div');
+                    bubble.className = 'wa-bubble wa-bubble-out';
+                    bubble.textContent = text;
+                    var time = document.createElement('time');
+                    time.className = 'wa-bubble-time';
+                    time.innerHTML = timeNow() + ' <i class="bi bi-check2-all"></i>';
+                    bubble.appendChild(time);
+                    messages.appendChild(bubble);
+                    messages.scrollTop = messages.scrollHeight;
+
+                    input.value = '';
+                    autosize();
+                });
+
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape' && widget.classList.contains('is-open')) { setOpen(false); toggle.focus(); }
+                });
+                document.addEventListener('click', function (e) {
+                    if (widget.classList.contains('is-open') && !widget.contains(e.target)) setOpen(false);
+                });
+            })();
+        </script>
+    <?php endif; ?>
+
     <!-- ===== BOTTOM NAVIGATION (mobile) ===== -->
     <nav class="app-bottomnav d-lg-none<?= $bnIndex < 0 ? ' no-active' : '' ?>" id="appBottomnav" aria-label="Navigasi utama"
          style="--bn-count: <?= count($bnItems) ?>; --bn-i: <?= max($bnIndex, 0) ?>;" data-bn-index="<?= $bnIndex ?>">

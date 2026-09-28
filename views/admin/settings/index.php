@@ -300,6 +300,12 @@
                             <small class="text-muted">Pisahkan dengan baris baru (enter) untuk setiap hari</small>
                         </div>
                         <div class="col-12">
+                            <label for="wa_greeting" class="form-label fw-semibold">Pesan Sapaan Chat WhatsApp</label>
+                            <textarea class="form-control" id="wa_greeting" name="wa_greeting" rows="2" maxlength="300"
+                                placeholder="Apakah ada yang bisa kita bantu?"><?= e($settings['wa_greeting'] ?? '') ?></textarea>
+                            <small class="text-muted">Pesan pertama yang tampil di jendela chat tombol WhatsApp (kanan bawah website). Kosongkan untuk memakai pesan bawaan.</small>
+                        </div>
+                        <div class="col-12">
                             <label for="site_address" class="form-label fw-semibold">Alamat Lengkap</label>
                             <textarea class="form-control" id="site_address" name="site_address" rows="3"
                                 placeholder="Jl. Gereja No. 123, Kelurahan, Kecamatan, Kota, Kode Pos"><?= e($settings['site_address'] ?? '') ?></textarea>

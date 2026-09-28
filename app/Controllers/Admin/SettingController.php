@@ -91,6 +91,7 @@ class SettingController extends Controller
             'site_email' => $this->post('site_email') ?? '',
             'site_phone' => $this->post('site_phone') ?? '',
             'site_whatsapp' => $this->post('site_whatsapp') ?? '',
+            'wa_greeting' => mb_substr($this->post('wa_greeting') ?? '', 0, 300),
             'site_address' => $this->post('site_address') ?? '',
             'site_operational_hours' => $this->post('site_operational_hours') ?? '',
             'site_gmaps_embed' => $this->post('site_gmaps_embed') ?? '',
