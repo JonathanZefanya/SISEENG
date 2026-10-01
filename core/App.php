@@ -125,22 +125,29 @@ class App
             'admin/kategori-artikel/delete' => ['controller' => 'Admin\ArticleCategory', 'action' => 'delete'],
             'admin/kategori-artikel/toggle-status' => ['controller' => 'Admin\ArticleCategory', 'action' => 'toggleStatus'],
 
-            // Admin - Jemaat (Indonesian & English URLs)
+            // Admin - Jemaat (berbasis Kartu Keluarga)
             'admin/jemaat' => ['controller' => 'Admin\Member', 'action' => 'index'],
             'admin/jemaat/tambah' => ['controller' => 'Admin\Member', 'action' => 'create'],
             'admin/jemaat/simpan' => ['controller' => 'Admin\Member', 'action' => 'store'],
             'admin/jemaat/detail' => ['controller' => 'Admin\Member', 'action' => 'show'],
-            'admin/jemaat/edit' => ['controller' => 'Admin\Member', 'action' => 'edit'],
-            'admin/jemaat/update' => ['controller' => 'Admin\Member', 'action' => 'update'],
-            'admin/jemaat/hapus' => ['controller' => 'Admin\Member', 'action' => 'delete'],
-            // English aliases
+            'admin/jemaat/cari' => ['controller' => 'Admin\Member', 'action' => 'search'],
+            'admin/jemaat/edit-kk' => ['controller' => 'Admin\Member', 'action' => 'editFamily'],
+            'admin/jemaat/hapus-kk' => ['controller' => 'Admin\Member', 'action' => 'deleteFamily'],
+            'admin/jemaat/anggota/tambah' => ['controller' => 'Admin\Member', 'action' => 'addMember'],
+            'admin/jemaat/anggota/edit' => ['controller' => 'Admin\Member', 'action' => 'editMember'],
+            'admin/jemaat/anggota/status' => ['controller' => 'Admin\Member', 'action' => 'status'],
+            'admin/jemaat/anggota/pernikahan' => ['controller' => 'Admin\Member', 'action' => 'marital'],
+            'admin/jemaat/anggota/pindah' => ['controller' => 'Admin\Member', 'action' => 'move'],
+            'admin/jemaat/anggota/kepala' => ['controller' => 'Admin\Member', 'action' => 'head'],
+            'admin/jemaat/anggota/menikah' => ['controller' => 'Admin\Member', 'action' => 'marry'],
+            'admin/jemaat/anggota/cerai' => ['controller' => 'Admin\Member', 'action' => 'divorce'],
+            'admin/jemaat/anggota/hapus' => ['controller' => 'Admin\Member', 'action' => 'deleteMember'],
+            // Link lama (per orang) diarahkan ke halaman setara
+            'admin/jemaat/edit' => ['controller' => 'Admin\Member', 'action' => 'editMember'],
             'admin/members' => ['controller' => 'Admin\Member', 'action' => 'index'],
             'admin/members/create' => ['controller' => 'Admin\Member', 'action' => 'create'],
-            'admin/members/store' => ['controller' => 'Admin\Member', 'action' => 'store'],
-            'admin/members/show' => ['controller' => 'Admin\Member', 'action' => 'show'],
-            'admin/members/edit' => ['controller' => 'Admin\Member', 'action' => 'edit'],
-            'admin/members/update' => ['controller' => 'Admin\Member', 'action' => 'update'],
-            'admin/members/delete' => ['controller' => 'Admin\Member', 'action' => 'delete'],
+            'admin/members/show' => ['controller' => 'Admin\Member', 'action' => 'showMember'],
+            'admin/members/edit' => ['controller' => 'Admin\Member', 'action' => 'editMember'],
 
             // Admin - Kegiatan/Event (Indonesian & English URLs)
             'admin/kegiatan' => ['controller' => 'Admin\Event', 'action' => 'index'],

@@ -51,6 +51,7 @@
                 <div>
                     <p class="stat-label mb-1">Total Jemaat</p>
                     <h2 class="stat-value mb-0"><?= number_format($stats['total_members']) ?></h2>
+                    <small class="text-muted">dalam <?= number_format($stats['total_families']) ?> KK</small>
                 </div>
                 <div class="stat-icon">
                     <i class="bi bi-people-fill"></i>

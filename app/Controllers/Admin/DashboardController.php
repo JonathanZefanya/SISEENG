@@ -5,6 +5,7 @@ use Core\Controller;
 use App\Models\User;
 use App\Models\Article;
 use App\Models\Member;
+use App\Models\Family;
 use App\Models\ContactMessage;
 use App\Models\Event;
 use App\Models\ActivityLog;
@@ -40,7 +41,9 @@ class DashboardController extends Controller
         $eventModel = new Event();
         
         $stats = [
+            // Total jemaat = orang berstatus Aktif (bukan jumlah KK)
             'total_members' => $memberModel->countActive(),
+            'total_families' => (new Family())->countActive(),
             'total_articles' => $articleModel->count(),
             'unread_messages' => $messageModel->countUnread(),
             'upcoming_events' => count($eventModel->getUpcoming(10)),

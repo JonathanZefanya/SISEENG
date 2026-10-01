@@ -6,153 +6,164 @@ use Core\Database;
 
 /**
  * =========================================================
- * Member Model (Data Jemaat)
+ * Member Model (Data Jemaat - per orang)
  * =========================================================
+ *
+ * Setiap orang tercatat di tepat satu KK aktif (lihat FamilyMember).
+ * Status jemaat & status pernikahan diubah lewat Family agar
+ * riwayat dan efeknya ke anggota lain ikut tercatat.
  */
 class Member extends Model
 {
     protected $table = 'members';
-    
+
     protected $fillable = [
         'full_name',
+        'gender',
+        'marital_status',
+        'spouse_id',
         'email',
         'phone',
         'address',
         'birth_date',
         'birth_place',
-        'gender',
         'baptism_date',
         'membership_date',
         'status',
+        'status_date',
+        'status_note',
         'notes',
         'created_by'
     ];
-    
+
+    /** Umur minimal "anak dewasa" (umur KTP) */
+    const ADULT_AGE = 17;
+
+    const STATUSES = [
+        'active' => 'Aktif',
+        'inactive' => 'Tidak Aktif',
+        'deceased' => 'Meninggal',
+        'moved_church' => 'Pindah Gereja',
+        'moved_religion' => 'Pindah Agama',
+    ];
+
+    /** Warna tag (class .t-*) & ikon per status */
+    const STATUS_TONES = [
+        'active' => ['t-green', 'check-circle-fill'],
+        'inactive' => ['t-grey', 'pause-circle'],
+        'deceased' => ['t-dark', 'flower1'],
+        'moved_church' => ['t-blue', 'signpost-split'],
+        'moved_religion' => ['t-orange', 'arrow-left-right'],
+    ];
+
+    /** Nilai filter status pernikahan; janda/duda = widowed + gender */
+    const MARITAL_FILTERS = [
+        'single' => 'Belum Menikah',
+        'married' => 'Menikah',
+        'janda' => 'Janda',
+        'duda' => 'Duda',
+        'none' => 'Belum diisi',
+    ];
+
     /**
-     * Ambil jemaat aktif
-     * 
-     * @return array
+     * Label status pernikahan (widowed → Janda/Duda sesuai gender)
      */
-    public function getActive(): array
+    public static function maritalLabel(?string $marital, ?string $gender): string
     {
-        $sql = "SELECT * FROM {$this->table} WHERE status = 'active' ORDER BY full_name ASC";
-        return Database::fetchAll($sql);
+        switch ($marital) {
+            case 'single':
+                return 'Belum Menikah';
+            case 'married':
+                return 'Menikah';
+            case 'widowed':
+                return $gender === 'F' ? 'Janda' : 'Duda';
+            default:
+                return 'Belum diisi';
+        }
     }
-    
+
     /**
-     * Cari jemaat
-     * 
-     * @param string $keyword
-     * @return array
+     * Pilihan status pernikahan untuk form (label menyesuaikan gender jika diketahui)
      */
-    public function search(string $keyword): array
+    public static function maritalOptions(?string $gender = null): array
     {
-        $sql = "SELECT * FROM {$this->table} 
-                WHERE full_name LIKE :keyword 
-                   OR email LIKE :keyword 
-                   OR phone LIKE :keyword 
-                ORDER BY full_name ASC";
-        
-        return Database::fetchAll($sql, ['keyword' => '%' . $keyword . '%']);
+        $widowed = $gender === 'F' ? 'Janda' : ($gender === 'M' ? 'Duda' : 'Janda/Duda');
+        return ['single' => 'Belum Menikah', 'married' => 'Menikah', 'widowed' => $widowed];
     }
-    
+
+    public static function statusLabel(string $status): string
+    {
+        return self::STATUSES[$status] ?? $status;
+    }
+
     /**
-     * Ambil jemaat dengan pagination
-     * 
-     * @param int $page
-     * @param int $perPage
-     * @param string|null $search
-     * @param string|null $status
-     * @param string|null $gender
-     * @return array
+     * Umur dalam tahun, null jika tanggal lahir kosong
      */
-    public function getWithPagination(int $page = 1, int $perPage = ITEMS_PER_PAGE, ?string $search = null, ?string $status = null, ?string $gender = null): array
+    public static function age(?string $birthDate): ?int
     {
-        $offset = ($page - 1) * $perPage;
-        $params = [];
-        $conditions = [];
-        
-        if ($search) {
-            $conditions[] = '(full_name LIKE :search1 OR email LIKE :search2 OR phone LIKE :search3)';
-            $searchValue = '%' . $search . '%';
-            $params['search1'] = $searchValue;
-            $params['search2'] = $searchValue;
-            $params['search3'] = $searchValue;
+        if (!$birthDate) {
+            return null;
         }
-        
-        if ($status) {
-            $conditions[] = 'status = :status';
-            $params['status'] = $status;
-        }
-        
-        if ($gender) {
-            $conditions[] = 'gender = :gender';
-            $params['gender'] = $gender;
-        }
-        
-        $whereClause = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
-        
-        // Count total
-        $countSql = "SELECT COUNT(*) FROM {$this->table} {$whereClause}";
-        $total = (int) Database::fetchColumn($countSql, $params);
-        
-        // Get data
-        $sql = "SELECT * FROM {$this->table} {$whereClause} ORDER BY full_name ASC LIMIT :limit OFFSET :offset";
-        
-        $stmt = Database::getInstance()->prepare($sql);
-        foreach ($params as $key => $value) {
-            $stmt->bindValue(':' . $key, $value);
-        }
-        $stmt->bindValue(':limit', $perPage, \PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
-        $stmt->execute();
-        $data = $stmt->fetchAll();
-        
-        return [
-            'data' => $data,
-            'total' => $total,
-            'per_page' => $perPage,
-            'current_page' => $page,
-            'last_page' => ceil($total / $perPage)
-        ];
+        return (new \DateTime($birthDate))->diff(new \DateTime('today'))->y;
     }
-    
+
     /**
-     * Hitung jemaat berdasarkan gender
-     * 
-     * @param string $gender
-     * @return int
-     */
-    public function countByGender(string $gender): int
-    {
-        return $this->count('gender', $gender);
-    }
-    
-    /**
-     * Hitung total jemaat aktif
-     * 
-     * @return int
+     * Hitung total jemaat aktif (TOTAL JEMAAT = orang berstatus Aktif)
      */
     public function countActive(): int
     {
         return $this->count('status', 'active');
     }
-    
+
     /**
-     * Statistik jemaat
-     * 
+     * Rekap jemaat: total aktif, per gender (aktif), dan per status
+     */
+    public function getSummary(): array
+    {
+        $rows = Database::fetchAll(
+            "SELECT status, gender, COUNT(*) AS total FROM {$this->table} GROUP BY status, gender"
+        );
+
+        $summary = [
+            'active' => 0,
+            'male' => 0,
+            'female' => 0,
+            'by_status' => array_fill_keys(array_keys(self::STATUSES), 0),
+        ];
+
+        foreach ($rows as $row) {
+            $summary['by_status'][$row['status']] += (int) $row['total'];
+            if ($row['status'] === 'active') {
+                $summary['active'] += (int) $row['total'];
+                $summary[$row['gender'] === 'M' ? 'male' : 'female'] += (int) $row['total'];
+            }
+        }
+
+        return $summary;
+    }
+
+    /**
+     * Cari jemaat AKTIF untuk kolom pencarian (pilih pasangan / pindahkan ke KK)
+     *
+     * @param string $keyword
+     * @param int|null $excludeFamilyId Jangan tampilkan anggota KK ini
      * @return array
      */
-    public function getStatistics(): array
+    public function searchActive(string $keyword, ?int $excludeFamilyId = null): array
     {
-        $sql = "SELECT 
-                    COUNT(*) as total,
-                    SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active,
-                    SUM(CASE WHEN gender = 'male' THEN 1 ELSE 0 END) as male,
-                    SUM(CASE WHEN gender = 'female' THEN 1 ELSE 0 END) as female,
-                    SUM(CASE WHEN YEAR(join_date) = YEAR(NOW()) THEN 1 ELSE 0 END) as new_this_year
-                FROM {$this->table}";
-        
-        return Database::fetch($sql);
+        $sql = "SELECT m.id, m.full_name, m.gender, m.birth_date, m.marital_status, m.spouse_id,
+                       f.id AS family_id, f.family_code, fm.relationship
+                FROM {$this->table} m
+                JOIN family_members fm ON fm.member_id = m.id AND fm.left_at IS NULL
+                JOIN families f ON f.id = fm.family_id
+                WHERE m.status = 'active' AND (m.full_name LIKE :kw1 OR m.phone LIKE :kw2)";
+        $params = ['kw1' => '%' . $keyword . '%', 'kw2' => '%' . $keyword . '%'];
+
+        if ($excludeFamilyId) {
+            $sql .= " AND f.id <> :exclude";
+            $params['exclude'] = $excludeFamilyId;
+        }
+
+        return Database::fetchAll($sql . " ORDER BY m.full_name ASC LIMIT 15", $params);
     }
 }

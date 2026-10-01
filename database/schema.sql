@@ -165,13 +165,15 @@ CREATE TABLE `preacher_schedules` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================================
--- TABEL: members (Data Jemaat)
+-- TABEL: members (Data Jemaat - per orang)
 -- =====================================================================
 DROP TABLE IF EXISTS `members`;
 CREATE TABLE `members` (
     `id`               INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `full_name`        VARCHAR(100) NOT NULL,
     `gender`           ENUM('M','F') NOT NULL,
+    `marital_status`   ENUM('single','married','widowed') DEFAULT NULL COMMENT 'widowed = Janda (F) / Duda (M); NULL = belum diisi',
+    `spouse_id`        INT UNSIGNED DEFAULT NULL,
     `birth_date`       DATE         DEFAULT NULL,
     `birth_place`      VARCHAR(100) DEFAULT NULL,
     `phone`            VARCHAR(20)  DEFAULT NULL,
@@ -179,7 +181,9 @@ CREATE TABLE `members` (
     `address`          TEXT         DEFAULT NULL,
     `baptism_date`     DATE         DEFAULT NULL,
     `membership_date`  DATE         DEFAULT NULL,
-    `status`           ENUM('active','inactive') NOT NULL DEFAULT 'active',
+    `status`           ENUM('active','inactive','deceased','moved_church','moved_religion') NOT NULL DEFAULT 'active',
+    `status_date`      DATE         DEFAULT NULL,
+    `status_note`      TEXT         DEFAULT NULL,
     `notes`            TEXT         DEFAULT NULL,
     `created_by`       INT UNSIGNED DEFAULT NULL,
     `created_at`       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -188,9 +192,90 @@ CREATE TABLE `members` (
     KEY `idx_full_name` (`full_name`),
     KEY `idx_gender`    (`gender`),
     KEY `idx_status`    (`status`),
+    KEY `idx_marital_status` (`marital_status`),
     KEY `fk_members_user` (`created_by`),
+    KEY `fk_members_spouse` (`spouse_id`),
     CONSTRAINT `fk_members_user`
+        FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+    CONSTRAINT `fk_members_spouse`
+        FOREIGN KEY (`spouse_id`) REFERENCES `members` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================================================================
+-- TABEL: families (Kartu Keluarga)
+-- =====================================================================
+DROP TABLE IF EXISTS `families`;
+CREATE TABLE `families` (
+    `id`               INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `family_code`      VARCHAR(20)  NOT NULL,
+    `address`          TEXT         DEFAULT NULL,
+    `phone`            VARCHAR(20)  DEFAULT NULL,
+    `origin_family_id` INT UNSIGNED DEFAULT NULL COMMENT 'KK asal (anak menikah / cerai lalu buat KK baru)',
+    `notes`            TEXT         DEFAULT NULL,
+    `created_by`       INT UNSIGNED DEFAULT NULL,
+    `created_at`       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`       DATETIME     DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uq_family_code` (`family_code`),
+    KEY `fk_families_origin` (`origin_family_id`),
+    KEY `fk_families_user` (`created_by`),
+    CONSTRAINT `fk_families_origin`
+        FOREIGN KEY (`origin_family_id`) REFERENCES `families` (`id`) ON DELETE SET NULL,
+    CONSTRAINT `fk_families_user`
         FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================================================================
+-- TABEL: family_members (Keanggotaan KK + riwayatnya)
+-- UNIQUE pada generated column: 1 orang aktif di 1 KK, 1 kepala per KK
+-- =====================================================================
+DROP TABLE IF EXISTS `family_members`;
+CREATE TABLE `family_members` (
+    `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `family_id`     INT UNSIGNED NOT NULL,
+    `member_id`     INT UNSIGNED NOT NULL,
+    `relationship`  ENUM('head','spouse','child','child_in_law','grandchild','parent','parent_in_law','sibling','other') NOT NULL,
+    `joined_at`     DATE         DEFAULT NULL,
+    `left_at`       DATE         DEFAULT NULL,
+    `left_reason`   ENUM('married_out','moved_family','divorce','status_change','data_fix') DEFAULT NULL,
+    `created_at`    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `current_member_key` INT UNSIGNED
+        GENERATED ALWAYS AS (IF(`left_at` IS NULL, `member_id`, NULL)) STORED,
+    `current_head_key`   INT UNSIGNED
+        GENERATED ALWAYS AS (IF(`left_at` IS NULL AND `relationship` = 'head', `family_id`, NULL)) STORED,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uq_current_member` (`current_member_key`),
+    UNIQUE KEY `uq_current_head` (`current_head_key`),
+    KEY `idx_family` (`family_id`, `left_at`),
+    KEY `idx_member` (`member_id`),
+    CONSTRAINT `fk_fm_family` FOREIGN KEY (`family_id`) REFERENCES `families` (`id`),
+    CONSTRAINT `fk_fm_member` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================================================================
+-- TABEL: member_status_logs (Riwayat status, pernikahan, hubungan, KK)
+-- =====================================================================
+DROP TABLE IF EXISTS `member_status_logs`;
+CREATE TABLE `member_status_logs` (
+    `id`                INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `member_id`         INT UNSIGNED NOT NULL,
+    `family_id`         INT UNSIGNED DEFAULT NULL COMMENT 'KK tempat perubahan terjadi',
+    `field`             ENUM('status','marital_status','relationship','family') NOT NULL,
+    `old_value`         VARCHAR(50)  DEFAULT NULL,
+    `new_value`         VARCHAR(50)  DEFAULT NULL,
+    `changed_at`        DATE         NOT NULL,
+    `reason`            VARCHAR(100) DEFAULT NULL,
+    `note`              TEXT         DEFAULT NULL,
+    `related_member_id` INT UNSIGNED DEFAULT NULL COMMENT 'Mis. pasangan yang meninggal / mantan pasangan',
+    `created_by`        INT UNSIGNED DEFAULT NULL,
+    `created_at`        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_member` (`member_id`),
+    KEY `idx_family` (`family_id`),
+    CONSTRAINT `fk_msl_member`  FOREIGN KEY (`member_id`) REFERENCES `members` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_msl_family`  FOREIGN KEY (`family_id`) REFERENCES `families` (`id`) ON DELETE SET NULL,
+    CONSTRAINT `fk_msl_related` FOREIGN KEY (`related_member_id`) REFERENCES `members` (`id`) ON DELETE SET NULL,
+    CONSTRAINT `fk_msl_user`    FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================================
