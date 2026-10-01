@@ -1,7 +1,7 @@
 <?php
 /**
  * Script untuk menambahkan settings ke database
- * Jalankan sekali: http://localhost/project-website/siseeng/public/install_settings.php
+ * Jalankan sekali: http://localhost/siseeng/public/install_settings.php
  */
 
 // Load konfigurasi

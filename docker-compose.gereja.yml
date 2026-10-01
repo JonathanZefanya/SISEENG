@@ -21,11 +21,11 @@ services:
     ports:
       - "8080:80"
     volumes:
-      # Mount di sub-path agar RewriteBase /project-website/siseeng/public/ tetap valid
-      - ./:/var/www/html/project-website/siseeng
+      # Mount di sub-path agar RewriteBase /siseeng/public/ tetap valid
+      - ./:/var/www/html/siseeng
     environment:
       # Hanya yang berbeda dari config.php saat jalan di Docker
-      APP_URL: http://localhost:8080/project-website/siseeng
+      APP_URL: http://localhost:8080/siseeng
       DB_HOST: db
       TZ: Asia/Jakarta
     depends_on:

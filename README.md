@@ -70,8 +70,8 @@ Cocok untuk development, jika MySQL sudah terpasang di komputer (misalnya dari X
    docker compose up -d --build
    ```
 4. Akses:
-   - Website: http://localhost:8080/project-website/siseeng/
-   - Admin: http://localhost:8080/project-website/siseeng/auth/login
+   - Website: http://localhost:8080/siseeng/
+   - Admin: http://localhost:8080/siseeng/auth/login
    - phpMyAdmin: http://localhost:8081 (terhubung ke MySQL di komputer)
 
 Container web terhubung ke MySQL di komputer lewat `host.docker.internal`.
@@ -87,18 +87,18 @@ docker compose -f docker-compose.gereja.yml up -d --build
 - Saat pertama kali dijalankan, database dibuat dan diisi otomatis dari `database/deploy.sql`. Import ini hanya terjadi sekali, selama volume `db_data` masih kosong.
 - Semua container otomatis hidup lagi setelah komputer restart (`restart: unless-stopped`).
 - Nilai `MYSQL_DATABASE` dan `MYSQL_ROOT_PASSWORD` di `docker-compose.gereja.yml` **harus sama** dengan `DB_NAME` dan `DB_PASS` di `config/config.php`.
-- Jika website ingin dibuka dari perangkat lain di jaringan gereja, ganti `APP_URL` di compose dengan IP komputer tersebut, misalnya `http://192.168.1.10:8080/project-website/siseeng`.
+- Jika website ingin dibuka dari perangkat lain di jaringan gereja, ganti `APP_URL` di compose dengan IP komputer tersebut, misalnya `http://192.168.1.10:8080/siseeng`.
 
 Alamat akses sama dengan Opsi A.
 
 ### Opsi C: Manual (XAMPP / Laragon / Apache)
 
-1. Salin project ke folder web server, misalnya `htdocs/project-website/siseeng`.
+1. Salin project ke folder web server, misalnya `htdocs/siseeng`.
 2. Buat database dan import skema (lihat [Database](#-database)).
 3. Sesuaikan [config/config.php](config/config.php) (lihat [Konfigurasi](#-konfigurasi)).
 4. Pastikan `mod_rewrite` aktif dan `AllowOverride All`.
 5. Pastikan folder `public/uploads/` bisa ditulis oleh web server.
-6. Akses `http://localhost/project-website/siseeng/`.
+6. Akses `http://localhost/siseeng/`.
 
 > Jika project diletakkan di path lain, sesuaikan juga `RewriteBase` di [public/.htaccess](public/.htaccess).
 
@@ -132,7 +132,7 @@ Semua pengaturan ada di [config/config.php](config/config.php). Nilai database d
 
 | Konstanta | Env var | Default | Keterangan |
 |---|---|---|---|
-| `APP_URL` | `APP_URL` | `http://localhost/project-website/siseeng` | URL dasar aplikasi |
+| `APP_URL` | `APP_URL` | `http://localhost/siseeng` | URL dasar aplikasi |
 | `DB_HOST` | `DB_HOST` | `localhost` | Host MySQL |
 | `DB_NAME` | `DB_NAME` | `db_siseeng` | Nama database |
 | `DB_USER` | `DB_USER` | `root` | User MySQL |

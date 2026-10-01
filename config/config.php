@@ -46,7 +46,7 @@ $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 // define('APP_URL', $protocol . '://' . $host);
 
 // TEMPORARY FIX FOR LOCALHOST
-define('APP_URL', getenv('APP_URL') ?: 'http://localhost/project-website/siseeng');
+define('APP_URL', getenv('APP_URL') ?: 'http://localhost/siseeng');
 
 define('ADMIN_EMAIL', 'admin@gbiciseeng.com');
 
