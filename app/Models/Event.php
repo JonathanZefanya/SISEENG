@@ -58,23 +58,57 @@ class Event extends Model
     }
 
     /**
+     * Filter waktu di halaman publik: kunci URL => [label, kondisi SQL, urutan]
+     * Kegiatan beberapa hari dianggap berlangsung sampai end_date.
+     */
+    const TIME_FILTERS = [
+        'mendatang' => ['Akan datang', "COALESCE(end_date, event_date) >= CURDATE()", 'event_date ASC, event_time ASC'],
+        'bulan-ini' => ['Bulan ini', "event_date BETWEEN DATE_FORMAT(CURDATE(), '%Y-%m-01') AND LAST_DAY(CURDATE())", 'event_date ASC, event_time ASC'],
+        'selesai' => ['Sudah lewat', "COALESCE(end_date, event_date) < CURDATE()", 'event_date DESC, event_time DESC'],
+    ];
+
+    /**
+     * Jumlah kegiatan terbit per filter waktu (untuk chip filter)
+     *
+     * @return array ['semua' => n, 'mendatang' => n, ...]
+     */
+    public function countPublishedByTime(): array
+    {
+        $select = ["COUNT(*) AS semua"];
+        foreach (self::TIME_FILTERS as $key => [, $condition]) {
+            $select[] = "SUM({$condition}) AS `{$key}`";
+        }
+        $row = Database::fetch("SELECT " . implode(', ', $select) . " FROM {$this->table} WHERE status = 'published'");
+        return array_map('intval', $row ?: []);
+    }
+
+    /**
      * Ambil event yang sudah dipublikasikan untuk halaman publik
      * 
      * @param int $page
      * @param int $perPage
+     * @param string $when Kunci TIME_FILTERS, kosong = semua
      * @return array
      */
-    public function getPublished(int $page = 1, int $perPage = ITEMS_PER_PAGE): array
+    public function getPublished(int $page = 1, int $perPage = ITEMS_PER_PAGE, string $when = ''): array
     {
+        $page = max(1, $page);
         $offset = ($page - 1) * $perPage;
 
+        $where = "status = 'published'";
+        $order = 'event_date DESC';
+        if (isset(self::TIME_FILTERS[$when])) {
+            $where .= ' AND ' . self::TIME_FILTERS[$when][1];
+            $order = self::TIME_FILTERS[$when][2];
+        }
+
         $total = (int) Database::fetchColumn(
-            "SELECT COUNT(*) FROM {$this->table} WHERE status = 'published'"
+            "SELECT COUNT(*) FROM {$this->table} WHERE {$where}"
         );
 
         $sql = "SELECT * FROM {$this->table}
-                WHERE status = 'published'
-                ORDER BY event_date DESC
+                WHERE {$where}
+                ORDER BY {$order}
                 LIMIT :limit OFFSET :offset";
 
         $stmt = Database::getInstance()->prepare($sql);

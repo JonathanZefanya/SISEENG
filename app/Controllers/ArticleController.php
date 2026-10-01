@@ -43,7 +43,7 @@ class ArticleController extends Controller
         }
         
         $articles = $this->articleModel->getWithPagination($page, ITEMS_PER_PAGE, 'published', $categoryId);
-        $categories = $this->categoryModel->getActive();
+        $categories = $this->categoryModel->getActiveWithPublishedCount();
         
         $this->view('public/articles/index', [
             'title' => ($selectedCategory ? e($selectedCategory['name']) . ' - ' : '') . 'Artikel - ' . APP_NAME,
@@ -51,7 +51,8 @@ class ArticleController extends Controller
             'pagination' => $articles,
             'categories' => $categories,
             'selectedCategory' => $selectedCategory,
-            'categorySlug' => $categorySlug
+            'categorySlug' => $categorySlug,
+            'totalPublished' => $this->articleModel->countByStatus('published'),
         ]);
     }
     

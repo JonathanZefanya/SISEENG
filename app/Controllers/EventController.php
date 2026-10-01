@@ -27,12 +27,18 @@ class EventController extends Controller
     public function index(): void
     {
         $page = (int) ($this->get('page') ?? 1);
-        $events = $this->eventModel->getPublished($page);
+        $when = (string) $this->get('waktu', '');
+        if (!isset(Event::TIME_FILTERS[$when])) {
+            $when = '';
+        }
+        $events = $this->eventModel->getPublished($page, ITEMS_PER_PAGE, $when);
 
         $this->view('public/events/index', [
-            'title' => 'Kegiatan - ' . APP_NAME,
+            'title' => ($when ? Event::TIME_FILTERS[$when][0] . ' - ' : '') . 'Kegiatan - ' . APP_NAME,
             'events' => $events['data'],
             'pagination' => $events,
+            'when' => $when,
+            'timeCounts' => $this->eventModel->countPublishedByTime(),
         ]);
     }
 

@@ -1,40 +1,40 @@
-<section class="py-5 bg-primary text-white">
-    <div class="container text-center">
-        <h1 class="display-4 fw-bold mb-3">
-            <?php if (!empty($selectedCategory)): ?>
-                <?= e($selectedCategory['name']) ?>
-            <?php else: ?>
-                Artikel & Renungan
-            <?php endif; ?>
-        </h1>
-        <p class="lead fs-4">
-            <?php if (!empty($selectedCategory) && $selectedCategory['description']): ?>
-                <?= e($selectedCategory['description']) ?>
-            <?php else: ?>
-                Bacaan rohani untuk pertumbuhan iman Anda
-            <?php endif; ?>
+<section class="page-hero">
+    <div class="container">
+        <?php if (!empty($selectedCategory)): ?>
+            <span class="chip"><i class="bi bi-bookmark"></i>Kategori</span>
+        <?php endif; ?>
+        <h1><?= !empty($selectedCategory) ? e($selectedCategory['name']) : 'Artikel &amp; Renungan' ?></h1>
+        <p>
+            <?= !empty($selectedCategory) && $selectedCategory['description']
+                ? e($selectedCategory['description'])
+                : 'Bacaan rohani untuk pertumbuhan iman Anda' ?>
         </p>
     </div>
 </section>
 
-<!-- Filter Kategori -->
+<!-- Filter kategori: satu baris chip, bisa digeser, menempel di bawah topbar -->
 <?php if (!empty($categories)): ?>
-    <section class="py-4 bg-light border-bottom">
+    <section class="filter-bar">
         <div class="container">
-            <div class="d-flex align-items-center gap-2 flex-wrap justify-content-center">
-                <span class="text-muted me-2 fw-medium"><i class="bi bi-filter me-1"></i>Kategori:</span>
-                <a href="<?= url('artikel') ?>"
-                    class="btn btn-sm <?= empty($categorySlug) ? 'btn-primary' : 'btn-outline-secondary' ?> rounded-pill px-3">
-                    <i class="bi bi-grid me-1"></i>Semua
+            <nav class="filter-scroll" aria-label="Filter kategori artikel">
+                <a href="<?= url('artikel') ?>" class="filter-chip <?= empty($selectedCategory) ? 'active' : '' ?>"
+                   <?= empty($selectedCategory) ? 'aria-current="page"' : '' ?>>
+                    <i class="bi bi-grid"></i>Semua <span class="count"><?= (int) $totalPublished ?></span>
                 </a>
                 <?php foreach ($categories as $cat): ?>
-                    <a href="<?= url('artikel?kategori=' . $cat['slug']) ?>"
-                        class="btn btn-sm rounded-pill px-3 <?= ($categorySlug ?? '') === $cat['slug'] ? '' : 'btn-outline-secondary' ?>"
-                        style="<?= ($categorySlug ?? '') === $cat['slug'] ? 'background-color: ' . e($cat['color']) . '; border-color: ' . e($cat['color']) . '; color: white;' : '' ?>">
-                        <?= e($cat['name']) ?>
+                    <?php
+                    $isActive = !empty($selectedCategory) && $selectedCategory['slug'] === $cat['slug'];
+                    // Kategori tanpa artikel terbit disembunyikan agar tidak berujung halaman kosong
+                    if ((int) $cat['published_count'] === 0 && !$isActive) continue;
+                    ?>
+                    <a href="<?= url('artikel?kategori=' . urlencode($cat['slug'])) ?>"
+                       class="filter-chip <?= $isActive ? 'active' : '' ?>" style="--c: <?= e($cat['color'] ?: '#6c757d') ?>"
+                       <?= $isActive ? 'aria-current="page"' : '' ?>>
+                        <span class="dot" aria-hidden="true"></span><?= e($cat['name']) ?>
+                        <span class="count"><?= (int) $cat['published_count'] ?></span>
                     </a>
                 <?php endforeach; ?>
-            </div>
+            </nav>
         </div>
     </section>
 <?php endif; ?>
@@ -72,8 +72,7 @@
                                 <img src="<?= uploads(e($articles[0]['image'])) ?>" class="img-fluid h-100 w-100"
                                     alt="<?= e($articles[0]['title']) ?>" style="object-fit: cover; min-height: 300px;">
                             <?php else: ?>
-                                <div class="bg-primary text-white d-flex align-items-center justify-content-center h-100"
-                                    style="min-height: 300px;">
+                                <div class="featured-placeholder bg-primary text-white d-flex align-items-center justify-content-center h-100">
                                     <i class="bi bi-journal-text display-1"></i>
                                 </div>
                             <?php endif; ?>

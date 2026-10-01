@@ -33,6 +33,22 @@ class ArticleCategory extends Model
     }
     
     /**
+     * Kategori aktif beserta jumlah artikel yang sudah terbit (untuk filter halaman publik)
+     *
+     * @return array
+     */
+    public function getActiveWithPublishedCount(): array
+    {
+        $sql = "SELECT c.*, COUNT(a.id) AS published_count
+                FROM {$this->table} c
+                LEFT JOIN articles a ON a.category_id = c.id AND a.status = 'published'
+                WHERE c.is_active = 1
+                GROUP BY c.id
+                ORDER BY c.name ASC";
+        return Database::fetchAll($sql);
+    }
+
+    /**
      * Ambil semua kategori dengan jumlah artikel
      * 
      * @return array

@@ -349,3 +349,12 @@
     }
 
 })();
+
+// Bilah filter (kategori artikel / waktu kegiatan): geser chip aktif ke tengah agar terlihat di layar sempit
+(function () {
+    document.querySelectorAll('.filter-scroll').forEach(function (scroller) {
+        const active = scroller.querySelector('.filter-chip.active');
+        if (!active || scroller.scrollWidth <= scroller.clientWidth) return;
+        scroller.scrollLeft = active.offsetLeft - (scroller.clientWidth - active.offsetWidth) / 2;
+    });
+})();

@@ -1,19 +1,52 @@
-<section class="py-5 bg-primary text-white">
-    <div class="container text-center">
-        <h1 class="display-4 fw-bold mb-3">Kegiatan & Acara</h1>
-        <p class="lead fs-4">Ikuti berbagai kegiatan menarik di gereja kami</p>
+<?php
+use App\Models\Event;
+
+$timeIcons = ['mendatang' => 'calendar-plus', 'bulan-ini' => 'calendar-month', 'selesai' => 'calendar-check'];
+$pageUrl = fn(int $page) => url('kegiatan?' . http_build_query(array_filter(['waktu' => $when, 'page' => $page > 1 ? $page : null])));
+?>
+<section class="page-hero">
+    <div class="container">
+        <h1>Kegiatan &amp; Acara</h1>
+        <p>Ikuti berbagai kegiatan menarik di gereja kami</p>
+    </div>
+</section>
+
+<!-- Filter waktu: satu baris chip, bisa digeser, menempel di bawah topbar -->
+<section class="filter-bar">
+    <div class="container">
+        <nav class="filter-scroll" aria-label="Filter waktu kegiatan">
+            <a href="<?= url('kegiatan') ?>" class="filter-chip <?= $when === '' ? 'active' : '' ?>" <?= $when === '' ? 'aria-current="page"' : '' ?>>
+                <i class="bi bi-grid"></i>Semua <span class="count"><?= (int) ($timeCounts['semua'] ?? 0) ?></span>
+            </a>
+            <?php foreach (Event::TIME_FILTERS as $key => [$label]): ?>
+                <a href="<?= url('kegiatan?waktu=' . $key) ?>" class="filter-chip <?= $when === $key ? 'active' : '' ?>" <?= $when === $key ? 'aria-current="page"' : '' ?>>
+                    <i class="bi bi-<?= $timeIcons[$key] ?>"></i><?= e($label) ?> <span class="count"><?= (int) ($timeCounts[$key] ?? 0) ?></span>
+                </a>
+            <?php endforeach; ?>
+        </nav>
     </div>
 </section>
 
 <section class="py-5">
     <div class="container">
         <?php if (empty($events)): ?>
-            <div class="text-center py-5">
-                <i class="bi bi-calendar-x text-muted display-1"></i>
-                <h3 class="mt-4 text-muted">Belum ada kegiatan yang dijadwalkan</h3>
-                <p class="text-muted fs-5">Silakan kembali lagi nanti untuk melihat kegiatan terbaru</p>
-                <a href="<?= url('/') ?>" class="btn btn-primary btn-lg mt-3">
-                    <i class="bi bi-house me-2"></i>Kembali ke Beranda
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-calendar-x"></i></div>
+                <?php if ($when === 'mendatang'): ?>
+                    <h2 class="h4">Belum ada kegiatan yang akan datang</h2>
+                    <p class="text-muted">Jadwal kegiatan berikutnya akan diumumkan di sini.</p>
+                <?php elseif ($when === 'bulan-ini'): ?>
+                    <h2 class="h4">Tidak ada kegiatan bulan ini</h2>
+                    <p class="text-muted">Coba lihat kegiatan yang akan datang atau semua kegiatan.</p>
+                <?php elseif ($when === 'selesai'): ?>
+                    <h2 class="h4">Belum ada kegiatan yang sudah lewat</h2>
+                    <p class="text-muted">Kegiatan yang telah selesai akan tersimpan di sini.</p>
+                <?php else: ?>
+                    <h2 class="h4">Belum ada kegiatan yang dijadwalkan</h2>
+                    <p class="text-muted">Silakan kembali lagi nanti untuk melihat kegiatan terbaru.</p>
+                <?php endif; ?>
+                <a href="<?= $when ? url('kegiatan') : url('/') ?>" class="btn btn-primary mt-2">
+                    <i class="bi bi-<?= $when ? 'grid' : 'house' ?> me-2"></i><?= $when ? 'Lihat semua kegiatan' : 'Kembali ke Beranda' ?>
                 </a>
             </div>
         <?php else: ?>
@@ -70,26 +103,19 @@
             </div>
 
             <!-- Pagination -->
-            <?php if (isset($pagination) && isset($pagination['total_pages']) && $pagination['total_pages'] > 1): ?>
-                <nav aria-label="Page navigation" class="mt-5">
-                    <ul class="pagination justify-content-center pagination-lg">
+            <?php if ($pagination['last_page'] > 1): ?>
+                <nav aria-label="Navigasi halaman" class="mt-5">
+                    <ul class="pagination justify-content-center">
                         <li class="page-item <?= $pagination['current_page'] <= 1 ? 'disabled' : '' ?>">
-                            <a class="page-link" href="<?= url('kegiatan?page=' . ($pagination['current_page'] - 1)) ?>">
-                                <i class="bi bi-chevron-left"></i>
-                            </a>
+                            <a class="page-link" href="<?= $pageUrl($pagination['current_page'] - 1) ?>" aria-label="Sebelumnya"><i class="bi bi-chevron-left"></i></a>
                         </li>
-
-                        <?php for ($i = 1; $i <= $pagination['total_pages']; $i++): ?>
+                        <?php for ($i = 1; $i <= $pagination['last_page']; $i++): ?>
                             <li class="page-item <?= $i === $pagination['current_page'] ? 'active' : '' ?>">
-                                <a class="page-link" href="<?= url('kegiatan?page=' . $i) ?>"><?= $i ?></a>
+                                <a class="page-link" href="<?= $pageUrl($i) ?>"><?= $i ?></a>
                             </li>
                         <?php endfor; ?>
-
-                        <li
-                            class="page-item <?= $pagination['current_page'] >= $pagination['total_pages'] ? 'disabled' : '' ?>">
-                            <a class="page-link" href="<?= url('kegiatan?page=' . ($pagination['current_page'] + 1)) ?>">
-                                <i class="bi bi-chevron-right"></i>
-                            </a>
+                        <li class="page-item <?= $pagination['current_page'] >= $pagination['last_page'] ? 'disabled' : '' ?>">
+                            <a class="page-link" href="<?= $pageUrl($pagination['current_page'] + 1) ?>" aria-label="Berikutnya"><i class="bi bi-chevron-right"></i></a>
                         </li>
                     </ul>
                 </nav>
