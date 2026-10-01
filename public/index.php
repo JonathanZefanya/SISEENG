@@ -25,6 +25,9 @@ require_once CORE_PATH . 'Autoloader.php';
 // Muat helper functions
 require_once CORE_PATH . 'Helpers.php';
 
+// Exception & fatal error ditampilkan sebagai halaman error
+registerErrorHandlers();
+
 // Inisialisasi session dengan pengaturan aman
 Core\Session::init();
 

@@ -57,9 +57,7 @@ class EventController extends Controller
 
         // Tidak ditemukan atau masih draft -> tampilkan 404
         if (!$event || $event['status'] !== 'published') {
-            http_response_code(404);
-            $this->view('errors/404', ['title' => 'Tidak Ditemukan']);
-            return;
+            showError(404);
         }
 
         $this->view('public/events/detail', [

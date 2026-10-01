@@ -313,8 +313,6 @@ class App
      */
     protected function show404(): void
     {
-        http_response_code(404);
-        require_once VIEW_PATH . 'errors/404.php';
-        exit;
+        showError(404);
     }
 }

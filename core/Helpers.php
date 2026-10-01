@@ -482,3 +482,68 @@ function faviconTag() {
     return '<link rel="icon" type="' . $type . '" href="' . $href . '">' . "\n"
          . '    <link rel="apple-touch-icon" href="' . $href . '">';
 }
+
+/**
+ * Tampilkan halaman error dengan gaya aplikasi, lalu hentikan eksekusi
+ * @param int $code Kode status HTTP (403, 404, 500, 503, ...)
+ * @param string|null $message Pesan khusus; null = pesan bawaan sesuai kode
+ * @param \Throwable|null $e Exception penyebab (detailnya hanya tampil di mode development)
+ */
+function showError($code, $message = null, $e = null) {
+    static $rendering = false;
+
+    $pages = [
+        403 => ['Akses Ditolak', 'Maaf, Anda tidak memiliki izin untuk membuka halaman ini.'],
+        404 => ['Halaman Tidak Ditemukan', 'Maaf, halaman yang Anda cari tidak dapat ditemukan atau telah dipindahkan.'],
+        405 => ['Metode Tidak Diizinkan', 'Permintaan ini tidak dapat diproses dengan cara tersebut.'],
+        500 => ['Terjadi Kesalahan', 'Maaf, terjadi kesalahan pada sistem. Silakan coba beberapa saat lagi.'],
+        503 => ['Layanan Tidak Tersedia', 'Sistem sedang tidak dapat diakses untuk sementara. Silakan coba beberapa saat lagi.'],
+    ];
+    if (!isset($pages[$code])) {
+        $code = $code >= 500 ? 500 : 404;
+    }
+
+    // Buang output yang sudah setengah jadi (mis. layout yang gagal dirender)
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+    if (!headers_sent()) {
+        http_response_code($code);
+        header('Content-Type: text/html; charset=UTF-8');
+    }
+
+    // Jika template error sendiri gagal, jangan berulang: tampilkan teks polos
+    if ($rendering) {
+        echo e($pages[$code][1]);
+        exit;
+    }
+    $rendering = true;
+
+    $heading = $pages[$code][0];
+    $message = $message ?? $pages[$code][1];
+    $detail = null;
+    if ($e && ENVIRONMENT === 'development') {
+        $detail = get_class($e) . ': ' . $e->getMessage() . "\n" . $e->getFile() . ':' . $e->getLine() . "\n\n" . $e->getTraceAsString();
+    }
+
+    require VIEW_PATH . 'errors/error.php';
+    exit;
+}
+
+/**
+ * Pasang handler global agar exception & fatal error tampil sebagai halaman error
+ */
+function registerErrorHandlers() {
+    set_exception_handler(function ($e) {
+        error_log('Uncaught ' . get_class($e) . ': ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+        showError($e instanceof \Core\DatabaseException ? 503 : 500, null, $e);
+    });
+
+    register_shutdown_function(function () {
+        $error = error_get_last();
+        if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+            $e = new \ErrorException($error['message'], 0, $error['type'], $error['file'], $error['line']);
+            showError(500, null, $e);
+        }
+    });
+}

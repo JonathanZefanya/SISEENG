@@ -95,13 +95,8 @@ class Database
             self::$instance = new \PDO($dsn, DB_USER, DB_PASS, $options);
             
         } catch (\PDOException $e) {
-            // Log error (dalam production, jangan tampilkan detail)
-            if (ENVIRONMENT === 'development') {
-                die("Database Connection Error: " . $e->getMessage());
-            } else {
-                error_log("Database Connection Error: " . $e->getMessage());
-                die("Terjadi kesalahan pada sistem. Silakan hubungi administrator.");
-            }
+            // Ditampilkan sebagai halaman 503 oleh handler global (detail hanya di mode development)
+            throw new DatabaseException("Database Connection Error: " . $e->getMessage(), 0, $e);
         }
     }
     
