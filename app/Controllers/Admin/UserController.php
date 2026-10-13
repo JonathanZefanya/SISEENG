@@ -70,6 +70,8 @@ class UserController extends Controller
             'password' => $this->post('password'),
             'role' => $this->post('role'),
             'status' => 'active',
+            // Password dibuat oleh super admin, pemilik akun wajib menggantinya
+            'must_change_password' => 1,
         ];
         
         // Validasi
@@ -169,6 +171,8 @@ class UserController extends Controller
         $password = $this->post('password');
         if (!empty($password)) {
             $data['password'] = $password;
+            // Password direset oleh admin lain: pemilik akun wajib menggantinya
+            $data['must_change_password'] = $id == auth('id') ? 0 : 1;
         }
         
         // Validasi

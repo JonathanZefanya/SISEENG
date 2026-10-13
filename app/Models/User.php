@@ -16,10 +16,16 @@ class User extends Model
 {
     protected $table = 'users';
     
+    /**
+     * Password bawaan instalasi (deploy.sql). Selalu wajib diganti.
+     */
+    public const DEFAULT_PASSWORD = 'admin123';
+    
     protected $fillable = [
         'name',
         'email',
         'password',
+        'must_change_password',
         'role',
         'status',
         'last_login',
@@ -71,6 +77,10 @@ class User extends Model
         // Update last login
         $this->updateLastLogin($user['id']);
         
+        // Paksa ganti password jika ditandai, atau masih memakai password default
+        $user['must_change_password'] = (int) ($user['must_change_password'] ?? 0) === 1
+            || hash_equals(self::DEFAULT_PASSWORD, $password);
+        
         // Hapus password dari data yang dikembalikan
         unset($user['password']);
         
@@ -114,6 +124,21 @@ class User extends Model
         }
         
         return $this->update($id, $data);
+    }
+    
+    /**
+     * Ganti password milik user sendiri dan hapus flag wajib ganti password
+     * 
+     * @param int $id
+     * @param string $newPassword Password baru (plain text)
+     * @return int
+     */
+    public function changePassword(int $id, string $newPassword): int
+    {
+        return $this->update($id, [
+            'password' => Security::hashPassword($newPassword),
+            'must_change_password' => 0,
+        ]);
     }
     
     /**

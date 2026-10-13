@@ -23,6 +23,7 @@ CREATE TABLE `users` (
     `name`           VARCHAR(100)   NOT NULL,
     `email`          VARCHAR(100)   NOT NULL,
     `password`       VARCHAR(255)   NOT NULL,
+    `must_change_password` TINYINT(1) NOT NULL DEFAULT 0,
     `role`           ENUM('super_admin','admin') NOT NULL DEFAULT 'admin',
     `status`         ENUM('active','inactive')   NOT NULL DEFAULT 'active',
     `last_login`     DATETIME       DEFAULT NULL,
@@ -37,11 +38,11 @@ CREATE TABLE `users` (
     KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Default Super Admin  (password: admin123)
-INSERT INTO `users` (`name`, `email`, `password`, `role`, `status`) VALUES
+-- Default Super Admin  (password: admin123, wajib diganti saat login pertama)
+INSERT INTO `users` (`name`, `email`, `password`, `must_change_password`, `role`, `status`) VALUES
 ('Super Admin', 'admin@gbiciseeng.com',
  '$2y$12$/1zBQIyWnQGWNN11gmyRJ.qCHsG/g8I6OLxV33RT0u19X4Kqw8I8i',
- 'super_admin', 'active');
+ 1, 'super_admin', 'active');
 
 -- =====================================================================
 -- TABEL: schedules (Jadwal Ibadah)

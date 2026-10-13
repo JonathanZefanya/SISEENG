@@ -86,6 +86,9 @@ class App
             'auth/login' => ['controller' => 'Auth', 'action' => 'login'],
             'auth/proses-login' => ['controller' => 'Auth', 'action' => 'processLogin'],
             'auth/logout' => ['controller' => 'Auth', 'action' => 'logout'],
+            'auth/ganti-password' => ['controller' => 'Auth', 'action' => 'changePassword'],
+            'auth/simpan-password' => ['controller' => 'Auth', 'action' => 'updatePassword'],
+            'auth/lewati-ganti-password' => ['controller' => 'Auth', 'action' => 'skipPasswordChange'],
 
             // =====================================================
             // ADMIN ROUTES

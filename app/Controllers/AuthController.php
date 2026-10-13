@@ -113,6 +113,12 @@ class AuthController extends Controller
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? ''
         ]);
         
+        if ($user['must_change_password']) {
+            setFlash('warning', 'Demi keamanan, silakan ganti password Anda terlebih dahulu.');
+            $this->redirect('auth/ganti-password');
+            return;
+        }
+
         // Set flash message sukses
         setFlash('success', 'Selamat datang kembali, ' . e($user['name']) . '!');
         
@@ -120,6 +126,99 @@ class AuthController extends Controller
         $this->redirect('admin/dashboard');
     }
     
+    /**
+     * Halaman ganti password (wajib jika must_change_password aktif)
+     */
+    public function changePassword(): void
+    {
+        if (!AuthMiddleware::check(false)) {
+            return;
+        }
+
+        $this->view('auth/change-password', [
+            'title' => 'Ganti Password - ' . APP_NAME,
+            'forced' => !empty(auth('must_change_password')),
+        ]);
+    }
+
+    /**
+     * Simpan password baru
+     */
+    public function updatePassword(): void
+    {
+        if (!AuthMiddleware::check(false)) {
+            return;
+        }
+
+        if (!$this->isPost()) {
+            $this->redirect('auth/ganti-password');
+            return;
+        }
+
+        $this->validateCsrf();
+
+        $current = (string) $this->post('current_password');
+        $new = (string) $this->post('new_password');
+        $confirm = (string) $this->post('confirm_password');
+
+        $user = $this->userModel->find((int) auth('id'));
+
+        $error = null;
+        if (!$user || !Security::verifyPassword($current, $user['password'])) {
+            $error = 'Password saat ini salah.';
+        } elseif (strlen($new) < 8) {
+            $error = 'Password baru minimal 8 karakter.';
+        } elseif ($new !== $confirm) {
+            $error = 'Konfirmasi password baru tidak cocok.';
+        } elseif ($new === $current || hash_equals(User::DEFAULT_PASSWORD, $new)) {
+            $error = 'Password baru harus berbeda dari password lama dan password default.';
+        }
+
+        if ($error !== null) {
+            setFlash('error', $error);
+            $this->redirect('auth/ganti-password');
+            return;
+        }
+
+        $this->userModel->changePassword((int) $user['id'], $new);
+
+        // Perbarui session: hapus flag & regenerate ID
+        $sessionUser = Session::get('user');
+        $sessionUser['must_change_password'] = false;
+        Session::setLogin($sessionUser);
+
+        ActivityLog::log($user['id'], 'change_password', 'User mengganti password');
+
+        setFlash('success', 'Password berhasil diganti.');
+        $this->redirect('admin/dashboard');
+    }
+
+    /**
+     * Tunda ganti password untuk sesi login ini saja.
+     * Flag di database tidak diubah, jadi user diminta lagi pada login berikutnya.
+     */
+    public function skipPasswordChange(): void
+    {
+        if (!AuthMiddleware::check(false)) {
+            return;
+        }
+
+        if (!$this->isPost()) {
+            $this->redirect('auth/ganti-password');
+            return;
+        }
+
+        $this->validateCsrf();
+
+        $sessionUser = Session::get('user');
+        $sessionUser['password_change_skipped'] = true;
+        Session::set('user', $sessionUser);
+
+        ActivityLog::log(auth('id'), 'skip_change_password', 'User menunda penggantian password');
+
+        $this->redirect('admin/dashboard');
+    }
+
     /**
      * Logout
      */

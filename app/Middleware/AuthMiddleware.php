@@ -16,9 +16,10 @@ class AuthMiddleware
      * Cek apakah user sudah login
      * Jika belum, redirect ke halaman login
      * 
+     * @param bool $enforcePasswordChange false hanya untuk halaman ganti password itu sendiri
      * @return bool
      */
-    public static function check(): bool
+    public static function check(bool $enforcePasswordChange = true): bool
     {
         if (!Session::has('user_id')) {
             setFlash('error', 'Silakan login terlebih dahulu.');
@@ -34,10 +35,18 @@ class AuthMiddleware
             redirect('auth/login');
             return false;
         }
-        
+
+        // Wajib ganti password (password default / direset admin) sebelum boleh mengakses admin,
+        // kecuali user sudah memilih "Nanti saja" di sesi login ini
+        if ($enforcePasswordChange && !empty($user['must_change_password']) && empty($user['password_change_skipped'])) {
+            setFlash('warning', 'Demi keamanan, silakan ganti password Anda terlebih dahulu.');
+            redirect('auth/ganti-password');
+            return false;
+        }
+
         return true;
     }
-    
+
     /**
      * Cek apakah user adalah guest (belum login)
      * Digunakan untuk halaman login/register

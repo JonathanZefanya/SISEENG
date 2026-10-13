@@ -163,6 +163,11 @@ $pageTitle = trim(explode(' - ', $title ?? 'Dashboard')[0]);
                             </a>
                         </li>
                         <li>
+                            <a class="dropdown-item" href="<?= url('auth/ganti-password') ?>">
+                                <i class="bi bi-key me-2"></i>Ganti Password
+                            </a>
+                        </li>
+                        <li>
                             <form action="<?= url('auth/logout') ?>" method="POST">
                                 <?= csrfField() ?>
                                 <button type="submit" class="dropdown-item text-danger">
@@ -176,6 +181,14 @@ $pageTitle = trim(explode(' - ', $title ?? 'Dashboard')[0]);
         </header>
 
         <div class="page-content">
+            <?php if (auth('must_change_password')): ?>
+                <div class="alert alert-warning d-flex flex-wrap align-items-center gap-2 mb-4" role="alert">
+                    <i class="bi bi-shield-exclamation fs-5"></i>
+                    <div class="flex-grow-1">Anda masih memakai password sementara. Akun dan data jemaat berisiko diakses orang lain.</div>
+                    <a href="<?= url('auth/ganti-password') ?>" class="btn btn-sm btn-warning fw-semibold">Ganti sekarang</a>
+                </div>
+            <?php endif; ?>
+
             <?php foreach (['success' => 'check-circle-fill', 'error' => 'exclamation-circle-fill', 'warning' => 'exclamation-triangle-fill'] as $type => $icon): ?>
                 <?php if (hasFlash($type)): ?>
                     <div class="alert alert-<?= $type === 'error' ? 'danger' : $type ?> alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">

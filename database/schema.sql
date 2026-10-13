@@ -27,6 +27,7 @@ CREATE TABLE `users` (
     `name`           VARCHAR(100)   NOT NULL,
     `email`          VARCHAR(100)   NOT NULL,
     `password`       VARCHAR(255)   NOT NULL,
+    `must_change_password` TINYINT(1) NOT NULL DEFAULT 0,
     `role`           ENUM('super_admin','admin') NOT NULL DEFAULT 'admin',
     `status`         ENUM('active','inactive')   NOT NULL DEFAULT 'active',
     `last_login`     DATETIME       DEFAULT NULL,
