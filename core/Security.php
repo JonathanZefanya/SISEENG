@@ -276,4 +276,31 @@ class Security
     {
         return bin2hex(random_bytes($length / 2));
     }
+
+    /**
+     * Tipe gambar yang diizinkan untuk upload: MIME => ekstensi
+     */
+    public const IMAGE_TYPES = [
+        'image/jpeg' => 'jpg',
+        'image/png'  => 'png',
+        'image/gif'  => 'gif',
+        'image/webp' => 'webp',
+    ];
+
+    /**
+     * Tentukan ekstensi file upload dari ISI file (finfo), bukan dari
+     * $_FILES['type'] / nama file yang dikirim browser.
+     * @param string $tmpPath Path file sementara ($_FILES[...]['tmp_name'])
+     * @param array $allowedTypes MIME => ekstensi yang diizinkan
+     * @return string|null Ekstensi dari whitelist, atau null jika tipe tidak diizinkan
+     */
+    public static function uploadExtension(string $tmpPath, array $allowedTypes = self::IMAGE_TYPES): ?string
+    {
+        if (!is_uploaded_file($tmpPath)) {
+            return null;
+        }
+
+        $mime = (new \finfo(FILEINFO_MIME_TYPE))->file($tmpPath);
+        return $allowedTypes[$mime] ?? null;
+    }
 }

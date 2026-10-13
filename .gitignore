@@ -1,2 +1,9 @@
 public/uploads/*
 !public/uploads/.gitkeep
+!public/uploads/.htaccess
+
+# Dump database lokal (berisi data & hash password asli)
+gbi_ciseeng.sql
+
+# Kredensial lokal per server
+config/config.local.php

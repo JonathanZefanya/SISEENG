@@ -15,9 +15,22 @@ if (!defined('BASE_PATH')) {
 }
 
 // =========================================================
+// KONFIGURASI LOKAL (tidak di-commit)
+// Kredensial database & ENVIRONMENT per server.
+// Salin config.local.example.php menjadi config.local.php.
+// Urutan prioritas: environment variable > config.local.php > default.
+// =========================================================
+$localConfig = is_file(__DIR__ . '/config.local.php') ? require __DIR__ . '/config.local.php' : [];
+$env = function (string $key, string $default = '') use ($localConfig): string {
+    $value = getenv($key);
+    return $value !== false && $value !== '' ? $value : (string) ($localConfig[$key] ?? $default);
+};
+
+// =========================================================
 // ENVIRONMENT SETTINGS
 // =========================================================
-define('ENVIRONMENT', 'development'); // 'development' atau 'production' - TEMPORARY DEBUG MODE
+// 'development' atau 'production'. Default production agar error tidak tampil di server live.
+define('ENVIRONMENT', $env('APP_ENV', 'production'));
 
 // Error reporting berdasarkan environment
 if (ENVIRONMENT === 'development') {
@@ -46,7 +59,7 @@ $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 // define('APP_URL', $protocol . '://' . $host);
 
 // TEMPORARY FIX FOR LOCALHOST
-define('APP_URL', getenv('APP_URL') ?: 'http://localhost/siseeng');
+define('APP_URL', $env('APP_URL', 'http://localhost/siseeng'));
 
 define('ADMIN_EMAIL', 'admin@gbiciseeng.com');
 
@@ -88,10 +101,11 @@ define('PASSWORD_OPTIONS', ['cost' => 12]);
 // =========================================================
 // DATABASE SETTINGS
 // =========================================================
-define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('DB_NAME', getenv('DB_NAME') ?: 'db_siseeng');
-define('DB_USER', getenv('DB_USER') ?: 'root');
-define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : 'root');
+// User & password sengaja tanpa default: wajib diisi lewat config.local.php atau env.
+define('DB_HOST', $env('DB_HOST', 'localhost'));
+define('DB_NAME', $env('DB_NAME', 'db_siseeng'));
+define('DB_USER', $env('DB_USER'));
+define('DB_PASS', $env('DB_PASS'));
 define('DB_CHARSET', 'utf8mb4');
 
 // =========================================================

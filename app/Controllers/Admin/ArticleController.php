@@ -3,6 +3,7 @@ namespace App\Controllers\Admin;
 
 use Core\Controller;
 use Core\HtmlSanitizer;
+use Core\Security;
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Models\ActivityLog;
@@ -264,10 +265,11 @@ class ArticleController extends Controller
      */
     private function uploadImage(array $file): ?string
     {
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         $maxSize = 5 * 1024 * 1024; // 5MB
 
-        if (!in_array($file['type'], $allowedTypes)) {
+        // Tipe & ekstensi ditentukan dari isi file, bukan dari data browser
+        $extension = Security::uploadExtension($file['tmp_name']);
+        if ($extension === null) {
             setFlash('warning', 'Format gambar tidak didukung.');
             return null;
         }
@@ -284,7 +286,6 @@ class ArticleController extends Controller
             mkdir($fullPath, 0755, true);
         }
 
-        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $filename = uniqid('article_') . '.' . $extension;
 
         if (move_uploaded_file($file['tmp_name'], $fullPath . $filename)) {

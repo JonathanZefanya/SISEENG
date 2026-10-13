@@ -5,9 +5,9 @@
 # Cara pakai:
 #   docker compose -f docker-compose.gereja.yml up -d --build
 #
-# Nama database, user & password diambil dari config/config.php
-# (DB_NAME, DB_USER, DB_PASS). Nilai MYSQL_* di bawah HARUS sama
-# dengan config.php.
+# Nama database, user & password dikirim ke web lewat env
+# (DB_NAME, DB_USER, DB_PASS). Nilainya HARUS sama dengan MYSQL_*
+# di service db.
 #
 # Database otomatis dibuat & diisi dari database/deploy.sql
 # HANYA saat pertama kali dijalankan (volume db_data masih kosong).
@@ -24,9 +24,12 @@ services:
       # Mount di sub-path agar RewriteBase /siseeng/public/ tetap valid
       - ./:/var/www/html/siseeng
     environment:
-      # Hanya yang berbeda dari config.php saat jalan di Docker
       APP_URL: http://localhost:8080/siseeng
       DB_HOST: db
+      # Harus sama dengan MYSQL_DATABASE & MYSQL_ROOT_PASSWORD di service db
+      DB_NAME: db_siseeng
+      DB_USER: root
+      DB_PASS: root
       TZ: Asia/Jakarta
     depends_on:
       db:
@@ -36,7 +39,7 @@ services:
     image: mysql:8.0
     restart: unless-stopped
     environment:
-      # Samakan dengan DB_NAME & DB_PASS di config/config.php (DB_USER = root)
+      # Samakan dengan DB_NAME & DB_PASS di service web (DB_USER = root)
       MYSQL_DATABASE: db_siseeng
       MYSQL_ROOT_PASSWORD: root
       TZ: Asia/Jakarta

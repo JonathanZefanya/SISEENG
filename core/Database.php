@@ -91,6 +91,10 @@ class Database
                 \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES " . DB_CHARSET
             ];
             
+            if (DB_USER === '') {
+                throw new DatabaseException('Kredensial database belum diatur. Buat config/config.local.php (lihat config.local.example.php) atau set env DB_USER/DB_PASS.');
+            }
+
             // Buat koneksi
             self::$instance = new \PDO($dsn, DB_USER, DB_PASS, $options);
             

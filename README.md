@@ -64,7 +64,7 @@ Ada tiga cara menjalankan aplikasi. Pilih salah satu.
 Cocok untuk development, jika MySQL sudah terpasang di komputer (misalnya dari XAMPP atau Laragon).
 
 1. Buat database dan import skema (lihat [Database](#-database)).
-2. Pastikan user dan password MySQL di [config/config.php](config/config.php) sesuai.
+2. Salin [config/config.local.example.php](config/config.local.example.php) menjadi `config/config.local.php`, lalu isi user dan password MySQL.
 3. Jalankan:
    ```bash
    docker compose up -d --build
@@ -86,7 +86,7 @@ docker compose -f docker-compose.gereja.yml up -d --build
 
 - Saat pertama kali dijalankan, database dibuat dan diisi otomatis dari `database/deploy.sql`. Import ini hanya terjadi sekali, selama volume `db_data` masih kosong.
 - Semua container otomatis hidup lagi setelah komputer restart (`restart: unless-stopped`).
-- Nilai `MYSQL_DATABASE` dan `MYSQL_ROOT_PASSWORD` di `docker-compose.gereja.yml` **harus sama** dengan `DB_NAME` dan `DB_PASS` di `config/config.php`.
+- Nilai `MYSQL_DATABASE` dan `MYSQL_ROOT_PASSWORD` di service `db` **harus sama** dengan `DB_NAME` dan `DB_PASS` di service `web` (keduanya di `docker-compose.gereja.yml`).
 - Jika website ingin dibuka dari perangkat lain di jaringan gereja, ganti `APP_URL` di compose dengan IP komputer tersebut, misalnya `http://192.168.1.10:8080/siseeng`.
 
 Alamat akses sama dengan Opsi A.
@@ -95,7 +95,7 @@ Alamat akses sama dengan Opsi A.
 
 1. Salin project ke folder web server, misalnya `htdocs/siseeng`.
 2. Buat database dan import skema (lihat [Database](#-database)).
-3. Sesuaikan [config/config.php](config/config.php) (lihat [Konfigurasi](#-konfigurasi)).
+3. Buat `config/config.local.php` dari [config/config.local.example.php](config/config.local.example.php) (lihat [Konfigurasi](#-konfigurasi)).
 4. Pastikan `mod_rewrite` aktif dan `AllowOverride All`.
 5. Pastikan folder `public/uploads/` bisa ditulis oleh web server.
 6. Akses `http://localhost/siseeng/`.
@@ -128,20 +128,22 @@ Atau import lewat phpMyAdmin. File `add_*.sql` dan file SQL per fitur di folder 
 
 ## ⚙️ Konfigurasi
 
-Semua pengaturan ada di [config/config.php](config/config.php). Nilai database dan URL bisa di-override lewat environment variable. Docker memakai mekanisme ini, sehingga instalasi manual tetap memakai nilai default di file.
+Pengaturan umum ada di [config/config.php](config/config.php). Nilai yang berbeda per server (environment, URL, kredensial database) diisi di `config/config.local.php`, yang tidak di-commit ke git. Salin dari [config/config.local.example.php](config/config.local.example.php). Environment variable dengan nama yang sama lebih diutamakan (dipakai oleh Docker).
 
-| Konstanta | Env var | Default | Keterangan |
+Urutan prioritas: **environment variable > `config.local.php` > default**.
+
+| Konstanta | Env var / key | Default | Keterangan |
 |---|---|---|---|
+| `ENVIRONMENT` | `APP_ENV` | `production` | `development` menampilkan detail error. Server live wajib `production` |
 | `APP_URL` | `APP_URL` | `http://localhost/siseeng` | URL dasar aplikasi |
 | `DB_HOST` | `DB_HOST` | `localhost` | Host MySQL |
 | `DB_NAME` | `DB_NAME` | `db_siseeng` | Nama database |
-| `DB_USER` | `DB_USER` | `root` | User MySQL |
-| `DB_PASS` | `DB_PASS` | `root` | Password MySQL |
+| `DB_USER` | `DB_USER` | _(wajib diisi)_ | User MySQL |
+| `DB_PASS` | `DB_PASS` | _(kosong)_ | Password MySQL |
 
 Pengaturan lain di file yang sama:
 
 ```php
-define('ENVIRONMENT', 'development');   // 'production' untuk menyembunyikan error
 date_default_timezone_set('Asia/Jakarta'); // Zona waktu WIB
 
 define('SESSION_LIFETIME', 7200);       // 2 jam

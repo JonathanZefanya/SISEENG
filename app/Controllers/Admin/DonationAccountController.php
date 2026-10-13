@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use Core\Controller;
+use Core\Security;
 use App\Models\DonationAccount;
 use App\Models\ActivityLog;
 use App\Middleware\RoleMiddleware;
@@ -273,10 +274,11 @@ class DonationAccountController extends Controller
         }
         
         $file = $_FILES['bank_logo'];
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         $maxSize = 2 * 1024 * 1024; // 2MB
         
-        if (!in_array($file['type'], $allowedTypes)) {
+        // Tipe & ekstensi ditentukan dari isi file, bukan dari data browser
+        $ext = Security::uploadExtension($file['tmp_name']);
+        if ($ext === null) {
             setFlash('warning', 'Format logo tidak valid. Gunakan JPG, PNG, GIF, atau WebP.');
             return null;
         }
@@ -286,7 +288,6 @@ class DonationAccountController extends Controller
             return null;
         }
         
-        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
         $filename = 'bank_' . time() . '_' . uniqid() . '.' . $ext;
         
         if (move_uploaded_file($file['tmp_name'], $this->uploadPath . $filename)) {
@@ -325,10 +326,11 @@ class DonationAccountController extends Controller
         // Handle QRIS image upload
         if (isset($_FILES['donation_qris_image']) && $_FILES['donation_qris_image']['error'] === UPLOAD_ERR_OK) {
             $file = $_FILES['donation_qris_image'];
-            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             $maxSize = 2 * 1024 * 1024; // 2MB
             
-            if (!in_array($file['type'], $allowedTypes)) {
+            // Tipe & ekstensi ditentukan dari isi file, bukan dari data browser
+            $ext = Security::uploadExtension($file['tmp_name']);
+            if ($ext === null) {
                 setFlash('error', 'Format gambar QRIS tidak valid. Gunakan JPG, PNG, GIF, atau WebP.');
                 $this->redirect('admin/rekening-donasi');
                 return;
@@ -346,7 +348,6 @@ class DonationAccountController extends Controller
                 unlink($this->uploadPath . $currentQris);
             }
             
-            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
             $filename = 'qris_' . time() . '_' . uniqid() . '.' . $ext;
             
             if (move_uploaded_file($file['tmp_name'], $this->uploadPath . $filename)) {

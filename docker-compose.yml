@@ -10,6 +10,7 @@ services:
       APP_URL: http://localhost:8080/siseeng
       # MySQL yang berjalan di host (bukan di container)
       DB_HOST: host.docker.internal
+      # DB_USER / DB_PASS diambil dari config/config.local.php (ikut ter-mount)
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

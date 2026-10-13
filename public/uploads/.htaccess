@@ -1,0 +1,22 @@
+# =========================================================
+# Folder upload: hanya berisi file statis (gambar/video).
+# Matikan eksekusi script agar file berbahaya yang lolos
+# tidak bisa dijalankan sebagai kode di server.
+# =========================================================
+
+# mod_php
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+
+# PHP-FPM / CGI: lepas handler & tolak akses ke ekstensi script
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .php8 .phar .phps .pht .cgi .pl .py .sh
+RemoveType .php .phtml .php3 .php4 .php5 .php7 .php8 .phar .phps .pht
+<FilesMatch "(?i)\.(php\d?|phtml|phar|phps|pht|cgi|pl|py|sh|htaccess)$">
+    Require all denied
+</FilesMatch>
+
+Options -Indexes -ExecCGI
