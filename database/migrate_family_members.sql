@@ -54,7 +54,7 @@ CREATE TABLE `families` (
 -- Keanggotaan KK sekaligus riwayatnya: pindah KK = tutup baris lama + buat baris baru.
 -- Dua UNIQUE pada generated column menjaga aturan di level database:
 --   * 1 orang hanya punya 1 keanggotaan terbuka (aktif di 1 KK)
---   * 1 KK hanya punya 1 kepala keluarga aktif
+--   * 1 KK hanya punya 1 kepala keluarzga aktif
 -- FK sengaja tanpa CASCADE: MySQL tidak mengizinkan CASCADE pada kolom dasar generated column.
 CREATE TABLE `family_members` (
     `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
