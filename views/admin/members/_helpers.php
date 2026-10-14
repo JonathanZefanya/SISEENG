@@ -112,12 +112,12 @@ function jmPersonFields(string $prefix, array $v, array $opts = []): void
     $gender = $v['gender'] ?? null;
     ?>
     <div class="row g-3" data-person>
-        <div class="col-xl-6">
+        <div class="col-xl-5">
             <label class="form-label" for="<?= $id('full_name') ?>">Nama lengkap <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="<?= $id('full_name') ?>" name="<?= $name('full_name') ?>" value="<?= $val('full_name') ?>"
                    maxlength="100" required autocomplete="off" placeholder="Sesuai KTP/akta">
         </div>
-        <div class="col-sm-6 col-xl-3">
+        <div class="col-sm-6 col-xl-4">
             <span class="form-label d-block" id="<?= $id('gender') ?>_label">Jenis kelamin <span class="text-danger">*</span></span>
             <?= jmSegment($name('gender'), ['M' => 'Laki-laki', 'F' => 'Perempuan'], $gender, $id('gender'), true,
                 'aria-labelledby="' . $id('gender') . '_label" data-gender') ?>

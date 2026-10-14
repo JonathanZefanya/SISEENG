@@ -1048,9 +1048,11 @@ a { color: var(--brand-dark); }
 .btn-check:disabled + .jm-pill { opacity: .45; cursor: not-allowed; }
 
 /* Segmented control (jenis kelamin, status pernikahan) */
-.jm-segment { display: flex; padding: 4px; gap: 4px; border-radius: 14px; background: #f1f2f4; }
+/* flex-wrap + min-width: pilihan turun ke baris baru jika kolom terlalu sempit, bukan menembus kotak */
+.jm-segment { display: flex; flex-wrap: wrap; padding: 4px; gap: 4px; border-radius: 14px; background: #f1f2f4; }
 .jm-segment .jm-seg {
-    flex: 1;
+    flex: 1 1 0;
+    min-width: max-content;
     display: flex; align-items: center; justify-content: center; gap: .35rem;
     min-height: 40px; padding: .4rem .5rem;
     border-radius: 10px;
