@@ -167,14 +167,14 @@ foreach ($bnItems as $i => $item) {
                 </div>
             </div>
 
-            <div class="copyright d-flex flex-column flex-md-row justify-content-between gap-2">
+            <!-- <div class="copyright d-flex flex-column flex-md-row justify-content-between gap-2">
                 <span>&copy; <?= date('Y') ?> <?= e($siteName) ?></span>
                 <?php if (isLoggedIn()): ?>
                     <a href="<?= url('admin/dashboard') ?>"><i class="bi bi-person-circle me-1"></i><?= e(auth('name')) ?></a>
                 <?php else: ?>
                     <a href="<?= url('auth/login') ?>"><i class="bi bi-shield-lock me-1"></i>Pengerja Panel</a>
                 <?php endif; ?>
-            </div>
+            </div> -->
         </div>
     </footer>
 
