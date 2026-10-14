@@ -489,7 +489,8 @@
                         <div class="col-12">
                             <label for="about_history" class="form-label fw-semibold">Sejarah Singkat</label>
                             <textarea class="form-control" id="about_history" name="about_history" rows="5"
-                                placeholder="Sejarah singkat gereja..."><?= e($settings['about_history'] ?? '') ?></textarea>
+                                data-rich-editor data-min-height="260"
+                                placeholder="Sejarah singkat gereja..."><?= e(richText($settings['about_history'] ?? '')) ?></textarea>
                         </div>
                         <div class="col-12">
                             <label for="about_pastor" class="form-label fw-semibold">Nama Gembala/Pendeta</label>
@@ -790,3 +791,5 @@
         apply(hexInput.value);
     })();
 </script>
+
+<?php require VIEW_PATH . 'admin/partials/rich-editor.php'; ?>

@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use Core\Controller;
+use Core\HtmlSanitizer;
 use App\Models\Setting;
 use App\Middleware\RoleMiddleware;
 
@@ -121,7 +122,7 @@ class SettingController extends Controller
             // About
             'about_vision' => $this->post('about_vision') ?? '',
             'about_mission' => $this->post('about_mission') ?? '',
-            'about_history' => $this->post('about_history') ?? '',
+            'about_history' => HtmlSanitizer::clean($_POST['about_history'] ?? ''),
             'about_pastor' => $this->post('about_pastor') ?? '',
         ];
 

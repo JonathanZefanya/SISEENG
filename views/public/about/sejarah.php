@@ -13,19 +13,9 @@
                     <div class="card-body p-5">
 
                         <?php if (!empty($about['history'])): ?>
-                            <?php
-                            // Pecah sejarah per paragraf (jika ada baris kosong)
-                            $paragraphs = array_values(array_filter(
-                                array_map('trim', preg_split('/\n{2,}/', $about['history']))
-                            ));
-                            ?>
-                            <?php if (count($paragraphs) > 1): ?>
-                                <?php foreach ($paragraphs as $para): ?>
-                                    <p class="fs-5 text-muted mb-4"><?= nl2br(e($para)) ?></p>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <p class="fs-5 text-muted mb-4"><?= nl2br(e($about['history'])) ?></p>
-                            <?php endif; ?>
+                            <div class="rich-content fs-5 text-muted lh-lg">
+                                <?= richText($about['history']) ?>
+                            </div>
                         <?php else: ?>
                             <p class="fs-5 text-muted mb-4">
                                 <?= e(APP_NAME) ?> didirikan dengan visi untuk menjangkau masyarakat
