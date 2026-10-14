@@ -930,9 +930,11 @@ main .rounded-circle.bg-primary { border-radius: 16px !important; }
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: .9rem;
     view-transition-name: wa-float; /* tetap diam saat pindah halaman */
+    /* Area kosong wadah tidak boleh menghalangi klik ke konten di belakangnya */
+    pointer-events: none;
 }
+.wa-float, .wa-widget.is-open .wa-panel { pointer-events: auto; }
 /* Di HP/tablet naik di atas bottom navigation, termasuk lingkaran menu aktif yang
    menonjol 37px di atas bar (--bn-lift 10px + setengah --bn-bubble 54px) */
 @media (max-width: 991.98px) {
@@ -1014,6 +1016,10 @@ main .rounded-circle.bg-primary { border-radius: 16px !important; }
 
 /* ---------- Jendela chat ---------- */
 .wa-panel {
+    /* Melayang di atas tombol, tidak ikut menambah ukuran wadah saat tertutup */
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + .9rem);
     width: min(360px, calc(100vw - 2rem));
     display: flex;
     flex-direction: column;
