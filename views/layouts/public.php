@@ -14,6 +14,12 @@ $canonicalQuery = array_intersect_key($_GET, array_flip(['page', 'kategori', 'mo
 $canonicalUrl = url($route) . ($canonicalQuery ? '?' . http_build_query($canonicalQuery) : '');
 
 $aboutActive = $isActive('tentang');
+// Submenu "Tentang": ikon, judul, deskripsi singkat
+$aboutItems = [
+    ['route' => 'tentang', 'icon' => 'building', 'label' => 'Profil Gereja', 'desc' => 'Kenali gereja kami lebih dekat'],
+    ['route' => 'tentang/visi-misi', 'icon' => 'eye', 'label' => 'Visi & Misi', 'desc' => 'Arah dan tujuan pelayanan'],
+    ['route' => 'tentang/sejarah', 'icon' => 'book', 'label' => 'Sejarah', 'desc' => 'Perjalanan gereja dari awal'],
+];
 $moreActive = $aboutActive || $isActive('donasi') || $isActive('kontak');
 
 // Penanda menu aktif; dianimasikan bergeser antar halaman (View Transitions, lihat style.css)
@@ -78,13 +84,24 @@ foreach ($bnItems as $i => $item) {
             <nav class="app-nav d-none d-lg-flex">
                 <a href="<?= url() ?>" class="<?= $isActive('') ? 'active' : '' ?>"><?= $navPill($isActive('')) ?>Beranda</a>
                 <div class="dropdown">
-                    <a href="#" class="<?= $aboutActive ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">
-                        <?= $navPill($aboutActive) ?>Tentang <i class="bi bi-chevron-down small"></i>
+                    <a href="#" class="<?= $aboutActive ? 'active' : '' ?>" data-bs-toggle="dropdown" data-bs-offset="0,12" aria-expanded="false">
+                        <?= $navPill($aboutActive) ?>Tentang <i class="bi bi-chevron-down small nav-caret"></i>
                     </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="<?= url('tentang') ?>"><i class="bi bi-building me-2 text-primary"></i>Profil Gereja</a></li>
-                        <li><a class="dropdown-item" href="<?= url('tentang/visi-misi') ?>"><i class="bi bi-eye me-2 text-primary"></i>Visi &amp; Misi</a></li>
-                        <li><a class="dropdown-item" href="<?= url('tentang/sejarah') ?>"><i class="bi bi-book me-2 text-primary"></i>Sejarah</a></li>
+                    <ul class="dropdown-menu nav-menu">
+                        <?php foreach ($aboutItems as $i => $item): ?>
+                            <?php $itemActive = $route === $item['route']; ?>
+                            <li style="--i: <?= $i ?>">
+                                <a class="dropdown-item nav-menu-item <?= $itemActive ? 'active' : '' ?>" href="<?= url($item['route']) ?>"
+                                   <?= $itemActive ? 'aria-current="page"' : '' ?>>
+                                    <span class="nav-menu-icon"><i class="bi bi-<?= $item['icon'] ?>"></i></span>
+                                    <span class="nav-menu-text">
+                                        <strong><?= e($item['label']) ?></strong>
+                                        <small><?= e($item['desc']) ?></small>
+                                    </span>
+                                    <i class="bi bi-arrow-right nav-menu-go"></i>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
                 <a href="<?= url('jadwal-pengkhotbah') ?>" class="<?= $isActive('jadwal-pengkhotbah') ? 'active' : '' ?>"><?= $navPill($isActive('jadwal-pengkhotbah')) ?>Jadwal</a>
