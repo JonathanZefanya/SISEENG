@@ -945,9 +945,9 @@ main .rounded-circle.bg-primary { border-radius: 16px !important; }
 
 /* ---------- Tombol ---------- */
 .wa-float {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: .6rem;
     padding: 0;
     border: 0;
     background: none;
@@ -984,8 +984,14 @@ main .rounded-circle.bg-primary { border-radius: 16px !important; }
 .wa-float-btn::after { animation-delay: 2.6s; }
 .wa-widget.is-open .wa-float-btn::before, .wa-widget.is-open .wa-float-btn::after { animation: none; opacity: 0; }
 
-/* Label sapaan: muncul sebentar setelah halaman dibuka, dan saat hover */
+/* Label sapaan: muncul sebentar setelah halaman dibuka, dan saat hover.
+   Melayang di kiri tombol, jadi area yang bisa disentuh/di-hover hanya lingkaran hijau */
 .wa-float-label {
+    position: absolute;
+    right: calc(100% + .6rem);
+    inset-block: 0;
+    margin-block: auto;
+    height: fit-content;
     max-width: min(240px, calc(100vw - 7rem));
     overflow: hidden;
     text-overflow: ellipsis;
