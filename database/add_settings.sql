@@ -29,8 +29,8 @@ INSERT IGNORE INTO `settings` (`key`, `value`, `type`, `group`, `description`) V
 ('site_tiktok', '', 'url', 'social', 'Link TikTok'),
 
 -- Donation
-('donation_title', 'Dukung Pelayanan Kami', 'text', 'donation', 'Judul halaman donasi'),
-('donation_description', 'Persembahan dan donasi Anda sangat berarti untuk mendukung pelayanan gereja dan membantu sesama.', 'textarea', 'donation', 'Deskripsi donasi'),
+('donation_title', 'Dukung Pelayanan Kami', 'text', 'donation', 'Judul halaman menabur'),
+('donation_description', 'Persembahan dan menabur Anda sangat berarti untuk mendukung pelayanan gereja dan membantu sesama.', 'textarea', 'donation', 'Deskripsi menabur'),
 ('donation_bank_name', 'Bank BCA', 'text', 'donation', 'Nama Bank 1'),
 ('donation_bank_account', '1234567890', 'text', 'donation', 'Nomor Rekening 1'),
 ('donation_account_name', 'GBI Ciseeng', 'text', 'donation', 'Atas Nama 1'),

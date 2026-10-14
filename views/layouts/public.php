@@ -46,7 +46,7 @@ $aboutItems = [
     ['route' => 'tentang/visi-misi', 'icon' => 'eye', 'label' => 'Visi & Misi', 'desc' => 'Arah dan tujuan pelayanan'],
     ['route' => 'tentang/sejarah', 'icon' => 'book', 'label' => 'Sejarah', 'desc' => 'Perjalanan gereja dari awal'],
 ];
-$moreActive = $aboutActive || $isActive('donasi') || $isActive('kontak');
+$moreActive = $aboutActive || $isActive('menabur') || $isActive('kontak');
 
 // Penanda menu aktif; dianimasikan bergeser antar halaman (View Transitions, lihat style.css)
 $navPill = fn(bool $on) => $on ? '<span class="nav-pill" aria-hidden="true"></span>' : '';
@@ -149,8 +149,8 @@ foreach ($bnItems as $i => $item) {
                 <a href="<?= url('kegiatan') ?>" class="<?= $isActive('kegiatan') ? 'active' : '' ?>"><?= $navPill($isActive('kegiatan')) ?>Kegiatan</a>
                 <a href="<?= url('artikel') ?>" class="<?= $isActive('artikel') ? 'active' : '' ?>"><?= $navPill($isActive('artikel')) ?>Artikel</a>
                 <a href="<?= url('kontak') ?>" class="<?= $isActive('kontak') ? 'active' : '' ?>"><?= $navPill($isActive('kontak')) ?>Kontak</a>
-                <a href="<?= url('donasi') ?>" class="btn btn-primary btn-sm">
-                    <i class="bi bi-heart-fill me-1"></i>Donasi
+                <a href="<?= url('menabur') ?>" class="btn btn-primary btn-sm">
+                    <i class="bi bi-heart-fill me-1"></i>Menabur
                 </a>
             </nav>
 
@@ -216,7 +216,7 @@ foreach ($bnItems as $i => $item) {
                         <li><a href="<?= url('jadwal-pengkhotbah') ?>">Jadwal Pengkhotbah</a></li>
                         <li><a href="<?= url('kegiatan') ?>">Kegiatan</a></li>
                         <li><a href="<?= url('artikel') ?>">Artikel</a></li>
-                        <li><a href="<?= url('donasi') ?>">Donasi</a></li>
+                        <li><a href="<?= url('menabur') ?>">Menabur</a></li>
                     </ul>
                 </div>
 
@@ -424,8 +424,8 @@ foreach ($bnItems as $i => $item) {
                 <a href="<?= url('tentang/sejarah') ?>" class="service-item">
                     <span class="service-icon tone-orange"><i class="bi bi-book"></i></span>Sejarah
                 </a>
-                <a href="<?= url('donasi') ?>" class="service-item">
-                    <span class="service-icon tone-red"><i class="bi bi-heart-fill"></i></span>Donasi
+                <a href="<?= url('menabur') ?>" class="service-item">
+                    <span class="service-icon tone-red"><i class="bi bi-heart-fill"></i></span>Menabur
                 </a>
                 <a href="<?= url('kontak') ?>" class="service-item">
                     <span class="service-icon tone-teal"><i class="bi bi-chat-dots-fill"></i></span>Kontak

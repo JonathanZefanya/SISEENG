@@ -370,7 +370,7 @@ CREATE TABLE `rate_limits` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================================
--- TABEL: donation_accounts (Rekening Donasi)
+-- TABEL: donation_accounts (Rekening Menabur)
 -- =====================================================================
 DROP TABLE IF EXISTS `donation_accounts`;
 CREATE TABLE `donation_accounts` (
@@ -433,8 +433,8 @@ INSERT INTO `settings` (`key`, `value`, `type`, `group`, `description`) VALUES
 ('site_youtube',     '',                                      'url',      'social', 'Link YouTube'),
 ('site_tiktok',      '',                                      'url',      'social', 'Link TikTok'),
 -- Donation
-('donation_title',       'Dukung Pelayanan Kami',             'text',     'donation','Judul halaman donasi'),
-('donation_description', 'Persembahan dan donasi Anda sangat berarti untuk mendukung pelayanan gereja.','textarea','donation','Deskripsi donasi'),
+('donation_title',       'Dukung Pelayanan Kami',             'text',     'donation','Judul halaman menabur'),
+('donation_description', 'Persembahan dan menabur Anda sangat berarti untuk mendukung pelayanan gereja.','textarea','donation','Deskripsi menabur'),
 ('donation_qris_image',  '',                                  'image',    'donation','Gambar QRIS'),
 ('donation_qris_name',   '',                                  'text',     'donation','Nama QRIS'),
 -- About

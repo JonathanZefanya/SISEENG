@@ -91,12 +91,9 @@
             <hr class="my-4">
             
             <div class="form-actions">
-                <a href="<?= url('admin/articles') ?>" class="btn btn-outline-secondary btn-lg">Batal</a>
-                <button type="submit" name="action" value="draft" class="btn btn-secondary btn-lg">
-                    <i class="bi bi-file-earmark me-2"></i>Simpan Draft
-                </button>
-                <button type="submit" name="action" value="publish" class="btn btn-primary btn-lg">
-                    <i class="bi bi-send me-2"></i>Publikasikan
+                <a href="<?= url('admin/articles') ?>" class="btn btn-outline-secondary">Batal</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg me-2"></i>Simpan
                 </button>
             </div>
         </form>

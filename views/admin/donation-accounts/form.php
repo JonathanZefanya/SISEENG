@@ -1,10 +1,10 @@
 <!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h1 class="h3 mb-0 fw-bold"><?= $isEdit ? 'Edit' : 'Tambah' ?> Rekening Donasi</h1>
-        <p class="text-muted mb-0"><?= $isEdit ? 'Ubah informasi rekening bank' : 'Tambahkan rekening bank baru untuk donasi' ?></p>
+        <h1 class="h3 mb-0 fw-bold"><?= $isEdit ? 'Edit' : 'Tambah' ?> Rekening Menabur</h1>
+        <p class="text-muted mb-0"><?= $isEdit ? 'Ubah informasi rekening bank' : 'Tambahkan rekening bank baru untuk menabur' ?></p>
     </div>
-    <a href="<?= url('admin/rekening-donasi') ?>" class="btn btn-outline-secondary">
+    <a href="<?= url('admin/rekening-menabur') ?>" class="btn btn-outline-secondary">
         <i class="bi bi-arrow-left me-2"></i>Kembali
     </a>
 </div>
@@ -18,7 +18,7 @@
                 </h5>
             </div>
             <div class="card-body p-4">
-                <form action="<?= url('admin/rekening-donasi/' . ($isEdit ? 'update/' . $account['id'] : 'store')) ?>" 
+                <form action="<?= url('admin/rekening-menabur/' . ($isEdit ? 'update/' . $account['id'] : 'store')) ?>" 
                       method="POST" enctype="multipart/form-data">
                     <?= csrfField() ?>
                     
@@ -79,7 +79,7 @@
                     <hr class="my-4">
                     
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="<?= url('admin/rekening-donasi') ?>" class="btn btn-outline-secondary btn-lg px-4">
+                        <a href="<?= url('admin/rekening-menabur') ?>" class="btn btn-outline-secondary btn-lg px-4">
                             Batal
                         </a>
                         <button type="submit" class="btn btn-primary btn-lg px-4">

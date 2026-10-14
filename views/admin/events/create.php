@@ -85,8 +85,8 @@
             <hr class="my-4">
 
             <div class="d-flex justify-content-end gap-2">
-                <a href="<?= url('admin/events') ?>" class="btn btn-outline-secondary btn-lg">Batal</a>
-                <button type="submit" class="btn btn-primary btn-lg">
+                <a href="<?= url('admin/events') ?>" class="btn btn-outline-secondary">Batal</a>
+                <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-lg me-2"></i>Simpan Kegiatan
                 </button>
             </div>

@@ -398,7 +398,7 @@
                         </li>
                         <li class="risk-item" style="--i: 2">
                             <div class="risk-icon"><i class="bi bi-pencil-square"></i></div>
-                            <div><strong>Konten website bisa diubah</strong><span>Artikel, kegiatan, dan rekening donasi bisa diganti tanpa sepengetahuan Anda.</span></div>
+                            <div><strong>Konten website bisa diubah</strong><span>Artikel, kegiatan, dan rekening menabur bisa diganti tanpa sepengetahuan Anda.</span></div>
                         </li>
                     </ul>
 

@@ -12,7 +12,7 @@ use App\Middleware\RoleMiddleware;
  * DonationAccount Controller (Admin)
  * =========================================================
  * 
- * Mengelola rekening bank donasi
+ * Mengelola rekening bank menabur
  */
 class DonationAccountController extends Controller
 {
@@ -40,7 +40,7 @@ class DonationAccountController extends Controller
         $accounts = $this->accountModel->getAll();
         
         $this->view('admin/donation-accounts/index', [
-            'title' => 'Kelola Rekening Donasi - ' . APP_NAME,
+            'title' => 'Kelola Rekening Menabur - ' . APP_NAME,
             'accounts' => $accounts
         ]);
     }
@@ -51,7 +51,7 @@ class DonationAccountController extends Controller
     public function create(): void
     {
         $this->view('admin/donation-accounts/form', [
-            'title' => 'Tambah Rekening Donasi - ' . APP_NAME,
+            'title' => 'Tambah Rekening Menabur - ' . APP_NAME,
             'account' => null,
             'isEdit' => false
         ]);
@@ -63,7 +63,7 @@ class DonationAccountController extends Controller
     public function store(): void
     {
         if (!$this->isPost()) {
-            $this->redirect('admin/rekening-donasi');
+            $this->redirect('admin/rekening-menabur');
             return;
         }
         
@@ -81,7 +81,7 @@ class DonationAccountController extends Controller
         $errors = $this->validate($data);
         if (!empty($errors)) {
             setFlash('error', implode('<br>', $errors));
-            $this->redirect('admin/rekening-donasi/create');
+            $this->redirect('admin/rekening-menabur/create');
             return;
         }
         
@@ -93,12 +93,12 @@ class DonationAccountController extends Controller
         
         if ($id) {
             ActivityLog::log(auth('id'), 'create', "Menambahkan rekening {$data['bank_name']}", [], 'donation_accounts', (int)$id);
-            setFlash('success', 'Rekening donasi berhasil ditambahkan!');
+            setFlash('success', 'Rekening menabur berhasil ditambahkan!');
         } else {
-            setFlash('error', 'Gagal menambahkan rekening donasi.');
+            setFlash('error', 'Gagal menambahkan rekening menabur.');
         }
         
-        $this->redirect('admin/rekening-donasi');
+        $this->redirect('admin/rekening-menabur');
     }
     
     /**
@@ -110,12 +110,12 @@ class DonationAccountController extends Controller
         
         if (!$account) {
             setFlash('error', 'Rekening tidak ditemukan.');
-            $this->redirect('admin/rekening-donasi');
+            $this->redirect('admin/rekening-menabur');
             return;
         }
         
         $this->view('admin/donation-accounts/form', [
-            'title' => 'Edit Rekening Donasi - ' . APP_NAME,
+            'title' => 'Edit Rekening Menabur - ' . APP_NAME,
             'account' => $account,
             'isEdit' => true
         ]);
@@ -127,7 +127,7 @@ class DonationAccountController extends Controller
     public function update(int $id): void
     {
         if (!$this->isPost()) {
-            $this->redirect('admin/rekening-donasi');
+            $this->redirect('admin/rekening-menabur');
             return;
         }
         
@@ -136,7 +136,7 @@ class DonationAccountController extends Controller
         $account = $this->accountModel->getById($id);
         if (!$account) {
             setFlash('error', 'Rekening tidak ditemukan.');
-            $this->redirect('admin/rekening-donasi');
+            $this->redirect('admin/rekening-menabur');
             return;
         }
         
@@ -153,7 +153,7 @@ class DonationAccountController extends Controller
         $errors = $this->validate($data);
         if (!empty($errors)) {
             setFlash('error', implode('<br>', $errors));
-            $this->redirect('admin/rekening-donasi/edit/' . $id);
+            $this->redirect('admin/rekening-menabur/edit/' . $id);
             return;
         }
         
@@ -170,12 +170,12 @@ class DonationAccountController extends Controller
         // Update
         if ($this->accountModel->updateAccount($id, $data)) {
             ActivityLog::log(auth('id'), 'update', "Mengubah rekening {$data['bank_name']}", [], 'donation_accounts', $id);
-            setFlash('success', 'Rekening donasi berhasil diperbarui!');
+            setFlash('success', 'Rekening menabur berhasil diperbarui!');
         } else {
-            setFlash('error', 'Gagal memperbarui rekening donasi.');
+            setFlash('error', 'Gagal memperbarui rekening menabur.');
         }
         
-        $this->redirect('admin/rekening-donasi');
+        $this->redirect('admin/rekening-menabur');
     }
     
     /**
@@ -184,7 +184,7 @@ class DonationAccountController extends Controller
     public function delete(int $id): void
     {
         if (!$this->isPost()) {
-            $this->redirect('admin/rekening-donasi');
+            $this->redirect('admin/rekening-menabur');
             return;
         }
         
@@ -193,7 +193,7 @@ class DonationAccountController extends Controller
         $account = $this->accountModel->getById($id);
         if (!$account) {
             setFlash('error', 'Rekening tidak ditemukan.');
-            $this->redirect('admin/rekening-donasi');
+            $this->redirect('admin/rekening-menabur');
             return;
         }
         
@@ -204,12 +204,12 @@ class DonationAccountController extends Controller
         
         if ($this->accountModel->deleteAccount($id)) {
             ActivityLog::log(auth('id'), 'delete', "Menghapus rekening {$account['bank_name']}", [], 'donation_accounts', $id);
-            setFlash('success', 'Rekening donasi berhasil dihapus!');
+            setFlash('success', 'Rekening menabur berhasil dihapus!');
         } else {
-            setFlash('error', 'Gagal menghapus rekening donasi.');
+            setFlash('error', 'Gagal menghapus rekening menabur.');
         }
         
-        $this->redirect('admin/rekening-donasi');
+        $this->redirect('admin/rekening-menabur');
     }
     
     /**
@@ -218,7 +218,7 @@ class DonationAccountController extends Controller
     public function toggle(int $id): void
     {
         if (!$this->isPost()) {
-            $this->redirect('admin/rekening-donasi');
+            $this->redirect('admin/rekening-menabur');
             return;
         }
         
@@ -227,7 +227,7 @@ class DonationAccountController extends Controller
         $account = $this->accountModel->getById($id);
         if (!$account) {
             setFlash('error', 'Rekening tidak ditemukan.');
-            $this->redirect('admin/rekening-donasi');
+            $this->redirect('admin/rekening-menabur');
             return;
         }
         
@@ -239,7 +239,7 @@ class DonationAccountController extends Controller
             setFlash('error', 'Gagal mengubah status rekening.');
         }
         
-        $this->redirect('admin/rekening-donasi');
+        $this->redirect('admin/rekening-menabur');
     }
     
     /**
@@ -303,7 +303,7 @@ class DonationAccountController extends Controller
     public function updateQris(): void
     {
         if (!$this->isPost()) {
-            $this->redirect('admin/rekening-donasi');
+            $this->redirect('admin/rekening-menabur');
             return;
         }
         
@@ -317,9 +317,9 @@ class DonationAccountController extends Controller
             }
             \App\Models\Setting::set('donation_qris_image', '');
             \App\Models\Setting::set('donation_qris_name', '');
-            ActivityLog::log(auth('id'), 'delete', "Menghapus gambar QRIS donasi", [], 'settings', null);
+            ActivityLog::log(auth('id'), 'delete', "Menghapus gambar QRIS menabur", [], 'settings', null);
             setFlash('success', 'Gambar QRIS berhasil dihapus!');
-            $this->redirect('admin/rekening-donasi');
+            $this->redirect('admin/rekening-menabur');
             return;
         }
         
@@ -332,13 +332,13 @@ class DonationAccountController extends Controller
             $ext = Security::uploadExtension($file['tmp_name']);
             if ($ext === null) {
                 setFlash('error', 'Format gambar QRIS tidak valid. Gunakan JPG, PNG, GIF, atau WebP.');
-                $this->redirect('admin/rekening-donasi');
+                $this->redirect('admin/rekening-menabur');
                 return;
             }
             
             if ($file['size'] > $maxSize) {
                 setFlash('error', 'Ukuran gambar QRIS terlalu besar. Maksimal 2MB.');
-                $this->redirect('admin/rekening-donasi');
+                $this->redirect('admin/rekening-menabur');
                 return;
             }
             
@@ -358,8 +358,8 @@ class DonationAccountController extends Controller
         // Update QRIS name
         \App\Models\Setting::set('donation_qris_name', $this->post('donation_qris_name') ?? '');
         
-        ActivityLog::log(auth('id'), 'update', "Memperbarui QRIS donasi", [], 'settings', null);
+        ActivityLog::log(auth('id'), 'update', "Memperbarui QRIS menabur", [], 'settings', null);
         setFlash('success', 'QRIS berhasil diperbarui!');
-        $this->redirect('admin/rekening-donasi');
+        $this->redirect('admin/rekening-menabur');
     }
 }

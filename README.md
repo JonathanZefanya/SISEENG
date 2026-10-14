@@ -9,12 +9,12 @@ Sistem Informasi Manajemen Gereja (SISEENG) adalah aplikasi web berbasis PHP Nat
 ## 📋 Fitur Utama
 
 ### Website Publik
-- **Beranda**: sapaan sesuai waktu (WIB), kartu ibadah terdekat beserta pengkhotbahnya, menu ikon, kegiatan mendatang, artikel terbaru, lokasi, dan ajakan donasi
+- **Beranda**: sapaan sesuai waktu (WIB), kartu ibadah terdekat beserta pengkhotbahnya, menu ikon, kegiatan mendatang, artikel terbaru, lokasi, dan ajakan menabur
 - **Tentang Kami**: profil, visi-misi, dan sejarah gereja
 - **Jadwal Ibadah & Jadwal Pengkhotbah**: jadwal ibadah rutin dan jadwal pengkhotbah per bulan
 - **Kegiatan/Acara**: daftar dan detail event gereja
 - **Artikel/Renungan**: artikel rohani dengan kategori
-- **Donasi**: rekening bank dan QRIS
+- **Menabur**: rekening bank dan QRIS
 - **Kontak**: form kontak dengan captcha aritmatika, serta peta lokasi
 - **Navigasi mobile**: bottom navigation dan menu "Lainnya" berupa bottom sheet
 
@@ -30,10 +30,10 @@ Sistem Informasi Manajemen Gereja (SISEENG) adalah aplikasi web berbasis PHP Nat
 - **Kegiatan**: CRUD event dan acara
 - **Data Jemaat**: CRUD data anggota jemaat
 - **Pesan Masuk**: pesan dari form kontak, dengan badge jumlah pesan belum dibaca
-- **Rekening Donasi**: kelola rekening dan gambar QRIS
+- **Rekening Menabur**: kelola rekening dan gambar QRIS
 - **Pengaturan Website**:
   - Identitas gereja, logo (otomatis dipakai sebagai favicon), dan **warna tema**
-  - Hero, kontak, donasi, media sosial, dan halaman Tentang
+  - Hero, kontak, menabur, media sosial, dan halaman Tentang
 - **Kelola Admin & Log Aktivitas** (khusus Super Admin)
 - **Tampilan mobile**: bottom navigation, dan tabel otomatis berubah menjadi kartu di layar kecil
 
@@ -109,7 +109,7 @@ Alamat akses sama dengan Opsi A.
 
 ## 🗄️ Database
 
-File skema lengkap yang disarankan adalah **`database/deploy.sql`**. File ini sudah mencakup semua tabel, termasuk jadwal pengkhotbah, kategori artikel, rekening donasi, dan settings.
+File skema lengkap yang disarankan adalah **`database/deploy.sql`**. File ini sudah mencakup semua tabel, termasuk jadwal pengkhotbah, kategori artikel, rekening menabur, dan settings.
 
 ```sql
 CREATE DATABASE db_siseeng CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -231,7 +231,7 @@ siseeng/
 - Kegiatan
 - Data Jemaat
 - Pesan Masuk
-- Rekening Donasi
+- Rekening Menabur
 - Pengaturan Website
 
 ## 📝 Routes
@@ -250,7 +250,7 @@ Semua route didefinisikan di [core/App.php](core/App.php). Beberapa modul admin 
 | `/kegiatan/detail/{slug}` | EventController@detail |
 | `/artikel` | ArticleController@index |
 | `/artikel/baca/{slug}` | ArticleController@read |
-| `/donasi` | DonationController@index |
+| `/menabur` | DonationController@index |
 | `/kontak` | ContactController@index |
 | `/kontak/kirim` (POST) | ContactController@send |
 | `/auth/login` | AuthController@login |
@@ -268,7 +268,7 @@ Semua route didefinisikan di [core/App.php](core/App.php). Beberapa modul admin 
 | `/admin/kegiatan` | Admin\EventController |
 | `/admin/jemaat` | Admin\MemberController |
 | `/admin/pesan` | Admin\MessageController |
-| `/admin/rekening-donasi` | Admin\DonationAccountController |
+| `/admin/rekening-menabur` | Admin\DonationAccountController |
 | `/admin/pengaturan` | Admin\SettingController |
 | `/admin/users` | Admin\UserController (Super Admin) |
 | `/admin/logs` | Admin\ActivityLogController (Super Admin) |

@@ -33,8 +33,8 @@
             <a href="<?= url('admin/pesan') ?>" class="quick-item">
                 <span class="quick-icon tone-pink"><i class="bi bi-envelope-fill"></i></span>Pesan
             </a>
-            <a href="<?= url('admin/rekening-donasi') ?>" class="quick-item">
-                <span class="quick-icon tone-red"><i class="bi bi-credit-card-fill"></i></span>Donasi
+            <a href="<?= url('admin/rekening-menabur') ?>" class="quick-item">
+                <span class="quick-icon tone-red"><i class="bi bi-credit-card-fill"></i></span>Menabur
             </a>
             <a href="<?= url('admin/pengaturan') ?>" class="quick-item">
                 <span class="quick-icon tone-dark"><i class="bi bi-gear-fill"></i></span>Pengaturan

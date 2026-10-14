@@ -838,7 +838,7 @@ main, .app-footer { overflow-x: clip; }
 .info-row .ir-label { font-size: .78rem; font-weight: 700; color: var(--muted); }
 .info-row .ir-value { font-weight: 700; }
 
-/* Banner donasi */
+/* Banner menabur */
 .cta-banner {
     border-radius: var(--radius-lg);
     background: linear-gradient(120deg, var(--brand-darker) 0%, var(--brand) 60%, var(--brand-light) 100%);

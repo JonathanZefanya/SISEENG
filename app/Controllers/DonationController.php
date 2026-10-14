@@ -8,19 +8,19 @@ use Core\Controller;
  * Donation Controller
  * =========================================================
  * 
- * Controller untuk halaman donasi
+ * Controller untuk halaman menabur
  */
 class DonationController extends Controller
 {
     protected $layout = 'public';
     
     /**
-     * Halaman donasi
+     * Halaman menabur
      */
     public function index(): void
     {
         $this->view('public/donation', [
-            'title' => 'Donasi - ' . APP_NAME,
+            'title' => 'Menabur - ' . APP_NAME,
         ]);
     }
 }

@@ -72,8 +72,8 @@ $heroVideo = setting('hero_video');
             <a href="<?= url('artikel') ?>" class="service-item">
                 <span class="service-icon tone-blue"><i class="bi bi-journal-text"></i></span>Artikel
             </a>
-            <a href="<?= url('donasi') ?>" class="service-item">
-                <span class="service-icon tone-red"><i class="bi bi-heart-fill"></i></span>Donasi
+            <a href="<?= url('menabur') ?>" class="service-item">
+                <span class="service-icon tone-red"><i class="bi bi-heart-fill"></i></span>Menabur
             </a>
             <a href="<?= url('tentang') ?>" class="service-item">
                 <span class="service-icon tone-purple"><i class="bi bi-building"></i></span>Tentang
@@ -403,14 +403,14 @@ $heroVideo = setting('hero_video');
     </div>
 </section>
 
-<!-- ===== CTA DONASI ===== -->
+<!-- ===== CTA MENABUR ===== -->
 <section class="pt-0">
     <div class="container">
         <div class="cta-banner">
             <h2><?= e(setting('donation_title', 'Dukung Pelayanan Kami')) ?></h2>
-            <p><?= e(setting('donation_description', 'Persembahan dan donasi Anda sangat berarti untuk mendukung pelayanan gereja dan membantu sesama.')) ?></p>
-            <a href="<?= url('donasi') ?>" class="btn btn-warning">
-                <i class="bi bi-heart-fill me-2"></i>Berikan Donasi
+            <p><?= e(setting('donation_description', 'Persembahan dan menabur Anda sangat berarti untuk mendukung pelayanan gereja dan membantu sesama.')) ?></p>
+            <a href="<?= url('menabur') ?>" class="btn btn-warning">
+                <i class="bi bi-heart-fill me-2"></i>Mari Menabur
             </a>
         </div>
     </div>

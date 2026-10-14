@@ -1,6 +1,6 @@
 <section class="py-5 bg-primary text-white">
     <div class="container text-center">
-        <h1 class="display-4 fw-bold mb-3"><?= e(setting('donation_title', 'Donasi')) ?></h1>
+        <h1 class="display-4 fw-bold mb-3"><?= e(setting('donation_title', 'Menabur')) ?></h1>
         <p class="lead fs-4"><?= e(setting('donation_description', 'Dukungan Anda sangat berarti bagi pelayanan gereja')) ?></p>
     </div>
 </section>
@@ -10,7 +10,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <div class="text-center mb-5">
-                    <h2 class="fw-bold text-primary mb-3">Persembahan & Donasi</h2>
+                    <h2 class="fw-bold text-primary mb-3">Persembahan & Menabur</h2>
                     <p class="lead text-muted">
                         "Hendaklah masing-masing memberikan menurut kerelaan hatinya, jangan dengan sedih hati atau karena paksaan, sebab Allah mengasihi orang yang memberi dengan sukacita."
                         <br><small>- 2 Korintus 9:7</small>
@@ -130,18 +130,18 @@
                             </li>
                             <li class="mb-2">
                                 <i class="bi bi-check-circle text-success me-2"></i>
-                                Cantumkan nama dan keperluan donasi pada berita transfer
+                                Cantumkan nama dan keperluan menabur pada berita transfer
                             </li>
                             <li class="mb-2">
                                 <i class="bi bi-check-circle text-success me-2"></i>
-                                Bukti transfer akan menjadi konfirmasi donasi Anda
+                                Bukti transfer akan menjadi konfirmasi menabur Anda
                             </li>
                         </ul>
                     </div>
                 </div>
                 
                 <div class="text-center mt-5">
-                    <p class="fs-5 text-muted">Ada pertanyaan tentang donasi?</p>
+                    <p class="fs-5 text-muted">Ada pertanyaan tentang menabur?</p>
                     <a href="<?= url('kontak') ?>" class="btn btn-primary btn-lg px-5">
                         <i class="bi bi-chat-dots me-2"></i>Hubungi Kami
                     </a>

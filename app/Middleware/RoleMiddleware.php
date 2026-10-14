@@ -255,10 +255,10 @@ class RoleMiddleware
                 'type' => 'single'
             ],
             [
-                'title' => 'Rekening Donasi',
-                'url' => 'admin/rekening-donasi',
+                'title' => 'Rekening Menabur',
+                'url' => 'admin/rekening-menabur',
                 'icon' => 'bi-credit-card',
-                'active' => 'admin/rekening-donasi',
+                'active' => 'admin/rekening-menabur',
                 'type' => 'single'
             ],
             [

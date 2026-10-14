@@ -1,6 +1,6 @@
 -- =====================================================
 -- Donation Accounts Table
--- Tabel untuk menyimpan rekening bank donasi (dinamis)
+-- Tabel untuk menyimpan rekening bank menabur (dinamis)
 -- =====================================================
 
 -- Create table donation_accounts
@@ -26,5 +26,5 @@ INSERT INTO `donation_accounts` (`bank_name`, `account_number`, `account_name`, 
 
 -- Add QRIS setting
 INSERT IGNORE INTO `settings` (`key`, `value`, `type`, `group`, `description`) VALUES
-('donation_qris_image', '', 'image', 'donation', 'Gambar QRIS untuk donasi'),
+('donation_qris_image', '', 'image', 'donation', 'Gambar QRIS untuk menabur'),
 ('donation_qris_name', '', 'text', 'donation', 'Nama QRIS (opsional)');

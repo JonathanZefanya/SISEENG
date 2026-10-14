@@ -6,10 +6,10 @@ use Core\Database;
 
 /**
  * =========================================================
- * DonationAccount Model (Rekening Donasi)
+ * DonationAccount Model (Rekening Menabur)
  * =========================================================
  * 
- * Model untuk mengelola rekening bank donasi
+ * Model untuk mengelola rekening bank menabur
  */
 class DonationAccount extends Model
 {

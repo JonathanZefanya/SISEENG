@@ -29,7 +29,7 @@ class SeoController extends Controller
         'tentang'            => ['monthly', '0.6'],
         'tentang/visi-misi'  => ['yearly', '0.5'],
         'tentang/sejarah'    => ['yearly', '0.5'],
-        'donasi'             => ['monthly', '0.5'],
+        'menabur'             => ['monthly', '0.5'],
         'kontak'             => ['yearly', '0.5'],
     ];
 

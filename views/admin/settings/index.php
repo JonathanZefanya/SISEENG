@@ -2,7 +2,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1 class="h3 mb-0 fw-bold">Pengaturan Website</h1>
-        <p class="text-muted mb-0">Kelola informasi gereja, kontak, dan donasi</p>
+        <p class="text-muted mb-0">Kelola informasi gereja, kontak, dan menabur</p>
     </div>
 </div>
 
@@ -16,7 +16,7 @@
         ['id' => 'general',  'icon' => 'gear',        'label' => 'Umum'],
         ['id' => 'hero',     'icon' => 'image',       'label' => 'Hero Section'],
         ['id' => 'contact',  'icon' => 'telephone',   'label' => 'Kontak'],
-        ['id' => 'donation', 'icon' => 'heart',       'label' => 'Donasi'],
+        ['id' => 'donation', 'icon' => 'heart',       'label' => 'Menabur'],
         ['id' => 'social',   'icon' => 'share',       'label' => 'Media Sosial'],
         ['id' => 'about',    'icon' => 'info-circle', 'label' => 'Tentang'],
     ];
@@ -356,32 +356,32 @@
             </div>
         </div>
 
-        <!-- Tab: Donasi -->
+        <!-- Tab: Menabur -->
         <div class="<?= $paneClass('donation') ?>" id="donation" role="tabpanel">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold"><i class="bi bi-heart me-2 text-primary"></i>Informasi Donasi</h5>
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-heart me-2 text-primary"></i>Informasi Menabur</h5>
                 </div>
                 <div class="card-body p-4">
                     <div class="row g-4">
                         <div class="col-12">
-                            <label for="donation_title" class="form-label fw-semibold">Judul Halaman Donasi</label>
+                            <label for="donation_title" class="form-label fw-semibold">Judul Halaman Menabur</label>
                             <input type="text" class="form-control form-control-lg" id="donation_title"
                                 name="donation_title"
                                 value="<?= e($settings['donation_title'] ?? 'Dukung Pelayanan Kami') ?>">
                         </div>
                         <div class="col-12">
-                            <label for="donation_description" class="form-label fw-semibold">Deskripsi Donasi</label>
+                            <label for="donation_description" class="form-label fw-semibold">Deskripsi Menabur</label>
                             <textarea class="form-control" id="donation_description" name="donation_description"
-                                rows="3"><?= e($settings['donation_description'] ?? 'Persembahan dan donasi Anda sangat berarti untuk mendukung pelayanan gereja dan membantu sesama.') ?></textarea>
+                                rows="3"><?= e($settings['donation_description'] ?? 'Persembahan dan menabur Anda sangat berarti untuk mendukung pelayanan gereja dan membantu sesama.') ?></textarea>
                         </div>
 
                         <div class="col-12">
                             <div class="alert alert-info mb-0">
                                 <i class="bi bi-info-circle me-2"></i>
                                 <strong>Rekening Bank & QRIS</strong> dapat dikelola melalui menu
-                                <a href="<?= url('admin/rekening-donasi') ?>" class="alert-link">
-                                    <i class="bi bi-credit-card me-1"></i>Rekening Donasi
+                                <a href="<?= url('admin/rekening-menabur') ?>" class="alert-link">
+                                    <i class="bi bi-credit-card me-1"></i>Rekening Menabur
                                 </a>
                             </div>
                         </div>
