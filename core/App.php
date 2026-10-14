@@ -80,6 +80,10 @@ class App
             // Jadwal Pengkhotbah Bulanan
             'jadwal-pengkhotbah' => ['controller' => 'Home', 'action' => 'preacherSchedule'],
 
+            // SEO: dibuat dinamis agar domain mengikuti APP_URL
+            'sitemap.xml' => ['controller' => 'Seo', 'action' => 'sitemap'],
+            'robots.txt' => ['controller' => 'Seo', 'action' => 'robots'],
+
             // =====================================================
             // AUTHENTICATION ROUTES
             // =====================================================

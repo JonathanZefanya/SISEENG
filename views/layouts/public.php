@@ -11,7 +11,33 @@ $isActive = function (string $path) use ($route): bool {
 };
 // URL canonical untuk SEO: selalu domain APP_URL, hanya query yang mengubah isi halaman
 $canonicalQuery = array_intersect_key($_GET, array_flip(['page', 'kategori', 'month']));
-$canonicalUrl = url($route) . ($canonicalQuery ? '?' . http_build_query($canonicalQuery) : '');
+$canonicalUrl = $canonical ?? (url($route) . ($canonicalQuery ? '?' . http_build_query($canonicalQuery) : ''));
+
+// Meta untuk mesin pencari & pratinjau link (WhatsApp, Facebook, dll)
+$metaDescription = ($description ?? '') ?: (setting('site_description') ?: APP_NAME . ' - Gereja yang Mengasihi dan Melayani');
+$settingImage = fn($key) => setting($key) ? uploads('settings/' . setting($key)) : null;
+$metaImage = $ogImage ?? $settingImage('hero_image') ?? $settingImage('about_image') ?? $settingImage('site_logo');
+$isHome = $route === '' || $route === 'home';
+
+// Data terstruktur (schema.org/Church) di beranda
+$jsonLd = null;
+if ($isHome) {
+    $jsonLd = array_filter([
+        '@context' => 'https://schema.org',
+        '@type' => 'Church',
+        'name' => $siteName,
+        'url' => url(),
+        'description' => setting('site_description') ?: null,
+        'logo' => $settingImage('site_logo'),
+        'image' => $metaImage,
+        'telephone' => setting('site_phone') ?: null,
+        'email' => setting('site_email') ?: null,
+        'address' => setting('site_address') ? ['@type' => 'PostalAddress', 'streetAddress' => setting('site_address'), 'addressCountry' => 'ID'] : null,
+        'sameAs' => array_values(array_filter([
+            setting('site_facebook'), setting('site_instagram'), setting('site_youtube'), setting('site_tiktok'),
+        ])) ?: null,
+    ]);
+}
 
 $aboutActive = $isActive('tentang');
 // Submenu "Tentang": ikon, judul, deskripsi singkat
@@ -45,12 +71,27 @@ foreach ($bnItems as $i => $item) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="<?= themeColor() ?>">
-    <meta name="description" content="<?= e($description ?? (setting('site_description') ?: APP_NAME . ' - Gereja yang Mengasihi dan Melayani')) ?>">
+    <meta name="description" content="<?= e($metaDescription) ?>">
     <?php if (setting('site_keywords')): ?>
     <meta name="keywords" content="<?= e(setting('site_keywords')) ?>">
     <?php endif; ?>
     <title><?= e($title ?? APP_NAME) ?></title>
     <link rel="canonical" href="<?= e($canonicalUrl) ?>">
+
+    <!-- Pratinjau link (WhatsApp, Facebook, Telegram, X) -->
+    <meta property="og:site_name" content="<?= e($siteName) ?>">
+    <meta property="og:type" content="<?= e($ogType ?? 'website') ?>">
+    <meta property="og:title" content="<?= e($title ?? $siteName) ?>">
+    <meta property="og:description" content="<?= e($metaDescription) ?>">
+    <meta property="og:url" content="<?= e($canonicalUrl) ?>">
+    <meta property="og:locale" content="id_ID">
+    <?php if ($metaImage): ?>
+    <meta property="og:image" content="<?= e($metaImage) ?>">
+    <?php endif; ?>
+    <meta name="twitter:card" content="<?= $metaImage ? 'summary_large_image' : 'summary' ?>">
+    <?php if ($jsonLd): ?>
+    <script type="application/ld+json"><?= json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
+    <?php endif; ?>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">

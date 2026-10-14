@@ -177,4 +177,19 @@ class Event extends Model
 
         return Database::fetchAll($sql, ['month' => $month, 'year' => $year]);
     }
+
+    /**
+     * Kegiatan terbit untuk sitemap.xml
+     *
+     * @return array slug & lastmod
+     */
+    public function getForSitemap(): array
+    {
+        $sql = "SELECT slug, COALESCE(updated_at, created_at) AS lastmod
+                FROM {$this->table}
+                WHERE status = 'published' AND slug IS NOT NULL AND slug <> ''
+                ORDER BY event_date DESC";
+
+        return Database::fetchAll($sql);
+    }
 }

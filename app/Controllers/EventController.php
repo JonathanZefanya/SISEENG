@@ -67,7 +67,11 @@ class EventController extends Controller
         }
 
         $this->view('public/events/detail', [
-            'title' => e($event['title']) . ' - ' . APP_NAME,
+            // Tanpa e(): layout sudah meng-escape judul
+            'title' => $event['title'] . ' - ' . APP_NAME,
+            'description' => excerpt($event['description'], 160),
+            'ogImage' => $event['image'] ? uploads($event['image']) : null,
+            'canonical' => url('kegiatan/' . ($event['slug'] ?: $event['id'])),
             'event' => $event,
         ]);
     }

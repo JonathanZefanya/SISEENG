@@ -80,7 +80,12 @@ class ArticleController extends Controller
         }
         
         $this->view('public/articles/read', [
-            'title' => e($article['title']) . ' - ' . APP_NAME,
+            // Tanpa e(): layout sudah meng-escape judul
+            'title' => $article['title'] . ' - ' . APP_NAME,
+            'description' => excerpt($article['excerpt'] ?: $article['content'], 160),
+            'ogType' => 'article',
+            'ogImage' => $article['image'] ? uploads($article['image']) : null,
+            'canonical' => url('artikel/' . $article['slug']),
             'article' => $article,
         ]);
     }

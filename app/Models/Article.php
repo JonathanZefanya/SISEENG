@@ -179,4 +179,19 @@ class Article extends Model
     {
         return $this->count('status', $status);
     }
+
+    /**
+     * Artikel terbit untuk sitemap.xml
+     *
+     * @return array slug & lastmod
+     */
+    public function getForSitemap(): array
+    {
+        $sql = "SELECT slug, COALESCE(updated_at, published_at, created_at) AS lastmod
+                FROM {$this->table}
+                WHERE status = 'published' AND published_at <= NOW()
+                ORDER BY published_at DESC";
+
+        return Database::fetchAll($sql);
+    }
 }
