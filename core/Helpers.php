@@ -26,6 +26,37 @@ function redirect($url) {
 }
 
 /**
+ * Redirect 301 ke domain utama (host di APP_URL) jika website dibuka dari domain lain.
+ * Hanya membandingkan host, bukan http/https, agar tidak loop di belakang proxy/Cloudflare.
+ */
+function redirectToCanonicalHost() {
+    if (!APP_CANONICAL_REDIRECT || PHP_SAPI === 'cli') {
+        return;
+    }
+
+    // Hanya GET/HEAD; POST dari form tidak dialihkan agar datanya tidak hilang
+    if (!in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['GET', 'HEAD'], true)) {
+        return;
+    }
+
+    $canonical = parse_url(APP_URL);
+    if (empty($canonical['host'])) {
+        return;
+    }
+
+    $canonicalHost = strtolower($canonical['host']) . (isset($canonical['port']) ? ':' . $canonical['port'] : '');
+    $requestHost = strtolower($_SERVER['HTTP_HOST'] ?? '');
+
+    if ($requestHost === '' || $requestHost === $canonicalHost) {
+        return;
+    }
+
+    $scheme = $canonical['scheme'] ?? 'https';
+    header('Location: ' . $scheme . '://' . $canonicalHost . ($_SERVER['REQUEST_URI'] ?? '/'), true, 301);
+    exit;
+}
+
+/**
  * Escape output untuk mencegah XSS
  * @param string $string String yang akan di-escape
  * @return string String yang sudah aman

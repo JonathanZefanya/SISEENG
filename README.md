@@ -136,10 +136,15 @@ Urutan prioritas: **environment variable > `config.local.php` > default**.
 |---|---|---|---|
 | `ENVIRONMENT` | `APP_ENV` | `production` | `development` menampilkan detail error. Server live wajib `production` |
 | `APP_URL` | `APP_URL` | `http://localhost/siseeng` | URL dasar aplikasi |
+| `APP_CANONICAL_REDIRECT` | `APP_CANONICAL_REDIRECT` | `false` | `true`: domain lain di-redirect 301 ke domain `APP_URL` |
 | `DB_HOST` | `DB_HOST` | `localhost` | Host MySQL |
 | `DB_NAME` | `DB_NAME` | `db_siseeng` | Nama database |
 | `DB_USER` | `DB_USER` | _(wajib diisi)_ | User MySQL |
 | `DB_PASS` | `DB_PASS` | _(kosong)_ | Password MySQL |
+
+### Beberapa domain
+
+Website bisa diarahkan dari beberapa domain (misalnya `www.` dan non-`www.`, atau domain alias). Arahkan semua domain ke folder hosting yang sama, isi `APP_URL` dengan domain utama, lalu set `APP_CANONICAL_REDIRECT` ke `true`. Pengunjung dari domain lain otomatis di-redirect 301 ke domain utama, sehingga link, login admin, dan SEO tetap konsisten.
 
 Pengaturan lain di file yang sama:
 

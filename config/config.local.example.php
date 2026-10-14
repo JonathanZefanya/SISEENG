@@ -11,6 +11,8 @@ return [
     // 'development' menampilkan detail error; server live WAJIB 'production'
     'APP_ENV'  => 'development',
     'APP_URL'  => 'http://localhost/siseeng',
+    // true: domain lain (alias, www/non-www) di-redirect 301 ke domain APP_URL
+    'APP_CANONICAL_REDIRECT' => false,
 
     'DB_HOST'  => 'localhost',
     'DB_NAME'  => 'db_siseeng',

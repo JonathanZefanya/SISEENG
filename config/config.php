@@ -61,6 +61,10 @@ $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 // TEMPORARY FIX FOR LOCALHOST
 define('APP_URL', $env('APP_URL', 'http://localhost/siseeng'));
 
+// Redirect 301 domain lain (alias, www/non-www) ke domain APP_URL.
+// Aktifkan di server live setelah APP_URL dipastikan benar.
+define('APP_CANONICAL_REDIRECT', filter_var($env('APP_CANONICAL_REDIRECT', 'false'), FILTER_VALIDATE_BOOLEAN));
+
 define('ADMIN_EMAIL', 'admin@gbiciseeng.com');
 
 // =========================================================

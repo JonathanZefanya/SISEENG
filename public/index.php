@@ -28,6 +28,9 @@ require_once CORE_PATH . 'Helpers.php';
 // Exception & fatal error ditampilkan sebagai halaman error
 registerErrorHandlers();
 
+// Arahkan domain alias ke domain utama (jika diaktifkan)
+redirectToCanonicalHost();
+
 // Inisialisasi session dengan pengaturan aman
 Core\Session::init();
 
