@@ -26,11 +26,12 @@ function redirect($url) {
 }
 
 /**
- * Redirect 301 ke domain utama (host di APP_URL) jika website dibuka dari domain lain.
- * Hanya membandingkan host, bukan http/https, agar tidak loop di belakang proxy/Cloudflare.
+ * Redirect 301 ke alamat utama:
+ * - APP_CANONICAL_REDIRECT: domain lain (alias, www/non-www) ke domain di APP_URL
+ * - APP_FORCE_HTTPS: http ke https
  */
 function redirectToCanonicalHost() {
-    if (!APP_CANONICAL_REDIRECT || PHP_SAPI === 'cli') {
+    if ((!APP_CANONICAL_REDIRECT && !APP_FORCE_HTTPS) || PHP_SAPI === 'cli') {
         return;
     }
 
@@ -47,12 +48,19 @@ function redirectToCanonicalHost() {
     $canonicalHost = strtolower($canonical['host']) . (isset($canonical['port']) ? ':' . $canonical['port'] : '');
     $requestHost = strtolower($_SERVER['HTTP_HOST'] ?? '');
 
-    if ($requestHost === '' || $requestHost === $canonicalHost) {
+    if ($requestHost === '') {
         return;
     }
 
-    $scheme = $canonical['scheme'] ?? 'https';
-    header('Location: ' . $scheme . '://' . $canonicalHost . ($_SERVER['REQUEST_URI'] ?? '/'), true, 301);
+    $wrongHost = APP_CANONICAL_REDIRECT && $requestHost !== $canonicalHost;
+    $needHttps = APP_FORCE_HTTPS && !IS_HTTPS;
+    if (!$wrongHost && !$needHttps) {
+        return;
+    }
+
+    $scheme = (APP_FORCE_HTTPS || IS_HTTPS) ? 'https' : 'http';
+    $host = APP_CANONICAL_REDIRECT ? $canonicalHost : $requestHost;
+    header('Location: ' . $scheme . '://' . $host . ($_SERVER['REQUEST_URI'] ?? '/'), true, 301);
     exit;
 }
 
@@ -106,8 +114,7 @@ function uploads($path) {
  * @return string Current URL
  */
 function currentUrl() {
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    return $protocol . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    return (IS_HTTPS ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 }
 
 /**

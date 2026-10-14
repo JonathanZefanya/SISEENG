@@ -13,6 +13,8 @@ return [
     'APP_URL'  => 'http://localhost/siseeng',
     // true: domain lain (alias, www/non-www) di-redirect 301 ke domain APP_URL
     'APP_CANONICAL_REDIRECT' => false,
+    // true: http di-redirect 301 ke https. Aktifkan HANYA setelah SSL terbit
+    'APP_FORCE_HTTPS' => false,
 
     'DB_HOST'  => 'localhost',
     'DB_NAME'  => 'db_siseeng',

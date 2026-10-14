@@ -53,13 +53,24 @@ define('APP_NAME', 'GBI HOP Ciseeng');
 date_default_timezone_set('Asia/Jakarta');
 define('APP_VERSION', '1.0.0');
 
-// Deteksi APP_URL secara otomatis
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-// define('APP_URL', $protocol . '://' . $host);
+// Apakah request saat ini lewat HTTPS (termasuk di belakang proxy/Cloudflare)
+define('IS_HTTPS',
+    (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off')
+    || strtolower($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https'
+    || ($_SERVER['SERVER_PORT'] ?? '') === '443'
+);
 
-// TEMPORARY FIX FOR LOCALHOST
-define('APP_URL', $env('APP_URL', 'http://localhost/siseeng'));
+// Paksa HTTPS: request http di-redirect 301 ke https.
+// Aktifkan HANYA setelah sertifikat SSL domain sudah terbit.
+define('APP_FORCE_HTTPS', filter_var($env('APP_FORCE_HTTPS', 'false'), FILTER_VALIDATE_BOOLEAN));
+
+// Domain & path diambil dari APP_URL, tapi skema (http/https) mengikuti request saat ini,
+// agar CSS/gambar tetap ter-load saat website dibuka lewat http (misalnya SSL belum terbit)
+$appUrl = rtrim($env('APP_URL', 'http://localhost/siseeng'), '/');
+if (PHP_SAPI !== 'cli' && !APP_FORCE_HTTPS) {
+    $appUrl = preg_replace('#^https?://#i', (IS_HTTPS ? 'https' : 'http') . '://', $appUrl);
+}
+define('APP_URL', $appUrl);
 
 // Redirect 301 domain lain (alias, www/non-www) ke domain APP_URL.
 // Aktifkan di server live setelah APP_URL dipastikan benar.
@@ -88,7 +99,7 @@ define('CSRF_TOKEN_EXPIRE', 3600); // 1 jam dalam detik
 // Session settings
 define('SESSION_NAME', 'SISEENG_SESSION');
 define('SESSION_LIFETIME', 7200); // 2 jam dalam detik
-define('SESSION_SECURE', false); // Set true jika menggunakan HTTPS
+define('SESSION_SECURE', IS_HTTPS); // Cookie session hanya dikirim via HTTPS jika dibuka lewat HTTPS
 define('SESSION_HTTPONLY', true);
 define('SESSION_SAMESITE', 'Strict');
 // Path untuk session files - gunakan tmp directory yang writable

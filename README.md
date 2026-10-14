@@ -137,6 +137,7 @@ Urutan prioritas: **environment variable > `config.local.php` > default**.
 | `ENVIRONMENT` | `APP_ENV` | `production` | `development` menampilkan detail error. Server live wajib `production` |
 | `APP_URL` | `APP_URL` | `http://localhost/siseeng` | URL dasar aplikasi |
 | `APP_CANONICAL_REDIRECT` | `APP_CANONICAL_REDIRECT` | `false` | `true`: domain lain di-redirect 301 ke domain `APP_URL` |
+| `APP_FORCE_HTTPS` | `APP_FORCE_HTTPS` | `false` | `true`: http di-redirect 301 ke https. Aktifkan setelah SSL terbit |
 | `DB_HOST` | `DB_HOST` | `localhost` | Host MySQL |
 | `DB_NAME` | `DB_NAME` | `db_siseeng` | Nama database |
 | `DB_USER` | `DB_USER` | _(wajib diisi)_ | User MySQL |
@@ -145,6 +146,10 @@ Urutan prioritas: **environment variable > `config.local.php` > default**.
 ### Beberapa domain
 
 Website bisa diarahkan dari beberapa domain (misalnya `www.` dan non-`www.`, atau domain alias). Arahkan semua domain ke folder hosting yang sama, isi `APP_URL` dengan domain utama, lalu set `APP_CANONICAL_REDIRECT` ke `true`. Pengunjung dari domain lain otomatis di-redirect 301 ke domain utama, sehingga link, login admin, dan SEO tetap konsisten.
+
+### HTTPS
+
+Skema link (http/https) mengikuti cara website dibuka, sehingga website tetap tampil normal lewat `http://` selama sertifikat SSL belum terbit, walaupun `APP_URL` ditulis `https://`. Setelah SSL aktif, set `APP_FORCE_HTTPS` ke `true` agar semua pengunjung diarahkan ke `https://`.
 
 Pengaturan lain di file yang sama:
 
